@@ -14,7 +14,7 @@ export default function SplashRoute() {
         <Text style={styles.logo}>Cicla</Text>
         <Text style={styles.tagline}>conheca seu ciclo</Text>
 
-        <Link href="/home-preview" asChild>
+        <Link href="/(exterior)" asChild>
           <Pressable style={styles.button}>
             <Text style={styles.buttonLabel}>Entrar</Text>
           </Pressable>

@@ -4,10 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function SettingsRoute() {
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={styles.content}>
-        <Text style={styles.eyebrow}>Configuracoes</Text>
-        <Text style={styles.title}>Ajuste o Cicla ao seu ritmo.</Text>
-        <Text style={styles.copy}>
+      <View className="flex-1 justify-center px-7">
+        <Text className="mb-3.5 text-[13px] font-extrabold uppercase text-vera-blue">
+          Configuracoes
+        </Text>
+        <Text className="text-[34px] font-black leading-10 text-vera-ink">
+          Ajuste o Cicla ao seu ritmo.
+        </Text>
+        <Text className="mt-4 text-base leading-[23px] text-vera-muted">
           Esta rota vai centralizar preferencias, notificacoes e conta.
         </Text>
       </View>
@@ -19,29 +23,5 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#FFF5EC',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 28,
-  },
-  eyebrow: {
-    color: '#20257B',
-    fontSize: 13,
-    fontWeight: '800',
-    marginBottom: 14,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: '#141011',
-    fontSize: 34,
-    fontWeight: '900',
-    lineHeight: 40,
-  },
-  copy: {
-    color: '#635957',
-    fontSize: 16,
-    lineHeight: 23,
-    marginTop: 16,
   },
 });

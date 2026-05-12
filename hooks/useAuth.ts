@@ -17,8 +17,8 @@ export function useLoginMutation() {
   return useMutation({
     mutationKey: [...authQueryKey, 'login'],
     mutationFn: (payload: LoginRequest) => authService.login(payload),
-    onSuccess: (session) => {
-      setSession(session);
+    onSuccess: async (session) => {
+      await setSession(session);
       queryClient.setQueryData(authQueryKey, session.user);
     },
   });
@@ -30,8 +30,8 @@ export function useRegisterMutation() {
   return useMutation({
     mutationKey: [...authQueryKey, 'register'],
     mutationFn: (payload: RegisterRequest) => authService.register(payload),
-    onSuccess: (session) => {
-      setSession(session);
+    onSuccess: async (session) => {
+      await setSession(session);
       queryClient.setQueryData(authQueryKey, session.user);
     },
   });
@@ -40,8 +40,8 @@ export function useRegisterMutation() {
 export function useLogout() {
   const clearSession = useAuthStore((state) => state.clearSession);
 
-  return () => {
-    clearSession();
+  return async () => {
+    await clearSession();
     queryClient.removeQueries({ queryKey: authQueryKey });
   };
 }

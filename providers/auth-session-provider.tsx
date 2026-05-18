@@ -1,5 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import { colors } from '@/constants/theme';
 import { useAuthStore } from '@/stores/auth.store';
 
 type AuthSessionProviderProps = {
@@ -14,5 +16,22 @@ export function AuthSessionProvider({ children }: AuthSessionProviderProps) {
     void hydrateSession();
   }, [hydrateSession]);
 
-  return isHydrated ? children : null;
+  if (!isHydrated) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={colors.blue} size="large" />
+      </View>
+    );
+  }
+
+  return children;
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.cream,
+  },
+});

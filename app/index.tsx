@@ -1,73 +1,33 @@
-import { Link } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Redirect } from 'expo-router';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Screen } from '@/components/ui';
-import { colors, spacing } from '@/constants/theme';
+import { useAuthStore } from '@/stores/auth.store';
+import { colors } from '@/constants/theme';
 
-export default function SplashRoute() {
-  return (
-    <Screen padded={false}>
-      <View style={styles.content}>
-        <View style={styles.mark} accessibilityElementsHidden>
-          <View style={styles.moon} />
-          <View style={styles.moonCutout} />
-        </View>
+export default function IndexRoute() {
+  const isHydrated = useAuthStore((state) => state.isHydrated);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-        <AppText variant="hero" tone="blue" style={styles.logo}>
-          Cicla
-        </AppText>
-        <AppText tone="soft" style={styles.tagline}>
-          conheca seu ciclo
-        </AppText>
-
-        <Link href="/(exterior)" asChild>
-          <Button style={styles.button}>Entrar</Button>
-        </Link>
+  if (!isHydrated) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={colors.blue} size="large" />
       </View>
-    </Screen>
-  );
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Redirect href="/(exterior)" />;
+  }
+
+  return <Redirect href="/(auth)/login" />;
 }
 
 const styles = StyleSheet.create({
-  content: {
+  loading: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing[8],
-  },
-  mark: {
-    width: 190,
-    height: 180,
-    marginBottom: spacing[4],
-  },
-  moon: {
-    position: 'absolute',
-    left: 20,
-    top: 4,
-    width: 142,
-    height: 164,
-    borderRadius: 82,
-    backgroundColor: colors.pink,
-    transform: [{ rotate: '-10deg' }],
-  },
-  moonCutout: {
-    position: 'absolute',
-    left: 78,
-    top: -6,
-    width: 142,
-    height: 154,
-    borderRadius: 82,
     backgroundColor: colors.cream,
-    transform: [{ rotate: '8deg' }],
-  },
-  logo: {
-    marginTop: 2,
-  },
-  tagline: {
-    marginTop: 4,
-  },
-  button: {
-    minWidth: 156,
-    marginTop: spacing[12],
   },
 });

@@ -17,32 +17,18 @@ import { UnderlineField } from '@/components/auth/underline-field';
 import { AppText } from '@/components/ui/app-text';
 import { Screen } from '@/components/ui/screen';
 import { colors, radius, spacing } from '@/constants/theme';
-import { useLoginMutation } from '@/hooks/useAuth';
-import { isApiError } from '@/services/api';
-
-function getLoginErrorMessage(error: unknown) {
-  if (!isApiError(error)) {
-    return 'Nao foi possivel entrar. Tente novamente.';
-  }
-
-  const message = error.response?.data?.message;
-
-  if (Array.isArray(message)) {
-    return message[0] ?? 'Credenciais invalidas.';
-  }
-
-  return message ?? error.response?.data?.error ?? 'Credenciais invalidas.';
-}
+import { useAuthStore } from '@/stores/auth.store';
 
 export default function LoginScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
-  const loginMutation = useLoginMutation();
+  const setSession = useAuthStore((state) => state.setSession);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const horizontalPadding = spacing[8];
   const contentWidth = windowWidth - horizontalPadding * 2;
@@ -56,15 +42,26 @@ export default function LoginScreen() {
     }
 
     setFormError(null);
+    setIsLoggingIn(true);
 
     try {
-      await loginMutation.mutateAsync({
-        email: trimmedEmail,
-        password,
+      // Simulando um delay de rede
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      await setSession({
+        token: 'mock-session-token',
+        user: {
+          id: '1',
+          email: trimmedEmail,
+          name: 'Usuário de Teste',
+        },
       });
+
       router.replace('/(exterior)');
     } catch (error) {
-      setFormError(getLoginErrorMessage(error));
+      setFormError('Ocorreu um erro ao tentar entrar.');
+    } finally {
+      setIsLoggingIn(false);
     }
   }
 
@@ -140,15 +137,15 @@ export default function LoginScreen() {
 
           <TouchableOpacity
             onPress={handleLogin}
-            disabled={loginMutation.isPending}
+            disabled={isLoggingIn}
             activeOpacity={0.85}
             style={[
               styles.loginButton,
               { width: contentWidth },
-              loginMutation.isPending && styles.loginButtonDisabled,
+              isLoggingIn && styles.loginButtonDisabled,
             ]}
           >
-            {loginMutation.isPending ? (
+            {isLoggingIn ? (
               <ActivityIndicator color={colors.cream} />
             ) : (
               <Text style={styles.loginButtonLabel}>Entrar</Text>

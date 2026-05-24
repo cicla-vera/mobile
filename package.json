@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "typecheck": "node scripts/generate-router-types.cjs && tsc --noEmit"
+    "typecheck": "node scripts/generate-router-types.cjs && tsc --noEmit",
+    "smoke:auth": "node scripts/smoke-auth.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.100.10",

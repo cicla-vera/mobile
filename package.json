@@ -8,7 +8,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "node scripts/generate-router-types.cjs && tsc --noEmit",
-    "smoke:auth": "node scripts/smoke-auth.mjs"
+    "smoke:auth": "node scripts/smoke-auth.mjs",
+    "smoke:cycles": "node scripts/smoke-cycles.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",

@@ -24,10 +24,15 @@ function resolveDayVariant(
   month: number,
   year: number,
   today: Date,
+  periodDays: Set<string>,
   fertileDays: Set<string>,
   predictedDays: Set<string>,
 ): CalendarDayVariant {
   const dateKey = toDateKey(date);
+
+  if (periodDays.has(dateKey)) {
+    return "period";
+  }
 
   if (isSameDay(date, today)) {
     return "today";
@@ -69,11 +74,13 @@ export function buildCalendarMonth(
   options: {
     today?: Date;
     selectedDateKey?: string;
+    periodDays?: Set<string>;
     fertileDays?: Set<string>;
     predictedDays?: Set<string>;
   } = {},
 ): CalendarDay[][] {
   const today = options.today ?? new Date();
+  const periodDays = options.periodDays ?? new Set<string>();
   const fertileDays = options.fertileDays ?? new Set<string>();
   const predictedDays = options.predictedDays ?? new Set<string>();
 
@@ -111,6 +118,7 @@ export function buildCalendarMonth(
           month,
           year,
           today,
+          periodDays,
           fertileDays,
           predictedDays,
         ),

@@ -19,6 +19,7 @@ export function useLoginMutation() {
     mutationFn: (payload: LoginRequest) => authService.login(payload),
     onSuccess: async (session) => {
       await setSession(session);
+      queryClient.clear();
       queryClient.setQueryData(authQueryKey, session.user);
     },
   });
@@ -32,6 +33,7 @@ export function useRegisterMutation() {
     mutationFn: (payload: RegisterRequest) => authService.register(payload),
     onSuccess: async (session) => {
       await setSession(session);
+      queryClient.clear();
       queryClient.setQueryData(authQueryKey, session.user);
     },
   });
@@ -42,6 +44,6 @@ export function useLogout() {
 
   return async () => {
     await clearSession();
-    queryClient.removeQueries({ queryKey: authQueryKey });
+    queryClient.clear();
   };
 }

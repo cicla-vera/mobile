@@ -8,10 +8,17 @@ import {
   CyclePeriodCard,
   MoodCheckIn,
   NotificationsModal,
+  PeriodMarkingCard,
 } from "@/components/calendar";
 import { MOCK_NOTIFICATIONS } from "@/constants/notifications";
 import { Screen } from "@/components/ui/screen";
 import { spacing } from "@/constants/theme";
+import {
+  useCreateCycleMutation,
+  useCyclesQuery,
+  useUpdateCycleMutation,
+} from "@/hooks/useCycles";
+import { getApiErrorMessage } from "@/services/api-error";
 import { useCycleStore } from "@/stores/cycle.store";
 import {
   buildCalendarMonth,
@@ -20,7 +27,9 @@ import {
   formatMonthHeading,
   getCalendarInsights,
 } from "@/utils/calendar";
+import { buildPeriodDaySet, getCycleStartKey } from "@/utils/cycles";
 import { parseDateKey, parseMonthKey } from "@/utils/date";
+import type { CycleLog } from "@/types/api.types";
 import type { AppNotification } from "@/constants/notifications";
 
 export default function HomePreviewRoute() {
@@ -33,6 +42,11 @@ export default function HomePreviewRoute() {
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const [notifications, setNotifications] =
     useState<AppNotification[]>(MOCK_NOTIFICATIONS);
+  const [cycleFeedback, setCycleFeedback] = useState<string | null>(null);
+
+  const cyclesQuery = useCyclesQuery();
+  const createCycleMutation = useCreateCycleMutation();
+  const updateCycleMutation = useUpdateCycleMutation();
 
   const today = useMemo(() => new Date(), []);
   const selectedDate = useMemo(
@@ -48,16 +62,29 @@ export default function HomePreviewRoute() {
     () => buildMockCycleSets(new Date(year, month, 1)),
     [month, year],
   );
+  const periodDays = useMemo(
+    () => buildPeriodDaySet(cyclesQuery.data ?? [], today),
+    [cyclesQuery.data, today],
+  );
 
   const weeks = useMemo(
     () =>
       buildCalendarMonth(year, month, {
         today,
         selectedDateKey,
+        periodDays,
         fertileDays,
         predictedDays,
       }),
-    [fertileDays, month, predictedDays, selectedDateKey, today, year],
+    [
+      fertileDays,
+      month,
+      periodDays,
+      predictedDays,
+      selectedDateKey,
+      today,
+      year,
+    ],
   );
 
   const insights = useMemo(
@@ -66,6 +93,18 @@ export default function HomePreviewRoute() {
   );
 
   const hasUnreadNotifications = notifications.some((item) => !item.read);
+  const cycleMutationError =
+    createCycleMutation.error ?? updateCycleMutation.error ?? null;
+  const cycleErrorMessage = cyclesQuery.isError
+    ? getApiErrorMessage(
+        cyclesQuery.error,
+        "Não deu para carregar seus ciclos agora.",
+      )
+    : cycleMutationError
+      ? getApiErrorMessage(cycleMutationError, "Não deu para salvar o ciclo.")
+      : null;
+  const isSavingCycle =
+    createCycleMutation.isPending || updateCycleMutation.isPending;
 
   function handleMarkAllRead() {
     setNotifications((current) =>
@@ -77,6 +116,38 @@ export default function HomePreviewRoute() {
     setNotifications((current) =>
       current.map((item) => (item.id === id ? { ...item, read: true } : item)),
     );
+  }
+
+  async function handleMarkPeriodStart() {
+    setCycleFeedback(null);
+    createCycleMutation.reset();
+    updateCycleMutation.reset();
+
+    try {
+      await createCycleMutation.mutateAsync({ startDate: selectedDateKey });
+      setCycleFeedback("Início salvo no calendário.");
+    } catch {
+      setCycleFeedback(null);
+    }
+  }
+
+  async function handleMarkPeriodEnd(cycle: CycleLog) {
+    setCycleFeedback(null);
+    createCycleMutation.reset();
+    updateCycleMutation.reset();
+
+    try {
+      await updateCycleMutation.mutateAsync({
+        id: cycle.id,
+        payload: {
+          startDate: getCycleStartKey(cycle),
+          endDate: selectedDateKey,
+        },
+      });
+      setCycleFeedback("Fim salvo no calendário.");
+    } catch {
+      setCycleFeedback(null);
+    }
   }
 
   return (
@@ -110,6 +181,17 @@ export default function HomePreviewRoute() {
         />
 
         <CyclePeriodCard title={insights.nextPeriodMessage} />
+
+        <PeriodMarkingCard
+          selectedDateKey={selectedDateKey}
+          cycles={cyclesQuery.data ?? []}
+          loading={cyclesQuery.isLoading}
+          saving={isSavingCycle}
+          errorMessage={cycleErrorMessage}
+          feedbackMessage={cycleFeedback}
+          onMarkStart={handleMarkPeriodStart}
+          onMarkEnd={handleMarkPeriodEnd}
+        />
 
         <MoodCheckIn dateKey={selectedDateKey} />
       </ScrollView>

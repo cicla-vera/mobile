@@ -8,3 +8,4 @@ export { CyclePeriodCard } from '@/components/calendar/cycle-period-card';
 export { MoodCheckIn } from '@/components/calendar/mood-check-in';
 export { MoonMark } from '@/components/calendar/moon-mark';
 export { NotificationsModal } from '@/components/calendar/notifications-modal';
+export { PeriodMarkingCard } from '@/components/calendar/period-marking-card';

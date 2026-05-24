@@ -30,6 +30,15 @@ const variantStyles: Record<CalendarDayVariant, VariantStyle> = {
       opacity: 0.5,
     },
   },
+  period: {
+    marker: {
+      backgroundColor: colors.pink,
+    },
+    label: {
+      color: colors.white,
+      fontWeight: "500",
+    },
+  },
   fertile: {
     marker: {
       backgroundColor: colors.coral,

@@ -57,6 +57,9 @@ export function Button({
         (disabled || loading) && styles.disabled,
         pressed && !disabled && !loading && styles.pressed,
         style,
+        style?.width === '100%' || style?.alignSelf === 'stretch'
+          ? styles.stretch
+          : null,
       ]}
     >
       {loading ? (
@@ -77,6 +80,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: spacing[6],
     borderRadius: radius.pill,
+  },
+  stretch: {
+    alignSelf: 'stretch',
   },
   disabled: {
     opacity: 0.48,

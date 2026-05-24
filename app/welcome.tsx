@@ -20,7 +20,7 @@ export default function WelcomeRoute() {
           conheca seu ciclo
         </AppText>
 
-        <Link href="/(auth)/login" asChild>
+        <Link href="/login" asChild>
           <Button style={styles.button}>Entrar</Button>
         </Link>
       </View>

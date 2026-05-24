@@ -20,7 +20,7 @@ export default function IndexRoute() {
     return <Redirect href="/(exterior)" />;
   }
 
-  return <Redirect href="/(auth)/login" />;
+  return <Redirect href="/login" />;
 }
 
 const styles = StyleSheet.create({

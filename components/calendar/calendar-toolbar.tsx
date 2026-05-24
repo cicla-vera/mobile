@@ -12,13 +12,38 @@ type ToolbarAction = {
   showBadge?: boolean;
 };
 
-const ACTIONS: ToolbarAction[] = [
-  { icon: 'plus', label: 'Registrar', href: '/(exterior)/log' },
-  { icon: 'user', label: 'Perfil', href: '/(interior)' },
-  { icon: 'calendar', label: 'Calendario', href: '/(exterior)' },
-  { icon: 'bell', label: 'Notificacoes', showBadge: true },
-  { icon: 'settings', label: 'Configuracoes', href: '/(exterior)/settings' },
-];
+type CalendarToolbarProps = {
+  onNotificationsPress: () => void;
+  onGoToToday: () => void;
+  hasUnreadNotifications?: boolean;
+};
+
+export function CalendarToolbar({
+  onNotificationsPress,
+  onGoToToday,
+  hasUnreadNotifications = false,
+}: CalendarToolbarProps) {
+  const actions: ToolbarAction[] = [
+    { icon: 'plus', label: 'Registrar', href: '/(exterior)/log' },
+    { icon: 'user', label: 'Perfil', href: '/(interior)' },
+    { icon: 'calendar', label: 'Ir para hoje', onPress: onGoToToday },
+    {
+      icon: 'bell',
+      label: 'Notificações',
+      onPress: onNotificationsPress,
+      showBadge: hasUnreadNotifications,
+    },
+    { icon: 'settings', label: 'Configuracoes', href: '/(exterior)/settings' },
+  ];
+
+  return (
+    <View style={styles.toolbar}>
+      {actions.map((action) => (
+        <ToolbarButton key={action.label} action={action} />
+      ))}
+    </View>
+  );
+}
 
 function ToolbarButton({ action }: { action: ToolbarAction }) {
   const icon = (
@@ -51,16 +76,6 @@ function ToolbarButton({ action }: { action: ToolbarAction }) {
     >
       {icon}
     </Pressable>
-  );
-}
-
-export function CalendarToolbar() {
-  return (
-    <View style={styles.toolbar}>
-      {ACTIONS.map((action) => (
-        <ToolbarButton key={action.label} action={action} />
-      ))}
-    </View>
   );
 }
 

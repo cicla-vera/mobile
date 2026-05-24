@@ -1,21 +1,42 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { CalendarDayCell } from '@/components/calendar/calendar-day-cell';
+import { CalendarMonthNav } from '@/components/calendar/calendar-month-nav';
 import type { CalendarDay } from '@/types/calendar.types';
 import { colors, spacing } from '@/constants/theme';
 import { getWeekDayLabels } from '@/utils/calendar';
 
 type CalendarGridProps = {
   weeks: CalendarDay[][];
+  monthLabel: string;
+  selectedDateKey: string;
   onSelectDate: (dateKey: string) => void;
+  onPreviousMonth: () => void;
+  onNextMonth: () => void;
+  onGoToToday: () => void;
 };
 
-export function CalendarGrid({ weeks, onSelectDate }: CalendarGridProps) {
+export function CalendarGrid({
+  weeks,
+  monthLabel,
+  selectedDateKey,
+  onSelectDate,
+  onPreviousMonth,
+  onNextMonth,
+  onGoToToday,
+}: CalendarGridProps) {
   const weekDays = getWeekDayLabels();
 
   return (
     <View style={styles.calendar}>
       <View style={styles.topDivider} />
+
+      <CalendarMonthNav
+        label={monthLabel}
+        onPrevious={onPreviousMonth}
+        onNext={onNextMonth}
+        onToday={onGoToToday}
+      />
 
       <View style={styles.weekRow}>
         {weekDays.map((day, index) => (
@@ -37,6 +58,7 @@ export function CalendarGrid({ weeks, onSelectDate }: CalendarGridProps) {
               key={day.key}
               label={day.label}
               variant={day.variant}
+              selected={day.key === selectedDateKey}
               onPress={() => onSelectDate(day.key)}
             />
           ))}

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Image,
   Pressable,
@@ -10,6 +9,7 @@ import {
 
 import { MOOD_OPTIONS } from '@/constants/moods';
 import { colors, radius, spacing } from '@/constants/theme';
+import { useCycleStore } from '@/stores/cycle.store';
 
 type MoodOptionCardProps = {
   label: string;
@@ -29,18 +29,37 @@ function MoodOptionCard({
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
-      style={[styles.option, selected && styles.optionSelected]}
+      style={styles.option}
     >
-      <View style={styles.card}>
+      <View style={[styles.card, selected && styles.cardSelected]}>
         <Image source={image} style={styles.emoji} resizeMode="contain" />
       </View>
-      <Text style={styles.optionLabel}>{label}</Text>
+      <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
-export function MoodCheckIn() {
-  const [selectedMoodId, setSelectedMoodId] = useState<string | null>(null);
+type MoodCheckInProps = {
+  dateKey: string;
+};
+
+export function MoodCheckIn({ dateKey }: MoodCheckInProps) {
+  const moodsByDate = useCycleStore((state) => state.moodsByDate);
+  const setMoodForDate = useCycleStore((state) => state.setMoodForDate);
+  const clearMoodForDate = useCycleStore((state) => state.clearMoodForDate);
+
+  const selectedMoodId = moodsByDate[dateKey] ?? null;
+
+  function handleSelect(moodId: string) {
+    if (selectedMoodId === moodId) {
+      clearMoodForDate(dateKey);
+      return;
+    }
+
+    setMoodForDate(dateKey, moodId);
+  }
 
   return (
     <View style={styles.section}>
@@ -52,7 +71,7 @@ export function MoodCheckIn() {
             label={option.label}
             image={option.image}
             selected={selectedMoodId === option.id}
-            onPress={() => setSelectedMoodId(option.id)}
+            onPress={() => handleSelect(option.id)}
           />
         ))}
       </View>
@@ -80,10 +99,6 @@ const styles = StyleSheet.create({
     width: 66,
     alignItems: 'center',
   },
-  optionSelected: {
-    opacity: 0.88,
-    transform: [{ scale: 0.98 }],
-  },
   card: {
     width: 66,
     height: 65,
@@ -91,6 +106,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  cardSelected: {
+    borderColor: colors.blue,
+    backgroundColor: colors.shell,
   },
   emoji: {
     width: 24,
@@ -101,5 +122,9 @@ const styles = StyleSheet.create({
     color: colors.ink,
     fontSize: 10,
     lineHeight: 18,
+  },
+  optionLabelSelected: {
+    color: colors.blue,
+    fontWeight: '700',
   },
 });

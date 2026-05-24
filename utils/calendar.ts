@@ -1,4 +1,8 @@
 import type { CalendarDay, CalendarDayVariant } from '@/types/calendar.types';
+import {
+  isSameDay,
+  toDateKey,
+} from '@/utils/date';
 
 const WEEK_DAYS = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'] as const;
 
@@ -16,18 +20,6 @@ const MONTH_NAMES = [
   'Novembro',
   'Dezembro',
 ] as const;
-
-function toDateKey(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-}
-
-function isSameDay(left: Date, right: Date) {
-  return toDateKey(left) === toDateKey(right);
-}
 
 function resolveDayVariant(
   date: Date,
@@ -70,11 +62,16 @@ export function formatCalendarHeading(date: Date) {
   return `${day} de ${month}`;
 }
 
+export function formatMonthHeading(year: number, month: number) {
+  return `${MONTH_NAMES[month]} ${year}`;
+}
+
 export function buildCalendarMonth(
   year: number,
   month: number,
   options: {
     today?: Date;
+    selectedDateKey?: string;
     fertileDays?: Set<string>;
     predictedDays?: Set<string>;
   } = {},
@@ -137,24 +134,51 @@ export function buildMockCycleSets(referenceDate: Date) {
   return { fertileDays, predictedDays };
 }
 
+function daysUntilNextPeriod(referenceDate: Date) {
+  const day = referenceDate.getDate();
+
+  if (day <= 5) {
+    return Math.max(1, 28 - day);
+  }
+
+  return Math.max(1, 33 - day);
+}
+
 export function getCalendarInsights(referenceDate: Date): {
   fertileMessage: string;
   fertileDetail: string;
   nextPeriodMessage: string;
 } {
   const day = referenceDate.getDate();
+  const daysToPeriod = daysUntilNextPeriod(referenceDate);
 
   if (day >= 14 && day <= 18) {
     return {
       fertileMessage: 'Seus dias férteis podem estar começando hoje.',
       fertileDetail: 'Talvez você se sinta mais disposta e animada.',
-      nextPeriodMessage: 'Sua próxima menstruação será em 20 dias.',
+      nextPeriodMessage: `Sua próxima menstruação será em ${daysToPeriod} dias.`,
+    };
+  }
+
+  if (day >= 1 && day <= 5) {
+    return {
+      fertileMessage: 'Você está no período menstrual.',
+      fertileDetail: 'Descanse e cuide do seu corpo nestes dias.',
+      nextPeriodMessage: `Sua próxima menstruação será em ${daysToPeriod} dias.`,
+    };
+  }
+
+  if (day > 18) {
+    return {
+      fertileMessage: 'Seu ciclo está em fase lútea.',
+      fertileDetail: 'Observe mudanças de humor e energia ao longo da semana.',
+      nextPeriodMessage: `Sua próxima menstruação será em ${daysToPeriod} dias.`,
     };
   }
 
   return {
-    fertileMessage: 'Seus dias férteis podem estar começando hoje.',
-    fertileDetail: 'Talvez você se sinta mais disposta e animada.',
-    nextPeriodMessage: 'Sua próxima menstruação será em 20 dias.',
+    fertileMessage: 'Seu ciclo está em fase folicular.',
+    fertileDetail: 'A energia tende a aumentar nesta fase do ciclo.',
+    nextPeriodMessage: `Sua próxima menstruação será em ${daysToPeriod} dias.`,
   };
 }

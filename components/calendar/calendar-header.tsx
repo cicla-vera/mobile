@@ -7,16 +7,28 @@ import { spacing } from '@/constants/theme';
 
 type CalendarHeaderProps = {
   dateLabel: string;
+  onNotificationsPress: () => void;
+  onGoToToday: () => void;
+  hasUnreadNotifications?: boolean;
 };
 
-export function CalendarHeader({ dateLabel }: CalendarHeaderProps) {
+export function CalendarHeader({
+  dateLabel,
+  onNotificationsPress,
+  onGoToToday,
+  hasUnreadNotifications,
+}: CalendarHeaderProps) {
   return (
     <View style={styles.header}>
       <View style={styles.left}>
         <MoonMark />
         <AppText style={styles.date}>{dateLabel}</AppText>
       </View>
-      <CalendarToolbar />
+      <CalendarToolbar
+        onNotificationsPress={onNotificationsPress}
+        onGoToToday={onGoToToday}
+        hasUnreadNotifications={hasUnreadNotifications}
+      />
     </View>
   );
 }

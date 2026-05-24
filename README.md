@@ -58,6 +58,21 @@ npm run typecheck
 This command regenerates Expo Router typed routes before running TypeScript, so
 new files under `app/` are included in validation.
 
+## Backend Contract Smoke Checks
+
+Run the backend locally first, then validate the mobile authentication contract:
+
+```bash
+npm run smoke:auth
+```
+
+By default this creates a temporary development user, logs in, and validates
+`/users/me` with the returned JWT. To reuse an existing account instead:
+
+```bash
+SMOKE_AUTH_EMAIL=user@example.com SMOKE_AUTH_PASSWORD=password npm run smoke:auth
+```
+
 ## Project Structure
 
 ```text

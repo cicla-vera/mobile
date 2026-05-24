@@ -2,7 +2,6 @@ import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,35 +16,43 @@ import { UnderlineField } from '@/components/auth/underline-field';
 import { AppText } from '@/components/ui/app-text';
 import { Screen } from '@/components/ui/screen';
 import { colors, radius, spacing } from '@/constants/theme';
+import { useRegisterMutation } from '@/hooks/useAuth';
 import { getApiErrorMessage } from '@/services/api-error';
-import { useLoginMutation } from '@/hooks/useAuth';
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
-  const loginMutation = useLoginMutation();
+  const registerMutation = useRegisterMutation();
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
 
   const horizontalPadding = spacing[8];
   const contentWidth = windowWidth - horizontalPadding * 2;
-  const isLoggingIn = loginMutation.isPending;
+  const isRegistering = registerMutation.isPending;
 
-  async function handleLogin() {
+  async function handleRegister() {
+    const trimmedName = name.trim();
     const trimmedEmail = email.trim();
 
-    if (!trimmedEmail || !password) {
-      setFormError('Preencha e-mail e senha.');
+    if (!trimmedName || !trimmedEmail || !password) {
+      setFormError('Preencha nome, email e senha.');
+      return;
+    }
+
+    if (password.length < 8) {
+      setFormError('A senha precisa ter pelo menos 8 caracteres.');
       return;
     }
 
     setFormError(null);
 
     try {
-      await loginMutation.mutateAsync({
+      await registerMutation.mutateAsync({
+        name: trimmedName,
         email: trimmedEmail,
         password,
       });
@@ -53,16 +60,9 @@ export default function LoginScreen() {
       router.replace('/(exterior)');
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel entrar agora.'),
+        getApiErrorMessage(error, 'Nao foi possivel criar sua conta agora.'),
       );
     }
-  }
-
-  function handleForgotPassword() {
-    Alert.alert(
-      'Recuperar senha',
-      'A recuperacao de senha sera disponibilizada em breve.',
-    );
   }
 
   return (
@@ -86,7 +86,18 @@ export default function LoginScreen() {
         </View>
 
         <View style={[styles.formSection, { width: contentWidth }]}>
-          <AppText style={styles.title}>Login</AppText>
+          <AppText style={styles.title}>Cadastro</AppText>
+          <View style={styles.fieldSpacing}>
+            <UnderlineField
+              label="Nome"
+              value={name}
+              onChangeText={setName}
+              autoCapitalize="words"
+              autoComplete="name"
+              textContentType="name"
+              returnKeyType="next"
+            />
+          </View>
           <View style={styles.fieldSpacing}>
             <UnderlineField
               label="Email"
@@ -104,10 +115,10 @@ export default function LoginScreen() {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
-            autoComplete="password"
-            textContentType="password"
+            autoComplete="new-password"
+            textContentType="newPassword"
             returnKeyType="done"
-            onSubmitEditing={handleLogin}
+            onSubmitEditing={handleRegister}
           />
         </View>
 
@@ -121,35 +132,27 @@ export default function LoginScreen() {
 
         <View style={[styles.actionsSection, { width: contentWidth }]}>
           <TouchableOpacity
-            onPress={handleForgotPassword}
-            activeOpacity={0.7}
-            style={styles.forgotButton}
-          >
-            <AppText style={styles.forgotLabel}>Esqueceu a senha?</AppText>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={handleLogin}
-            disabled={isLoggingIn}
+            onPress={handleRegister}
+            disabled={isRegistering}
             activeOpacity={0.85}
             style={[
-              styles.loginButton,
+              styles.primaryButton,
               { width: contentWidth },
-              isLoggingIn && styles.loginButtonDisabled,
+              isRegistering && styles.primaryButtonDisabled,
             ]}
           >
-            {isLoggingIn ? (
+            {isRegistering ? (
               <ActivityIndicator color={colors.cream} />
             ) : (
-              <Text style={styles.loginButtonLabel}>Entrar</Text>
+              <Text style={styles.primaryButtonLabel}>Criar conta</Text>
             )}
           </TouchableOpacity>
 
-          <View style={styles.registerRow}>
-            <AppText style={styles.registerText}>Ainda nao tem conta?</AppText>
-            <Link href="/register" asChild>
-              <TouchableOpacity activeOpacity={0.7} style={styles.registerLink}>
-                <AppText style={styles.registerLabel}>Criar cadastro</AppText>
+          <View style={styles.loginRow}>
+            <AppText style={styles.loginText}>Ja tem conta?</AppText>
+            <Link href="/login" asChild>
+              <TouchableOpacity activeOpacity={0.7} style={styles.loginLink}>
+                <AppText style={styles.loginLabel}>Entrar</AppText>
               </TouchableOpacity>
             </Link>
           </View>
@@ -176,12 +179,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    fontSize: 22,
-    lineHeight: 28,
-    fontWeight: '800',
     color: colors.ink,
-    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: '800',
+    lineHeight: 28,
     marginBottom: spacing[6],
+    textAlign: 'center',
   },
   fieldSpacing: {
     marginBottom: spacing[7],
@@ -202,19 +205,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: spacing[2],
   },
-  forgotButton: {
-    alignSelf: 'center',
-    paddingVertical: spacing[1],
-    marginBottom: spacing[5],
-  },
-  forgotLabel: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: '600',
-    color: colors.blue,
-    textDecorationLine: 'underline',
-  },
-  loginButton: {
+  primaryButton: {
     minHeight: 52,
     borderRadius: radius.pill,
     backgroundColor: colors.blue,
@@ -222,16 +213,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: spacing[8],
   },
-  loginButtonDisabled: {
+  primaryButtonDisabled: {
     opacity: 0.65,
   },
-  loginButtonLabel: {
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: '800',
+  primaryButtonLabel: {
     color: colors.cream,
+    fontSize: 16,
+    fontWeight: '800',
+    lineHeight: 20,
   },
-  registerRow: {
+  loginRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -239,19 +230,19 @@ const styles = StyleSheet.create({
     gap: spacing[2],
     marginTop: spacing[6],
   },
-  registerText: {
+  loginText: {
     color: colors.muted,
     fontSize: 14,
     lineHeight: 20,
   },
-  registerLink: {
+  loginLink: {
     paddingVertical: spacing[1],
   },
-  registerLabel: {
+  loginLabel: {
     color: colors.blue,
     fontSize: 14,
-    lineHeight: 20,
     fontWeight: '800',
+    lineHeight: 20,
     textDecorationLine: 'underline',
   },
 });

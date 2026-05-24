@@ -64,10 +64,14 @@ Run the backend locally first, then validate the mobile authentication contract:
 
 ```bash
 npm run smoke:auth
+npm run smoke:cycles
 ```
 
 By default this creates a temporary development user, logs in, and validates
-`/users/me` with the returned JWT. To reuse an existing account instead:
+`/users/me` with the returned JWT. The cycles smoke test uses the same flow and
+then validates creating, ending, and listing a cycle through `/cycles`.
+
+To reuse an existing account instead:
 
 ```bash
 SMOKE_AUTH_EMAIL=user@example.com SMOKE_AUTH_PASSWORD=password npm run smoke:auth

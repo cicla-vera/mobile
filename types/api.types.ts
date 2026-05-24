@@ -23,3 +23,20 @@ export type LoginRequest = {
 export type RegisterRequest = LoginRequest & {
   name: string;
 };
+
+export type CycleLog = {
+  id: string;
+  userId: string;
+  startDate: string;
+  endDate: string | null;
+  duration: number | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateCycleRequest = {
+  startDate: string;
+  endDate?: string;
+};
+
+export type UpdateCycleRequest = Partial<CreateCycleRequest>;

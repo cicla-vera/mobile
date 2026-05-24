@@ -2,6 +2,7 @@ export type CalendarDayVariant =
   | "default"
   | "mutedPrev"
   | "mutedNext"
+  | "period"
   | "fertile"
   | "today"
   | "predicted";

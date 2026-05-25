@@ -15,6 +15,7 @@
     "smoke:profile": "node scripts/smoke-profile.mjs",
     "smoke:temperature": "node scripts/smoke-temperature.mjs",
     "smoke:activity": "node scripts/smoke-activity.mjs",
+    "smoke:sleep": "node scripts/smoke-sleep.mjs",
     "smoke:history-charts": "node scripts/smoke-history-charts.mjs",
     "smoke:monthly-summary": "node scripts/smoke-monthly-summary.mjs",
     "smoke:daily-log": "node scripts/smoke-daily-log.mjs"

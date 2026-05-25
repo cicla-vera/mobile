@@ -104,6 +104,13 @@ export default function DayDetailsRoute() {
     });
   }
 
+  function goToSleep() {
+    router.push({
+      pathname: '/(exterior)/sleep',
+      params: { date: dateKey },
+    });
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -257,6 +264,13 @@ export default function DayDetailsRoute() {
           style={styles.secondaryActionButton}
         >
           Registrar atividade
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={goToSleep}
+          style={styles.secondaryActionButton}
+        >
+          Registrar sono
         </Button>
       </ScrollView>
     </Screen>

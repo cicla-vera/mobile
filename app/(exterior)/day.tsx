@@ -97,6 +97,13 @@ export default function DayDetailsRoute() {
     });
   }
 
+  function goToActivity() {
+    router.push({
+      pathname: '/(exterior)/activity',
+      params: { date: dateKey },
+    });
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -243,6 +250,13 @@ export default function DayDetailsRoute() {
           style={styles.secondaryActionButton}
         >
           Registrar agua
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={goToActivity}
+          style={styles.secondaryActionButton}
+        >
+          Registrar atividade
         </Button>
       </ScrollView>
     </Screen>

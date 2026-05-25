@@ -269,6 +269,35 @@ export type CreateWaterEntryRequest = {
   date: string;
 };
 
+export type ActivityType =
+  | 'WALKING'
+  | 'RUNNING'
+  | 'CYCLING'
+  | 'SWIMMING'
+  | 'YOGA'
+  | 'GYM'
+  | 'DANCING'
+  | 'OTHER';
+
+export type ActivityIntensity = 'LOW' | 'MEDIUM' | 'HIGH';
+
+export type ActivityEntry = {
+  id: string;
+  userId: string;
+  type: ActivityType;
+  intensity: ActivityIntensity;
+  duration: number;
+  date: string;
+  createdAt: string;
+};
+
+export type CreateActivityEntryRequest = {
+  type: ActivityType;
+  intensity: ActivityIntensity;
+  duration: number;
+  date: string;
+};
+
 export type HistoryCharts = {
   temperature: TemperatureEntry[];
   weight: WeightEntry[];

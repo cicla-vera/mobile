@@ -31,6 +31,7 @@ export function CalendarToolbar({
       label: "Resumo mensal",
       href: "/(exterior)/insights",
     },
+    { icon: "trending-up", label: "Graficos", href: "/(exterior)/charts" },
     { icon: "calendar", label: "Ir para hoje", onPress: onGoToToday },
     {
       icon: "bell",

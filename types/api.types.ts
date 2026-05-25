@@ -213,6 +213,28 @@ export type MoodEntry = {
   createdAt: string;
 };
 
+export type TemperatureEntry = {
+  id: string;
+  userId: string;
+  temperature: number;
+  date: string;
+  createdAt: string;
+};
+
+export type WeightEntry = {
+  id: string;
+  userId: string;
+  weight: number;
+  date: string;
+  createdAt: string;
+};
+
+export type HistoryCharts = {
+  temperature: TemperatureEntry[];
+  weight: WeightEntry[];
+  moods: MoodEntry[];
+};
+
 export type FlowEntry = {
   id: string;
   userId: string;

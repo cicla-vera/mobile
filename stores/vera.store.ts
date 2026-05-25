@@ -35,13 +35,21 @@ export const useVeraStore = create<VeraState>((set) => ({
     }),
 }));
 
-export function getHasValidVeraSession() {
-  const { isUnlocked, sessionExpiresAt, veraSessionToken } =
-    useVeraStore.getState();
-
+export function isVeraSessionValid({
+  isUnlocked,
+  sessionExpiresAt,
+  veraSessionToken,
+}: Pick<
+  VeraState,
+  'isUnlocked' | 'sessionExpiresAt' | 'veraSessionToken'
+>) {
   if (!isUnlocked || !sessionExpiresAt || !veraSessionToken) {
     return false;
   }
 
   return new Date(sessionExpiresAt).getTime() > Date.now();
+}
+
+export function getHasValidVeraSession() {
+  return isVeraSessionValid(useVeraStore.getState());
 }

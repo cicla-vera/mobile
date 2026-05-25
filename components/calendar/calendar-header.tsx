@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import { CalendarToolbar } from "@/components/calendar/calendar-toolbar";
 import { MoonMark } from "@/components/calendar/moon-mark";
@@ -9,6 +9,7 @@ type CalendarHeaderProps = {
   dateLabel: string;
   onNotificationsPress: () => void;
   onGoToToday: () => void;
+  onPrivateAccessPress: () => void;
   hasUnreadNotifications?: boolean;
 };
 
@@ -16,12 +17,24 @@ export function CalendarHeader({
   dateLabel,
   onNotificationsPress,
   onGoToToday,
+  onPrivateAccessPress,
   hasUnreadNotifications,
 }: CalendarHeaderProps) {
   return (
     <View style={styles.header}>
       <View style={styles.left}>
-        <MoonMark />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Abrir area privada"
+          hitSlop={12}
+          onPress={onPrivateAccessPress}
+          style={({ pressed }) => [
+            styles.privateEntry,
+            pressed && styles.privateEntryPressed,
+          ]}
+        >
+          <MoonMark />
+        </Pressable>
         <AppText style={styles.date}>{dateLabel}</AppText>
       </View>
       <CalendarToolbar
@@ -43,6 +56,12 @@ const styles = StyleSheet.create({
   },
   left: {
     gap: spacing[1],
+  },
+  privateEntry: {
+    alignSelf: "flex-start",
+  },
+  privateEntryPressed: {
+    opacity: 0.72,
   },
   date: {
     marginLeft: spacing[7],

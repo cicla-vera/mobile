@@ -88,6 +88,90 @@ export type CycleHistory = {
   stats: CycleHistoryStats;
 };
 
+export type SummaryCount = {
+  value: string;
+  count: number;
+};
+
+export type SymptomSummaryCount = {
+  symptomId: string;
+  name: string;
+  count: number;
+};
+
+export type NumericSummary = {
+  totalEntries: number;
+  average: number | null;
+  min: number | null;
+  max: number | null;
+};
+
+export type MonthlySummaryCycle = {
+  id: string;
+  startDate: string;
+  endDate: string | null;
+  duration: number | null;
+};
+
+export type MonthlySummary = {
+  month: string;
+  range: {
+    start: string;
+    end: string;
+  };
+  cycles: {
+    total: number;
+    periodDays: number;
+    entries: MonthlySummaryCycle[];
+  };
+  symptoms: {
+    totalEntries: number;
+    topSymptoms: SymptomSummaryCount[];
+  };
+  moods: {
+    totalEntries: number;
+    distribution: SummaryCount[];
+  };
+  flow: {
+    totalEntries: number;
+    daysWithFlow: number;
+    distribution: SummaryCount[];
+  };
+  notes: {
+    totalEntries: number;
+  };
+  health: {
+    temperature: NumericSummary;
+    weight: NumericSummary;
+    water: {
+      totalEntries: number;
+      totalAmount: number;
+      daysTracked: number;
+      averageAmountPerEntry: number | null;
+    };
+    activity: {
+      totalEntries: number;
+      totalDuration: number;
+      averageDuration: number | null;
+      byType: SummaryCount[];
+      byIntensity: SummaryCount[];
+    };
+    sleep: NumericSummary & {
+      qualityDistribution: SummaryCount[];
+    };
+    intercourse: {
+      totalEntries: number;
+      protected: number;
+      unprotected: number;
+    };
+    medications: {
+      totalEntries: number;
+      uniqueMedications: SummaryCount[];
+    };
+  };
+  generatedAt: string;
+};
+
 export type MoodType =
   | 'HAPPY'
   | 'SAD'

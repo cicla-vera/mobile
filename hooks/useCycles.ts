@@ -10,6 +10,8 @@ export const cyclePredictionQueryKey = [
   'prediction',
 ] as const;
 export const cycleHistoryQueryKey = [...cyclesQueryKey, 'history'] as const;
+export const monthlySummaryQueryKey = (month: string) =>
+  [...cyclesQueryKey, 'monthly-summary', month] as const;
 
 export function useCyclesQuery() {
   return useQuery({
@@ -29,6 +31,13 @@ export function useCycleHistoryQuery() {
   return useQuery({
     queryKey: cycleHistoryQueryKey,
     queryFn: cyclesService.getCycleHistory,
+  });
+}
+
+export function useMonthlySummaryQuery(month: string) {
+  return useQuery({
+    queryKey: monthlySummaryQueryKey(month),
+    queryFn: () => cyclesService.getMonthlySummary(month),
   });
 }
 

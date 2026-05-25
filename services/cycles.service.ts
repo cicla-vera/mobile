@@ -4,6 +4,7 @@ import type {
   CreateCycleRequest,
   CycleLog,
   CyclePrediction,
+  MonthlySummary,
   UpdateCycleRequest,
 } from '@/types/api.types';
 
@@ -25,6 +26,12 @@ export async function getCycleHistory() {
   return response.data;
 }
 
+export async function getMonthlySummary(month: string) {
+  const response = await api.get<MonthlySummary>(`/cycles/summary/${month}`);
+
+  return response.data;
+}
+
 export async function createCycle(payload: CreateCycleRequest) {
   const response = await api.post<CycleLog>('/cycles', payload);
 
@@ -41,6 +48,7 @@ export const cyclesService = {
   findCycles,
   predictCycle,
   getCycleHistory,
+  getMonthlySummary,
   createCycle,
   updateCycle,
 };

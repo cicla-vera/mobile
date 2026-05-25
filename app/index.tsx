@@ -1,14 +1,50 @@
 import { Redirect } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useAuthStore } from '@/stores/auth.store';
 import { colors } from '@/constants/theme';
+import { hasSeenOnboarding } from '@/services/onboarding-storage';
 
 export default function IndexRoute() {
   const isHydrated = useAuthStore((state) => state.isHydrated);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const [onboardingResolved, setOnboardingResolved] = useState(false);
+  const [onboardingSeen, setOnboardingSeen] = useState(false);
 
-  if (!isHydrated) {
+  useEffect(() => {
+    let active = true;
+
+    if (!isHydrated || isAuthenticated) {
+      setOnboardingResolved(isAuthenticated);
+      return;
+    }
+
+    setOnboardingResolved(false);
+
+    void hasSeenOnboarding()
+      .then((seen) => {
+        if (active) {
+          setOnboardingSeen(seen);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setOnboardingSeen(false);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setOnboardingResolved(true);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [isAuthenticated, isHydrated]);
+
+  if (!isHydrated || !onboardingResolved) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator color={colors.blue} size="large" />
@@ -20,7 +56,7 @@ export default function IndexRoute() {
     return <Redirect href="/(exterior)" />;
   }
 
-  return <Redirect href="/login" />;
+  return <Redirect href={onboardingSeen ? '/login' : '/welcome'} />;
 }
 
 const styles = StyleSheet.create({

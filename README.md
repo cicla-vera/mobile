@@ -133,5 +133,9 @@ The Vera interior layer is kept separate from the menstrual-calendar exterior:
 - `stores/vera.store.ts` keeps only in-memory Vera UI/session state such as the
   active alert session id and short-lived Vera unlock token. It does not persist
   PINs or evidence data.
-- Native capabilities such as biometrics, location, camera, audio, and
-  notifications are intentionally left to the dedicated native-dependency issue.
+- Native capabilities such as biometrics, location, camera, audio, task manager,
+  and notifications are installed through Expo modules and configured in
+  `app.json`. Runtime availability checks live in
+  `services/vera/native-capabilities.service.ts` so web, Expo Go, and
+  development builds can fall back safely before a Vera screen requests a
+  permission or starts a sensitive workflow.

@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Redirect, router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
 import { TextField } from '@/components/ui/text-field';
 import { colors, spacing } from '@/constants/theme';
-import { useVerifyVeraPinMutation } from '@/hooks/vera';
+import { useVeraProfileQuery, useVerifyVeraPinMutation } from '@/hooks/vera';
 import { getApiErrorMessage } from '@/services/api-error';
 import {
   getVeraBiometricUnlockAvailability,
@@ -32,6 +33,7 @@ export default function VeraUnlockRoute() {
   const sessionExpiresAt = useVeraStore((state) => state.sessionExpiresAt);
   const unlockVeraSession = useVeraStore((state) => state.unlockVeraSession);
   const veraSessionToken = useVeraStore((state) => state.veraSessionToken);
+  const profileQuery = useVeraProfileQuery();
   const verifyPinMutation = useVerifyVeraPinMutation();
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [biometricPending, setBiometricPending] = useState(false);
@@ -74,11 +76,30 @@ export default function VeraUnlockRoute() {
     };
   }, []);
 
+  if (profileQuery.isLoading) {
+    return (
+      <Screen style={styles.loadingScreen}>
+        <ActivityIndicator color={colors.blue} size="large" />
+      </Screen>
+    );
+  }
+
+  if (profileQuery.data && !profileQuery.data.consentAccepted) {
+    return <Redirect href="/(exterior)/vera-consent" />;
+  }
+
   if (hasValidSession) {
     return <Redirect href="/(interior)" />;
   }
 
+  const profileError = profileQuery.isError
+    ? getApiErrorMessage(
+        profileQuery.error,
+        'Nao deu para confirmar seu consentimento Vera agora.',
+      )
+    : null;
   const pinError =
+    profileError ??
     validationError ??
     (verifyPinMutation.error
       ? getApiErrorMessage(
@@ -87,6 +108,7 @@ export default function VeraUnlockRoute() {
         )
       : undefined);
   const canSubmit =
+    !profileError &&
     pin.length >= PIN_MIN_LENGTH &&
     !pinPending &&
     !biometricPending;
@@ -101,7 +123,7 @@ export default function VeraUnlockRoute() {
   }
 
   async function handleSubmit() {
-    if (pinPending || biometricPending) {
+    if (pinPending || biometricPending || profileError) {
       return;
     }
 
@@ -125,6 +147,10 @@ export default function VeraUnlockRoute() {
   }
 
   async function handleBiometricUnlock() {
+    if (profileError) {
+      return;
+    }
+
     setBiometricPending(true);
     setBiometricReason(null);
     verifyPinMutation.reset();
@@ -177,9 +203,18 @@ export default function VeraUnlockRoute() {
         </View>
 
         <View style={styles.form}>
+          {profileError ? (
+            <View style={styles.message}>
+              <Feather name="alert-circle" size={17} color={colors.danger} />
+              <AppText variant="caption" style={styles.messageText}>
+                {profileError}
+              </AppText>
+            </View>
+          ) : null}
+
           <Button
             accessibilityRole="button"
-            disabled={!biometricAvailable || biometricPending}
+            disabled={Boolean(profileError) || !biometricAvailable || biometricPending}
             loading={biometricPending}
             onPress={handleBiometricUnlock}
             style={styles.submitButton}
@@ -270,6 +305,22 @@ const styles = StyleSheet.create({
   },
   statusText: {
     marginTop: -spacing[2],
+  },
+  loadingScreen: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  message: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing[2],
+    padding: spacing[3],
+    borderRadius: 8,
+    backgroundColor: 'rgba(180, 35, 66, 0.08)',
+  },
+  messageText: {
+    flex: 1,
+    color: colors.danger,
   },
 });
 

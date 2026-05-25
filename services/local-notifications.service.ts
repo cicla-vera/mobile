@@ -160,6 +160,7 @@ async function scheduleDailyLogNotification() {
       data: { screen: 'home' },
     },
     trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour: DEFAULT_NOTIFICATION_HOUR,
       minute: DEFAULT_NOTIFICATION_MINUTE,
       repeats: true,
@@ -189,6 +190,7 @@ async function scheduleFertileWindowNotification(prediction: CyclePrediction) {
       data: { screen: 'home' },
     },
     trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
       date: triggerDate,
       ...androidChannelTrigger(),
     },
@@ -216,6 +218,7 @@ async function scheduleNextPeriodNotification(prediction: CyclePrediction) {
       data: { screen: 'home' },
     },
     trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
       date: triggerDate,
       ...androidChannelTrigger(),
     },

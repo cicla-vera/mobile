@@ -1,4 +1,4 @@
-const DEFAULT_API_URL = 'http://127.0.0.1:3001/api';
+const DEFAULT_API_URL = 'http://127.0.0.1:3000/api';
 const API_URL = (process.env.EXPO_PUBLIC_API_URL || DEFAULT_API_URL).replace(
   /\/+$/,
   '',

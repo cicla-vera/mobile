@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-const LOCAL_BACKEND_PORT = 3001;
+const LOCAL_BACKEND_PORT = 3000;
 
 function getDefaultApiUrl() {
   if (Platform.OS === 'android') {

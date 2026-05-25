@@ -315,6 +315,19 @@ export type CreateSleepEntryRequest = {
   date: string;
 };
 
+export type IntercourseEntry = {
+  id: string;
+  userId: string;
+  protected: boolean;
+  date: string;
+  createdAt: string;
+};
+
+export type CreateIntercourseEntryRequest = {
+  protected: boolean;
+  date: string;
+};
+
 export type HistoryCharts = {
   temperature: TemperatureEntry[];
   weight: WeightEntry[];

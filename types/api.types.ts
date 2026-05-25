@@ -343,6 +343,29 @@ export type CreateMedicationEntryRequest = {
   date: string;
 };
 
+export type DataImportCounters = {
+  cycles: number;
+  flowEntries: number;
+  symptomEntries: number;
+  moodEntries: number;
+  notes: number;
+  temperatureEntries: number;
+  weightEntries: number;
+  waterEntries: number;
+  activityEntries: number;
+  sleepEntries: number;
+  intercourseEntries: number;
+  medicationEntries: number;
+  skipped: number;
+};
+
+export type DataImportResult = {
+  source: string;
+  imported: DataImportCounters;
+  processedRecords: number;
+  generatedAt: string;
+};
+
 export type HistoryCharts = {
   temperature: TemperatureEntry[];
   weight: WeightEntry[];

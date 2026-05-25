@@ -103,8 +103,10 @@ constants/      theme and environment constants
 hooks/          reusable hooks
 providers/      app-level providers
 services/       API clients and storage helpers
+  vera/         Vera safety-layer API clients
 stores/         Zustand stores
 types/          shared TypeScript API contracts
+  vera.types.ts Vera safety-layer contracts
 ```
 
 ## Conventions
@@ -115,3 +117,21 @@ types/          shared TypeScript API contracts
 - Prefer shared UI primitives from `components/ui` before creating screen-local components.
 - Keep the exterior layer visually consistent with the Cicla calendar identity.
 - Keep Vera safety flows discreet, consent-aware, and explicit about permissions.
+
+## Vera Mobile Architecture
+
+The Vera interior layer is kept separate from the menstrual-calendar exterior:
+
+- API contracts for safety profile, PIN, emergency contacts, safety locations,
+  alert sessions, alert events, evidence, and AI analysis live in
+  `types/vera.types.ts`.
+- Backend calls live under `services/vera/`, matching the NestJS `/vera/*`
+  endpoints without exposing these calls from exterior screens.
+- TanStack Query hooks live under `hooks/vera/` and share `veraQueryKeys` so
+  future screens can invalidate profile, contact, location, alert, and evidence
+  data consistently.
+- `stores/vera.store.ts` keeps only in-memory Vera UI/session state such as the
+  active alert session id and short-lived Vera unlock token. It does not persist
+  PINs or evidence data.
+- Native capabilities such as biometrics, location, camera, audio, and
+  notifications are intentionally left to the dedicated native-dependency issue.

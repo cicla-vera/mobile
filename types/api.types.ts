@@ -246,6 +246,11 @@ export type WeightEntry = {
   createdAt: string;
 };
 
+export type CreateWeightEntryRequest = {
+  weight: number;
+  date: string;
+};
+
 export type HistoryCharts = {
   temperature: TemperatureEntry[];
   weight: WeightEntry[];

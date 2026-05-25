@@ -83,6 +83,13 @@ export default function DayDetailsRoute() {
     });
   }
 
+  function goToWeight() {
+    router.push({
+      pathname: '/(exterior)/weight',
+      params: { date: dateKey },
+    });
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -215,6 +222,13 @@ export default function DayDetailsRoute() {
           style={styles.secondaryActionButton}
         >
           Registrar temperatura
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={goToWeight}
+          style={styles.secondaryActionButton}
+        >
+          Registrar peso
         </Button>
       </ScrollView>
     </Screen>

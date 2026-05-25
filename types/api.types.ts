@@ -10,6 +10,18 @@ export type AuthUser = {
   name?: string | null;
 };
 
+export type UserProfile = AuthUser & {
+  phone?: string | null;
+  birthDate?: string | null;
+  createdAt?: string;
+};
+
+export type UpdateUserProfileRequest = {
+  name?: string;
+  phone?: string;
+  birthDate?: string;
+};
+
 export type AuthSession = {
   token: string;
   user: AuthUser;

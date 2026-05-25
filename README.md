@@ -67,6 +67,7 @@ npm run smoke:auth
 npm run smoke:cycles
 npm run smoke:cycle-history
 npm run smoke:cycle-prediction
+npm run smoke:history-charts
 npm run smoke:monthly-summary
 npm run smoke:daily-log
 ```
@@ -76,10 +77,11 @@ By default this creates a temporary development user, logs in, and validates
 then validates creating, ending, and listing a cycle through `/cycles`.
 `smoke:cycle-history` validates `/cycles/history` stats and timeline.
 `smoke:cycle-prediction` validates `/cycles/predict` from multiple completed
-cycles. `smoke:monthly-summary` validates `/cycles/summary/:month` across
-cycle, mood, flow, symptom, note, and wellness entries. `smoke:daily-log`
-validates mood, flow, symptoms, notes, and available symptoms through the
-exterior calendar endpoints.
+cycles. `smoke:history-charts` validates the temperature, weight, and mood
+history used by the charts screen. `smoke:monthly-summary` validates
+`/cycles/summary/:month` across cycle, mood, flow, symptom, note, and wellness
+entries. `smoke:daily-log` validates mood, flow, symptoms, notes, and available
+symptoms through the exterior calendar endpoints.
 
 To reuse an existing account instead:
 

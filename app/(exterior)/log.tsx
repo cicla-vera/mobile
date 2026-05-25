@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -33,7 +33,9 @@ type SelectedSymptoms = Record<string, number>;
 const intensityOptions = [1, 2, 3, 4, 5] as const;
 
 export default function DailyLogRoute() {
+  const params = useLocalSearchParams<{ date?: string }>();
   const selectedDateKey = useCycleStore((state) => state.selectedDate);
+  const selectDate = useCycleStore((state) => state.selectDate);
   const goToToday = useCycleStore((state) => state.goToToday);
   const [selectedMood, setSelectedMood] = useState<MoodType | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<FlowIntensity | null>(null);
@@ -47,6 +49,16 @@ export default function DailyLogRoute() {
   const dailyLogQuery = useDailyLogQuery(selectedDateKey);
   const availableSymptomsQuery = useAvailableSymptomsQuery();
   const saveDailyLogMutation = useSaveDailyLogMutation();
+
+  useEffect(() => {
+    if (
+      typeof params.date === 'string' &&
+      isDateKey(params.date) &&
+      params.date !== selectedDateKey
+    ) {
+      selectDate(params.date);
+    }
+  }, [params.date, selectDate, selectedDateKey]);
 
   const selectedDate = useMemo(
     () => parseDateKey(selectedDateKey),
@@ -490,6 +502,10 @@ function getMoodLabel(value: MoodType) {
 
 function getFlowLabel(value: FlowIntensity) {
   return FLOW_CHOICES.find((flow) => flow.value === value)?.label ?? value;
+}
+
+function isDateKey(value: string) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
 const styles = StyleSheet.create({

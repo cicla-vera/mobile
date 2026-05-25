@@ -4,8 +4,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import {
   CalendarGrid,
   CalendarHeader,
-  CycleInsightCard,
-  CyclePeriodCard,
+  CyclePredictionCard,
   MoodCheckIn,
   NotificationsModal,
   PeriodMarkingCard,
@@ -14,6 +13,7 @@ import { MOCK_NOTIFICATIONS } from "@/constants/notifications";
 import { Screen } from "@/components/ui/screen";
 import { spacing } from "@/constants/theme";
 import {
+  useCyclePredictionQuery,
   useCreateCycleMutation,
   useCyclesQuery,
   useUpdateCycleMutation,
@@ -22,13 +22,12 @@ import { getApiErrorMessage } from "@/services/api-error";
 import { useCycleStore } from "@/stores/cycle.store";
 import {
   buildCalendarMonth,
-  buildMockCycleSets,
   formatCalendarHeading,
   formatMonthHeading,
-  getCalendarInsights,
 } from "@/utils/calendar";
 import { buildPeriodDaySet, getCycleStartKey } from "@/utils/cycles";
 import { parseDateKey, parseMonthKey } from "@/utils/date";
+import { buildPredictionDaySets } from "@/utils/prediction";
 import type { CycleLog } from "@/types/api.types";
 import type { AppNotification } from "@/constants/notifications";
 
@@ -45,6 +44,7 @@ export default function HomePreviewRoute() {
   const [cycleFeedback, setCycleFeedback] = useState<string | null>(null);
 
   const cyclesQuery = useCyclesQuery();
+  const cyclePredictionQuery = useCyclePredictionQuery();
   const createCycleMutation = useCreateCycleMutation();
   const updateCycleMutation = useUpdateCycleMutation();
 
@@ -59,8 +59,8 @@ export default function HomePreviewRoute() {
   );
 
   const { fertileDays, predictedDays } = useMemo(
-    () => buildMockCycleSets(new Date(year, month, 1)),
-    [month, year],
+    () => buildPredictionDaySets(cyclePredictionQuery.data),
+    [cyclePredictionQuery.data],
   );
   const periodDays = useMemo(
     () => buildPeriodDaySet(cyclesQuery.data ?? [], today),
@@ -85,11 +85,6 @@ export default function HomePreviewRoute() {
       today,
       year,
     ],
-  );
-
-  const insights = useMemo(
-    () => getCalendarInsights(selectedDate),
-    [selectedDate],
   );
 
   const hasUnreadNotifications = notifications.some((item) => !item.read);
@@ -175,12 +170,11 @@ export default function HomePreviewRoute() {
           />
         </View>
 
-        <CycleInsightCard
-          title={insights.fertileMessage}
-          description={insights.fertileDetail}
+        <CyclePredictionCard
+          prediction={cyclePredictionQuery.data}
+          loading={cyclePredictionQuery.isLoading}
+          error={cyclePredictionQuery.error}
         />
-
-        <CyclePeriodCard title={insights.nextPeriodMessage} />
 
         <PeriodMarkingCard
           selectedDateKey={selectedDateKey}

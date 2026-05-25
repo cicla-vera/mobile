@@ -65,13 +65,15 @@ Run the backend locally first, then validate the mobile authentication contract:
 ```bash
 npm run smoke:auth
 npm run smoke:cycles
+npm run smoke:cycle-prediction
 npm run smoke:daily-log
 ```
 
 By default this creates a temporary development user, logs in, and validates
 `/users/me` with the returned JWT. The cycles smoke test uses the same flow and
-then validates creating, ending, and listing a cycle through `/cycles`. The
-daily log smoke test validates mood, flow, symptoms, notes, and available
+then validates creating, ending, and listing a cycle through `/cycles`.
+`smoke:cycle-prediction` validates `/cycles/predict` from multiple completed
+cycles. `smoke:daily-log` validates mood, flow, symptoms, notes, and available
 symptoms through the exterior calendar endpoints.
 
 To reuse an existing account instead:

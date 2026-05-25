@@ -2,11 +2,18 @@ import { api } from '@/services/api';
 import type {
   CreateCycleRequest,
   CycleLog,
+  CyclePrediction,
   UpdateCycleRequest,
 } from '@/types/api.types';
 
 export async function findCycles() {
   const response = await api.get<CycleLog[]>('/cycles');
+
+  return response.data;
+}
+
+export async function predictCycle() {
+  const response = await api.get<CyclePrediction>('/cycles/predict');
 
   return response.data;
 }
@@ -25,6 +32,7 @@ export async function updateCycle(id: string, payload: UpdateCycleRequest) {
 
 export const cyclesService = {
   findCycles,
+  predictCycle,
   createCycle,
   updateCycle,
 };

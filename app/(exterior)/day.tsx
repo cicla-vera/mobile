@@ -76,6 +76,13 @@ export default function DayDetailsRoute() {
     });
   }
 
+  function goToTemperature() {
+    router.push({
+      pathname: '/(exterior)/temperature',
+      params: { date: dateKey },
+    });
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -201,6 +208,13 @@ export default function DayDetailsRoute() {
 
         <Button onPress={goToLog} style={styles.actionButton}>
           Adicionar registro
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={goToTemperature}
+          style={styles.secondaryActionButton}
+        >
+          Registrar temperatura
         </Button>
       </ScrollView>
     </Screen>
@@ -733,5 +747,9 @@ const styles = StyleSheet.create({
   actionButton: {
     alignSelf: 'stretch',
     marginTop: spacing[5],
+  },
+  secondaryActionButton: {
+    alignSelf: 'stretch',
+    marginTop: spacing[3],
   },
 });

@@ -233,6 +233,11 @@ export type TemperatureEntry = {
   createdAt: string;
 };
 
+export type CreateTemperatureEntryRequest = {
+  temperature: number;
+  date: string;
+};
+
 export type WeightEntry = {
   id: string;
   userId: string;

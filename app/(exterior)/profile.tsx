@@ -285,6 +285,31 @@ export default function ProfileRoute() {
 
         <Pressable
           accessibilityRole="button"
+          onPress={() =>
+            router.push({
+              pathname: '/(exterior)/data-import',
+              params: { source: 'health-connect' },
+            })
+          }
+          style={({ pressed }) => [
+            styles.importCard,
+            pressed && styles.importCardPressed,
+          ]}
+        >
+          <View style={styles.importIcon}>
+            <Feather name="activity" size={17} color={colors.blue} />
+          </View>
+          <View style={styles.importCopy}>
+            <AppText variant="label">Health Connect</AppText>
+            <AppText variant="caption" tone="muted">
+              Importar JSON do Saude Connect.
+            </AppText>
+          </View>
+          <Feather name="chevron-right" size={18} color={colors.soft} />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
           onPress={handleLogout}
           style={({ pressed }) => [
             styles.logoutButton,

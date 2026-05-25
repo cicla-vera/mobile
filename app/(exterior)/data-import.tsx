@@ -17,6 +17,7 @@ import { colors, radius, shadow, spacing } from '@/constants/theme';
 import {
   useImportAppleHealthMutation,
   useImportFloMutation,
+  useImportHealthConnectMutation,
 } from '@/hooks/useDataImport';
 import { getApiErrorMessage } from '@/services/api-error';
 import type { AppleHealthImportPayload } from '@/services/data-import.service';
@@ -25,7 +26,7 @@ import type {
   DataImportResult,
 } from '@/types/api.types';
 
-type ImportSource = 'flo' | 'apple-health';
+type ImportSource = 'flo' | 'apple-health' | 'health-connect';
 
 type SelectedImportFile = {
   name: string;
@@ -86,6 +87,22 @@ const importConfigs: Record<ImportSource, ImportConfig> = {
     selectButtonLabel: 'Selecionar XML',
     importButtonLabel: 'Importar Apple Health',
   },
+  'health-connect': {
+    source: 'health-connect',
+    eyebrow: 'Integracao',
+    title: 'Health Connect',
+    heroIcon: 'activity',
+    heroTitle: 'JSON do Android',
+    heroText:
+      'Traga registros do Saude Connect, como ciclo, sono, agua, peso e atividade.',
+    fileTypeLabel: '.json',
+    pickerTypes: ['application/json', 'text/json', 'text/plain'],
+    emptyText: 'Selecione um JSON exportado ou preparado do Health Connect.',
+    invalidFileMessage:
+      'Nao foi possivel ler esse arquivo. Selecione um JSON valido do Health Connect.',
+    selectButtonLabel: 'Selecionar JSON',
+    importButtonLabel: 'Importar Health Connect',
+  },
 };
 
 const counterLabels: Array<{
@@ -113,6 +130,7 @@ export default function DataImportRoute() {
   const insets = useSafeAreaInsets();
   const importFloMutation = useImportFloMutation();
   const importAppleHealthMutation = useImportAppleHealthMutation();
+  const importHealthConnectMutation = useImportHealthConnectMutation();
   const [payload, setPayload] = useState<unknown | null>(null);
   const [selectedFile, setSelectedFile] = useState<SelectedImportFile | null>(
     null,
@@ -123,6 +141,8 @@ export default function DataImportRoute() {
   const activeMutation =
     config.source === 'apple-health'
       ? importAppleHealthMutation
+      : config.source === 'health-connect'
+        ? importHealthConnectMutation
       : importFloMutation;
   const importedTotal = useMemo(
     () => (result ? getImportedTotal(result.imported) : 0),
@@ -201,6 +221,10 @@ export default function DataImportRoute() {
       return importAppleHealthMutation.mutateAsync(
         currentPayload as AppleHealthImportPayload,
       );
+    }
+
+    if (config.source === 'health-connect') {
+      return importHealthConnectMutation.mutateAsync(currentPayload);
     }
 
     return importFloMutation.mutateAsync(currentPayload);
@@ -361,7 +385,11 @@ async function readDocumentText(asset: DocumentPicker.DocumentPickerAsset) {
 }
 
 function getImportSource(value?: string): ImportSource {
-  return value === 'apple-health' ? 'apple-health' : 'flo';
+  if (value === 'apple-health' || value === 'health-connect') {
+    return value;
+  }
+
+  return 'flo';
 }
 
 function parseImportPayload(
@@ -372,10 +400,18 @@ function parseImportPayload(
     return parseAppleHealthPayload(value);
   }
 
+  if (source === 'health-connect') {
+    return parseJsonPayload(value);
+  }
+
   return parseFloPayload(value);
 }
 
 function parseFloPayload(value: string): ParsedImportPayload {
+  return parseJsonPayload(value);
+}
+
+function parseJsonPayload(value: string): ParsedImportPayload {
   const parsed = JSON.parse(value) as unknown;
 
   if (!isJsonRecord(parsed) && !Array.isArray(parsed)) {

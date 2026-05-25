@@ -20,7 +20,17 @@ export async function importAppleHealthData(payload: AppleHealthImportPayload) {
   return response.data;
 }
 
+export async function importHealthConnectData(payload: unknown) {
+  const response = await api.post<DataImportResult>(
+    '/import/health-connect',
+    payload,
+  );
+
+  return response.data;
+}
+
 export const dataImportService = {
   importAppleHealthData,
   importFloData,
+  importHealthConnectData,
 };

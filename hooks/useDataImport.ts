@@ -49,3 +49,12 @@ export function useImportAppleHealthMutation() {
     onSuccess: invalidateImportedData,
   });
 }
+
+export function useImportHealthConnectMutation() {
+  return useMutation({
+    mutationKey: ['data-import', 'health-connect'],
+    mutationFn: (payload: unknown) =>
+      dataImportService.importHealthConnectData(payload),
+    onSuccess: invalidateImportedData,
+  });
+}

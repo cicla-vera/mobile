@@ -26,6 +26,11 @@ export function CalendarToolbar({
   const actions: ToolbarAction[] = [
     { icon: "plus", label: "Registrar", href: "/(exterior)/log" },
     { icon: "bar-chart-2", label: "Historico", href: "/(exterior)/history" },
+    {
+      icon: "pie-chart",
+      label: "Resumo mensal",
+      href: "/(exterior)/insights",
+    },
     { icon: "calendar", label: "Ir para hoje", onPress: onGoToToday },
     {
       icon: "bell",

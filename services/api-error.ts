@@ -36,7 +36,23 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
       return 'Muitas tentativas. Tente novamente mais tarde.';
     }
 
+    if (message === 'Current Vera PIN is required.') {
+      return 'Digite o PIN Vera atual para alterar.';
+    }
+
+    if (message === 'Consent must be accepted before enabling Vera mode.') {
+      return 'Aceite o consentimento Vera antes de ativar o modo privado.';
+    }
+
     return message;
+  }
+
+  if (error.response?.status === 401) {
+    return 'Sessao expirada. Entre novamente para continuar.';
+  }
+
+  if (error.response?.status === 404) {
+    return 'Nao encontramos esse recurso agora.';
   }
 
   if (error.code === 'ECONNABORTED') {

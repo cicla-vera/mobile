@@ -1,5 +1,7 @@
+import { Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import {
   CalendarGrid,
@@ -10,8 +12,9 @@ import {
   PeriodMarkingCard,
 } from "@/components/calendar";
 import { MOCK_NOTIFICATIONS } from "@/constants/notifications";
+import { AppText } from "@/components/ui/app-text";
 import { Screen } from "@/components/ui/screen";
-import { spacing } from "@/constants/theme";
+import { colors, radius, spacing } from "@/constants/theme";
 import {
   useCyclePredictionQuery,
   useCreateCycleMutation,
@@ -187,6 +190,35 @@ export default function HomePreviewRoute() {
           onMarkEnd={handleMarkPeriodEnd}
         />
 
+        <Pressable
+          accessibilityRole="button"
+          onPress={() =>
+            router.push({
+              pathname: "/(exterior)/day",
+              params: { date: selectedDateKey },
+            })
+          }
+          style={({ pressed }) => [
+            styles.dayDetailsCard,
+            pressed && styles.dayDetailsPressed,
+          ]}
+        >
+          <View style={styles.dayDetailsIcon}>
+            <Feather name="calendar" size={18} color={colors.cream} />
+          </View>
+          <View style={styles.dayDetailsCopy}>
+            <AppText variant="label">Detalhes do dia</AppText>
+            <AppText
+              variant="caption"
+              tone="muted"
+              style={styles.dayDetailsText}
+            >
+              Veja humor, fluxo, sintomas e notas de {selectedDateKey}.
+            </AppText>
+          </View>
+          <Feather name="chevron-right" size={18} color={colors.soft} />
+        </Pressable>
+
         <MoodCheckIn dateKey={selectedDateKey} />
       </ScrollView>
 
@@ -212,5 +244,35 @@ const styles = StyleSheet.create({
   },
   mainSection: {
     paddingHorizontal: spacing[6],
+  },
+  dayDetailsCard: {
+    minHeight: 78,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing[3],
+    marginTop: spacing[5],
+    marginHorizontal: spacing[6],
+    padding: spacing[4],
+    borderWidth: 1,
+    borderColor: "rgba(20, 16, 17, 0.08)",
+    borderRadius: radius.sm,
+    backgroundColor: "rgba(255, 255, 255, 0.74)",
+  },
+  dayDetailsPressed: {
+    opacity: 0.72,
+  },
+  dayDetailsIcon: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    backgroundColor: colors.blue,
+  },
+  dayDetailsCopy: {
+    flex: 1,
+  },
+  dayDetailsText: {
+    marginTop: 2,
   },
 });

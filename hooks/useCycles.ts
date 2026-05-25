@@ -5,11 +5,22 @@ import { queryClient } from '@/services/query-client';
 import type { CreateCycleRequest, UpdateCycleRequest } from '@/types/api.types';
 
 export const cyclesQueryKey = ['cycles'] as const;
+export const cyclePredictionQueryKey = [
+  ...cyclesQueryKey,
+  'prediction',
+] as const;
 
 export function useCyclesQuery() {
   return useQuery({
     queryKey: cyclesQueryKey,
     queryFn: cyclesService.findCycles,
+  });
+}
+
+export function useCyclePredictionQuery() {
+  return useQuery({
+    queryKey: cyclePredictionQueryKey,
+    queryFn: cyclesService.predictCycle,
   });
 }
 

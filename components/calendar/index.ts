@@ -5,6 +5,7 @@ export { CalendarMonthNav } from '@/components/calendar/calendar-month-nav';
 export { CalendarToolbar } from '@/components/calendar/calendar-toolbar';
 export { CycleInsightCard } from '@/components/calendar/cycle-insight-card';
 export { CyclePeriodCard } from '@/components/calendar/cycle-period-card';
+export { CyclePredictionCard } from '@/components/calendar/cycle-prediction-card';
 export { MoodCheckIn } from '@/components/calendar/mood-check-in';
 export { MoonMark } from '@/components/calendar/moon-mark';
 export { NotificationsModal } from '@/components/calendar/notifications-modal';

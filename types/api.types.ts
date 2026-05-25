@@ -41,6 +41,25 @@ export type CreateCycleRequest = {
 
 export type UpdateCycleRequest = Partial<CreateCycleRequest>;
 
+export type CyclePrediction = {
+  averageCycleLength?: number;
+  currentCycleDay?: number;
+  daysUntilNextPeriod?: number;
+  nextPeriod: {
+    date: string;
+    daysUntil: number;
+  } | null;
+  ovulationDate: {
+    date: string;
+  } | null;
+  fertileWindow: {
+    start: string;
+    end: string;
+  } | null;
+  basedOnCycles?: number;
+  message?: string;
+};
+
 export type MoodType =
   | 'HAPPY'
   | 'SAD'

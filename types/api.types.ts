@@ -298,6 +298,23 @@ export type CreateActivityEntryRequest = {
   date: string;
 };
 
+export type SleepQuality = 'POOR' | 'FAIR' | 'GOOD' | 'EXCELLENT';
+
+export type SleepEntry = {
+  id: string;
+  userId: string;
+  hours: number;
+  quality: SleepQuality;
+  date: string;
+  createdAt: string;
+};
+
+export type CreateSleepEntryRequest = {
+  hours: number;
+  quality: SleepQuality;
+  date: string;
+};
+
 export type HistoryCharts = {
   temperature: TemperatureEntry[];
   weight: WeightEntry[];

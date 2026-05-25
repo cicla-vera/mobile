@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { Redirect, router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -16,6 +16,12 @@ import { TextField } from '@/components/ui/text-field';
 import { colors, spacing } from '@/constants/theme';
 import { useVerifyVeraPinMutation } from '@/hooks/vera';
 import { getApiErrorMessage } from '@/services/api-error';
+import {
+  getVeraBiometricUnlockAvailability,
+  storeVeraSessionForBiometricUnlock,
+  unlockStoredVeraSessionWithBiometrics,
+  type VeraBiometricUnlockReason,
+} from '@/services/vera';
 import { isVeraSessionValid, useVeraStore } from '@/stores/vera.store';
 
 const PIN_MIN_LENGTH = 4;
@@ -24,15 +30,49 @@ const PIN_MAX_LENGTH = 8;
 export default function VeraUnlockRoute() {
   const isUnlocked = useVeraStore((state) => state.isUnlocked);
   const sessionExpiresAt = useVeraStore((state) => state.sessionExpiresAt);
+  const unlockVeraSession = useVeraStore((state) => state.unlockVeraSession);
   const veraSessionToken = useVeraStore((state) => state.veraSessionToken);
   const verifyPinMutation = useVerifyVeraPinMutation();
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [biometricPending, setBiometricPending] = useState(false);
+  const [biometricReason, setBiometricReason] =
+    useState<VeraBiometricUnlockReason | null>(null);
   const [pin, setPin] = useState('');
+  const [pinPending, setPinPending] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const hasValidSession = isVeraSessionValid({
     isUnlocked,
     sessionExpiresAt,
     veraSessionToken,
   });
+  const biometricMessage = useMemo(
+    () => getBiometricMessage(biometricReason),
+    [biometricReason],
+  );
+
+  useEffect(() => {
+    let active = true;
+
+    void getVeraBiometricUnlockAvailability()
+      .then((availability) => {
+        if (!active) {
+          return;
+        }
+
+        setBiometricAvailable(availability.available);
+        setBiometricReason(availability.reason ?? null);
+      })
+      .catch(() => {
+        if (active) {
+          setBiometricAvailable(false);
+          setBiometricReason('biometric_storage_unavailable');
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   if (hasValidSession) {
     return <Redirect href="/(interior)" />;
@@ -47,26 +87,61 @@ export default function VeraUnlockRoute() {
         )
       : undefined);
   const canSubmit =
-    pin.length >= PIN_MIN_LENGTH && !verifyPinMutation.isPending;
+    pin.length >= PIN_MIN_LENGTH &&
+    !pinPending &&
+    !biometricPending;
 
   function handlePinChange(value: string) {
     setPin(value.replace(/\D/g, '').slice(0, PIN_MAX_LENGTH));
     setValidationError(null);
+    if (biometricAvailable) {
+      setBiometricReason(null);
+    }
     verifyPinMutation.reset();
   }
 
   async function handleSubmit() {
+    if (pinPending || biometricPending) {
+      return;
+    }
+
     if (pin.length < PIN_MIN_LENGTH) {
       setValidationError('Digite entre 4 e 8 numeros.');
       return;
     }
 
+    setPinPending(true);
+
     try {
-      await verifyPinMutation.mutateAsync({ pin });
+      const session = await verifyPinMutation.mutateAsync({ pin });
+      await storeVeraSessionForBiometricUnlock(session);
       setPin('');
       router.replace('/(interior)');
     } catch {
       setPin('');
+    } finally {
+      setPinPending(false);
+    }
+  }
+
+  async function handleBiometricUnlock() {
+    setBiometricPending(true);
+    setBiometricReason(null);
+    verifyPinMutation.reset();
+    setValidationError(null);
+
+    try {
+      const result = await unlockStoredVeraSessionWithBiometrics();
+
+      if (!result.success) {
+        setBiometricReason(result.reason);
+        return;
+      }
+
+      unlockVeraSession(result.session);
+      router.replace('/(interior)');
+    } finally {
+      setBiometricPending(false);
     }
   }
 
@@ -97,11 +172,28 @@ export default function VeraUnlockRoute() {
             Acesso privado
           </AppText>
           <AppText tone="muted" style={styles.copy}>
-            Use seu PIN Vera para continuar.
+            Use biometria ou PIN Vera para continuar.
           </AppText>
         </View>
 
         <View style={styles.form}>
+          <Button
+            accessibilityRole="button"
+            disabled={!biometricAvailable || biometricPending}
+            loading={biometricPending}
+            onPress={handleBiometricUnlock}
+            style={styles.submitButton}
+            variant="secondary"
+          >
+            Usar biometria
+          </Button>
+
+          {biometricMessage ? (
+            <AppText variant="caption" tone="muted" style={styles.statusText}>
+              {biometricMessage}
+            </AppText>
+          ) : null}
+
           <TextField
             accessibilityLabel="PIN Vera"
             autoComplete="off"
@@ -121,7 +213,7 @@ export default function VeraUnlockRoute() {
           <Button
             accessibilityRole="button"
             disabled={!canSubmit}
-            loading={verifyPinMutation.isPending}
+            loading={pinPending}
             onPress={handleSubmit}
             style={styles.submitButton}
           >
@@ -176,4 +268,38 @@ const styles = StyleSheet.create({
   submitButton: {
     alignSelf: 'stretch',
   },
+  statusText: {
+    marginTop: -spacing[2],
+  },
 });
+
+function getBiometricMessage(reason: VeraBiometricUnlockReason | null) {
+  if (!reason) {
+    return null;
+  }
+
+  if (reason === 'session_missing') {
+    return 'Entre com o PIN uma vez neste aparelho.';
+  }
+
+  if (reason === 'session_expired') {
+    return 'Sessao expirada. Use o PIN para continuar.';
+  }
+
+  if (reason === 'authentication_failed') {
+    return 'Biometria cancelada ou nao reconhecida.';
+  }
+
+  if (
+    reason === 'web_unavailable' ||
+    reason === 'expo_go_unavailable' ||
+    reason === 'secure_store_unavailable' ||
+    reason === 'biometric_hardware_unavailable' ||
+    reason === 'biometric_not_enrolled' ||
+    reason === 'biometric_storage_unavailable'
+  ) {
+    return 'Biometria indisponivel neste ambiente. Use o PIN.';
+  }
+
+  return 'Nao deu para usar biometria agora. Use o PIN.';
+}

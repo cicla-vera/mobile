@@ -4,4 +4,5 @@ export * from './evidence.service';
 export * from './native-capabilities.service';
 export * from './safety-locations.service';
 export * from './safety-profile.service';
+export * from './vera-session-storage.service';
 export * from './vera-pin.service';

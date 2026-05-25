@@ -2,6 +2,11 @@ import { create } from 'zustand';
 
 import type { VerifyVeraPinResponse } from '@/types/vera.types';
 
+export type VeraSession = Pick<
+  VerifyVeraPinResponse,
+  'expiresAt' | 'veraSessionToken'
+>;
+
 type VeraState = {
   activeAlertSessionId: string | null;
   isUnlocked: boolean;
@@ -10,7 +15,7 @@ type VeraState = {
   clearActiveAlertSession: () => void;
   lockVeraSession: () => void;
   setActiveAlertSessionId: (alertSessionId: string | null) => void;
-  unlockVeraSession: (session: VerifyVeraPinResponse) => void;
+  unlockVeraSession: (session: VeraSession) => void;
 };
 
 export const useVeraStore = create<VeraState>((set) => ({

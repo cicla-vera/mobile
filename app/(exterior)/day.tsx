@@ -111,6 +111,13 @@ export default function DayDetailsRoute() {
     });
   }
 
+  function goToIntercourse() {
+    router.push({
+      pathname: '/(exterior)/intercourse',
+      params: { date: dateKey },
+    });
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -271,6 +278,13 @@ export default function DayDetailsRoute() {
           style={styles.secondaryActionButton}
         >
           Registrar sono
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={goToIntercourse}
+          style={styles.secondaryActionButton}
+        >
+          Registrar relacao
         </Button>
       </ScrollView>
     </Screen>

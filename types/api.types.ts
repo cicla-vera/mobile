@@ -60,6 +60,34 @@ export type CyclePrediction = {
   message?: string;
 };
 
+export type CycleHistoryItem = CycleLog & {
+  periodDuration: number | null;
+  cycleLength: number | null;
+};
+
+export type CycleHistoryRegularity = {
+  status: 'INSUFFICIENT_DATA' | 'REGULAR' | 'IRREGULAR';
+  variationDays: number | null;
+  message: string;
+};
+
+export type CycleHistoryStats = {
+  totalCycles: number;
+  completeCycles: number;
+  averageDuration: number | null;
+  shortest: number | null;
+  longest: number | null;
+  averageCycleLength: number | null;
+  shortestCycleLength: number | null;
+  longestCycleLength: number | null;
+  regularity: CycleHistoryRegularity;
+};
+
+export type CycleHistory = {
+  cycles: CycleHistoryItem[];
+  stats: CycleHistoryStats;
+};
+
 export type MoodType =
   | 'HAPPY'
   | 'SAD'

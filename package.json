@@ -10,6 +10,7 @@
     "typecheck": "node scripts/generate-router-types.cjs && tsc --noEmit",
     "smoke:auth": "node scripts/smoke-auth.mjs",
     "smoke:cycles": "node scripts/smoke-cycles.mjs",
+    "smoke:cycle-history": "node scripts/smoke-cycle-history.mjs",
     "smoke:cycle-prediction": "node scripts/smoke-cycle-prediction.mjs",
     "smoke:daily-log": "node scripts/smoke-daily-log.mjs"
   },

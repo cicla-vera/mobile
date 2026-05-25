@@ -9,6 +9,7 @@ export const cyclePredictionQueryKey = [
   ...cyclesQueryKey,
   'prediction',
 ] as const;
+export const cycleHistoryQueryKey = [...cyclesQueryKey, 'history'] as const;
 
 export function useCyclesQuery() {
   return useQuery({
@@ -21,6 +22,13 @@ export function useCyclePredictionQuery() {
   return useQuery({
     queryKey: cyclePredictionQueryKey,
     queryFn: cyclesService.predictCycle,
+  });
+}
+
+export function useCycleHistoryQuery() {
+  return useQuery({
+    queryKey: cycleHistoryQueryKey,
+    queryFn: cyclesService.getCycleHistory,
   });
 }
 

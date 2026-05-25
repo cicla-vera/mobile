@@ -1,5 +1,6 @@
 import { api } from '@/services/api';
 import type {
+  CycleHistory,
   CreateCycleRequest,
   CycleLog,
   CyclePrediction,
@@ -14,6 +15,12 @@ export async function findCycles() {
 
 export async function predictCycle() {
   const response = await api.get<CyclePrediction>('/cycles/predict');
+
+  return response.data;
+}
+
+export async function getCycleHistory() {
+  const response = await api.get<CycleHistory>('/cycles/history');
 
   return response.data;
 }
@@ -33,6 +40,7 @@ export async function updateCycle(id: string, payload: UpdateCycleRequest) {
 export const cyclesService = {
   findCycles,
   predictCycle,
+  getCycleHistory,
   createCycle,
   updateCycle,
 };

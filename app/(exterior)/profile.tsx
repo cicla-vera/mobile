@@ -235,6 +235,26 @@ export default function ProfileRoute() {
 
         <Pressable
           accessibilityRole="button"
+          onPress={() => router.push('/(exterior)/data-import')}
+          style={({ pressed }) => [
+            styles.importCard,
+            pressed && styles.importCardPressed,
+          ]}
+        >
+          <View style={styles.importIcon}>
+            <Feather name="upload-cloud" size={17} color={colors.blue} />
+          </View>
+          <View style={styles.importCopy}>
+            <AppText variant="label">Importar dados</AppText>
+            <AppText variant="caption" tone="muted">
+              Trazer historico exportado do Flo.
+            </AppText>
+          </View>
+          <Feather name="chevron-right" size={18} color={colors.soft} />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
           onPress={handleLogout}
           style={({ pressed }) => [
             styles.logoutButton,
@@ -444,6 +464,32 @@ const styles = StyleSheet.create({
   saveButton: {
     alignSelf: 'stretch',
     marginTop: spacing[5],
+  },
+  importCard: {
+    minHeight: 68,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    marginTop: spacing[5],
+    padding: spacing[4],
+    borderWidth: 1,
+    borderColor: 'rgba(20, 16, 17, 0.08)',
+    borderRadius: radius.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+  },
+  importCardPressed: {
+    opacity: 0.72,
+  },
+  importIcon: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 18,
+    backgroundColor: colors.shell,
+  },
+  importCopy: {
+    flex: 1,
   },
   logoutButton: {
     minHeight: 50,

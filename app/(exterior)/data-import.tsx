@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -14,17 +14,78 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Screen } from '@/components/ui';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
-import { useImportFloMutation } from '@/hooks/useDataImport';
+import {
+  useImportAppleHealthMutation,
+  useImportFloMutation,
+} from '@/hooks/useDataImport';
 import { getApiErrorMessage } from '@/services/api-error';
+import type { AppleHealthImportPayload } from '@/services/data-import.service';
 import type {
   DataImportCounters,
   DataImportResult,
 } from '@/types/api.types';
 
+type ImportSource = 'flo' | 'apple-health';
+
 type SelectedImportFile = {
   name: string;
   size?: number;
   records: number;
+};
+
+type ImportConfig = {
+  source: ImportSource;
+  eyebrow: string;
+  title: string;
+  heroIcon: keyof typeof Feather.glyphMap;
+  heroTitle: string;
+  heroText: string;
+  fileTypeLabel: string;
+  pickerTypes: string[];
+  emptyText: string;
+  invalidFileMessage: string;
+  selectButtonLabel: string;
+  importButtonLabel: string;
+};
+
+type ParsedImportPayload = {
+  payload: unknown;
+  records: number;
+};
+
+const importConfigs: Record<ImportSource, ImportConfig> = {
+  flo: {
+    source: 'flo',
+    eyebrow: 'Importacao',
+    title: 'Dados do Flo',
+    heroIcon: 'upload-cloud',
+    heroTitle: 'JSON exportado',
+    heroText:
+      'Traga historico de ciclo, sintomas e bem-estar sem preencher tudo novamente.',
+    fileTypeLabel: '.json',
+    pickerTypes: ['application/json', 'text/json', 'text/plain'],
+    emptyText: 'Selecione o arquivo JSON exportado pelo Flo.',
+    invalidFileMessage:
+      'Nao foi possivel ler esse arquivo. Selecione um JSON valido do Flo.',
+    selectButtonLabel: 'Selecionar JSON',
+    importButtonLabel: 'Importar dados',
+  },
+  'apple-health': {
+    source: 'apple-health',
+    eyebrow: 'Integracao',
+    title: 'Apple Health',
+    heroIcon: 'heart',
+    heroTitle: 'export.xml',
+    heroText:
+      'Importe ciclo, temperatura, peso, agua, sono e outros registros do app Saude.',
+    fileTypeLabel: '.xml',
+    pickerTypes: ['application/xml', 'text/xml', 'text/plain'],
+    emptyText: 'Selecione o export.xml gerado pelo Apple Health.',
+    invalidFileMessage:
+      'Nao foi possivel ler esse arquivo. Selecione um export.xml valido do Apple Health.',
+    selectButtonLabel: 'Selecionar XML',
+    importButtonLabel: 'Importar Apple Health',
+  },
 };
 
 const counterLabels: Array<{
@@ -47,8 +108,11 @@ const counterLabels: Array<{
 ];
 
 export default function DataImportRoute() {
+  const params = useLocalSearchParams<{ source?: string }>();
+  const config = importConfigs[getImportSource(params.source)];
   const insets = useSafeAreaInsets();
   const importFloMutation = useImportFloMutation();
+  const importAppleHealthMutation = useImportAppleHealthMutation();
   const [payload, setPayload] = useState<unknown | null>(null);
   const [selectedFile, setSelectedFile] = useState<SelectedImportFile | null>(
     null,
@@ -56,6 +120,10 @@ export default function DataImportRoute() {
   const [result, setResult] = useState<DataImportResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const activeMutation =
+    config.source === 'apple-health'
+      ? importAppleHealthMutation
+      : importFloMutation;
   const importedTotal = useMemo(
     () => (result ? getImportedTotal(result.imported) : 0),
     [result],
@@ -67,7 +135,7 @@ export default function DataImportRoute() {
 
     try {
       const pickerResult = await DocumentPicker.getDocumentAsync({
-        type: ['application/json', 'text/json', 'text/plain'],
+        type: config.pickerTypes,
         copyToCacheDirectory: true,
         multiple: false,
         base64: false,
@@ -85,26 +153,24 @@ export default function DataImportRoute() {
       }
 
       const text = await readDocumentText(asset);
-      const parsed = parseJsonPayload(text);
+      const parsed = parseImportPayload(text, config.source);
 
-      setPayload(parsed);
+      setPayload(parsed.payload);
       setSelectedFile({
         name: asset.name,
         size: asset.size,
-        records: countRecords(parsed),
+        records: parsed.records,
       });
     } catch {
       setPayload(null);
       setSelectedFile(null);
-      setErrorMessage(
-        'Nao foi possivel ler esse arquivo. Selecione um JSON valido do Flo.',
-      );
+      setErrorMessage(config.invalidFileMessage);
     }
   }
 
   async function handleImport() {
     if (!payload) {
-      setErrorMessage('Selecione um arquivo JSON antes de importar.');
+      setErrorMessage('Selecione um arquivo antes de importar.');
       return;
     }
 
@@ -112,7 +178,7 @@ export default function DataImportRoute() {
     setResult(null);
 
     try {
-      const importResult = await importFloMutation.mutateAsync(payload);
+      const importResult = await submitImportPayload(payload);
 
       setResult(importResult);
       setSelectedFile((current) =>
@@ -128,6 +194,16 @@ export default function DataImportRoute() {
         getApiErrorMessage(error, 'Nao foi possivel importar esse arquivo.'),
       );
     }
+  }
+
+  function submitImportPayload(currentPayload: unknown) {
+    if (config.source === 'apple-health') {
+      return importAppleHealthMutation.mutateAsync(
+        currentPayload as AppleHealthImportPayload,
+      );
+    }
+
+    return importFloMutation.mutateAsync(currentPayload);
   }
 
   return (
@@ -151,24 +227,21 @@ export default function DataImportRoute() {
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="muted" style={styles.eyebrow}>
-              Importacao
+              {config.eyebrow}
             </AppText>
-            <AppText variant="heading">Dados do Flo</AppText>
+            <AppText variant="heading">{config.title}</AppText>
           </View>
         </View>
 
         <View style={styles.heroCard}>
           <View style={styles.heroIcon}>
-            <Feather name="upload-cloud" size={23} color={colors.cream} />
+            <Feather name={config.heroIcon} size={23} color={colors.cream} />
           </View>
           <View style={styles.heroCopy}>
             <AppText variant="heading" tone="cream">
-              JSON exportado
+              {config.heroTitle}
             </AppText>
-            <AppText style={styles.heroText}>
-              Traga historico de ciclo, sintomas e bem-estar sem preencher tudo
-              novamente.
-            </AppText>
+            <AppText style={styles.heroText}>{config.heroText}</AppText>
           </View>
         </View>
 
@@ -176,7 +249,7 @@ export default function DataImportRoute() {
           <View style={styles.sectionHeader}>
             <AppText variant="label">Arquivo</AppText>
             <AppText variant="caption" tone="muted">
-              .json
+              {config.fileTypeLabel}
             </AppText>
           </View>
 
@@ -197,7 +270,7 @@ export default function DataImportRoute() {
             <View style={styles.emptyBlock}>
               <Feather name="file-plus" size={18} color={colors.soft} />
               <AppText variant="caption" tone="muted" style={styles.emptyText}>
-                Selecione o arquivo JSON exportado pelo Flo.
+                {config.emptyText}
               </AppText>
             </View>
           )}
@@ -215,18 +288,18 @@ export default function DataImportRoute() {
             <Button
               variant="secondary"
               onPress={() => void handlePickFile()}
-              disabled={importFloMutation.isPending}
+              disabled={activeMutation.isPending}
               style={styles.actionButton}
             >
-              Selecionar JSON
+              {config.selectButtonLabel}
             </Button>
             <Button
               onPress={() => void handleImport()}
-              loading={importFloMutation.isPending}
-              disabled={!payload || importFloMutation.isPending}
+              loading={activeMutation.isPending}
+              disabled={!payload || activeMutation.isPending}
               style={styles.actionButton}
             >
-              Importar dados
+              {config.importButtonLabel}
             </Button>
           </View>
         </View>
@@ -234,7 +307,7 @@ export default function DataImportRoute() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <AppText variant="label">Resultado</AppText>
-            {importFloMutation.isPending ? (
+            {activeMutation.isPending ? (
               <ActivityIndicator color={colors.blue} size="small" />
             ) : (
               <AppText variant="caption" tone="muted">
@@ -287,14 +360,45 @@ async function readDocumentText(asset: DocumentPicker.DocumentPickerAsset) {
   return FileSystem.readAsStringAsync(asset.uri);
 }
 
-function parseJsonPayload(value: string) {
+function getImportSource(value?: string): ImportSource {
+  return value === 'apple-health' ? 'apple-health' : 'flo';
+}
+
+function parseImportPayload(
+  value: string,
+  source: ImportSource,
+): ParsedImportPayload {
+  if (source === 'apple-health') {
+    return parseAppleHealthPayload(value);
+  }
+
+  return parseFloPayload(value);
+}
+
+function parseFloPayload(value: string): ParsedImportPayload {
   const parsed = JSON.parse(value) as unknown;
 
   if (!isJsonRecord(parsed) && !Array.isArray(parsed)) {
     throw new Error('Invalid JSON root');
   }
 
-  return parsed;
+  return {
+    payload: parsed,
+    records: countRecords(parsed),
+  };
+}
+
+function parseAppleHealthPayload(value: string): ParsedImportPayload {
+  const xml = value.trim();
+
+  if (!/<HealthData[\s>]/.test(xml) || !/<Record[\s/>]/.test(xml)) {
+    throw new Error('Invalid Apple Health export');
+  }
+
+  return {
+    payload: { xml },
+    records: countAppleHealthRecords(xml),
+  };
 }
 
 function isJsonRecord(value: unknown): value is Record<string, unknown> {
@@ -316,6 +420,10 @@ function countRecords(value: unknown): number {
   );
 
   return 1 + nestedRecords;
+}
+
+function countAppleHealthRecords(value: string) {
+  return value.match(/<Record[\s/>]/g)?.length ?? 0;
 }
 
 function getImportedTotal(counters: DataImportCounters) {

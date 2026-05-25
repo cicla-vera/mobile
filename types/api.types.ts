@@ -328,6 +328,21 @@ export type CreateIntercourseEntryRequest = {
   date: string;
 };
 
+export type MedicationEntry = {
+  id: string;
+  userId: string;
+  name: string;
+  dose: string | null;
+  date: string;
+  createdAt: string;
+};
+
+export type CreateMedicationEntryRequest = {
+  name: string;
+  dose?: string;
+  date: string;
+};
+
 export type HistoryCharts = {
   temperature: TemperatureEntry[];
   weight: WeightEntry[];

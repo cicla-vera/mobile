@@ -90,6 +90,13 @@ export default function DayDetailsRoute() {
     });
   }
 
+  function goToWater() {
+    router.push({
+      pathname: '/(exterior)/water',
+      params: { date: dateKey },
+    });
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -229,6 +236,13 @@ export default function DayDetailsRoute() {
           style={styles.secondaryActionButton}
         >
           Registrar peso
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={goToWater}
+          style={styles.secondaryActionButton}
+        >
+          Registrar agua
         </Button>
       </ScrollView>
     </Screen>

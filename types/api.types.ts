@@ -251,6 +251,24 @@ export type CreateWeightEntryRequest = {
   date: string;
 };
 
+export type WaterEntry = {
+  id: string;
+  userId: string;
+  amount: number;
+  date: string;
+  createdAt: string;
+};
+
+export type WaterDayLog = {
+  entries: WaterEntry[];
+  total: number;
+};
+
+export type CreateWaterEntryRequest = {
+  amount: number;
+  date: string;
+};
+
 export type HistoryCharts = {
   temperature: TemperatureEntry[];
   weight: WeightEntry[];

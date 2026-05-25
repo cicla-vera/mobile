@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { cyclesService } from '@/services/cycles.service';
 import { queryClient } from '@/services/query-client';
+import { useAuthStore } from '@/stores/auth.store';
 import type { CreateCycleRequest, UpdateCycleRequest } from '@/types/api.types';
 
 export const cyclesQueryKey = ['cycles'] as const;
@@ -21,9 +22,12 @@ export function useCyclesQuery() {
 }
 
 export function useCyclePredictionQuery() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   return useQuery({
     queryKey: cyclePredictionQueryKey,
     queryFn: cyclesService.predictCycle,
+    enabled: isAuthenticated,
   });
 }
 

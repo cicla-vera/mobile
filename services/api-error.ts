@@ -24,6 +24,18 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
       return 'Este email ja esta em uso.';
     }
 
+    if (message === 'Invalid Vera PIN.') {
+      return 'PIN Vera incorreto.';
+    }
+
+    if (message === 'Vera PIN is not configured.') {
+      return 'O PIN Vera ainda nao foi configurado.';
+    }
+
+    if (message === 'Too many failed Vera PIN attempts. Try again later.') {
+      return 'Muitas tentativas. Tente novamente mais tarde.';
+    }
+
     return message;
   }
 

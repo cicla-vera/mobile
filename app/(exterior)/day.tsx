@@ -118,6 +118,13 @@ export default function DayDetailsRoute() {
     });
   }
 
+  function goToMedications() {
+    router.push({
+      pathname: '/(exterior)/medications',
+      params: { date: dateKey },
+    });
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -285,6 +292,13 @@ export default function DayDetailsRoute() {
           style={styles.secondaryActionButton}
         >
           Registrar relacao
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={goToMedications}
+          style={styles.secondaryActionButton}
+        >
+          Registrar medicamento
         </Button>
       </ScrollView>
     </Screen>

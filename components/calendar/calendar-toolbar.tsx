@@ -32,6 +32,7 @@ export function CalendarToolbar({
       href: "/(exterior)/insights",
     },
     { icon: "trending-up", label: "Graficos", href: "/(exterior)/charts" },
+    { icon: "user", label: "Perfil", href: "/(exterior)/profile" },
     { icon: "calendar", label: "Ir para hoje", onPress: onGoToToday },
     {
       icon: "bell",

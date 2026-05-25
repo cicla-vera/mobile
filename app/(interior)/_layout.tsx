@@ -1,6 +1,9 @@
 import { Redirect, Stack } from 'expo-router';
 import { useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import { colors } from '@/constants/theme';
+import { useVeraProfileQuery } from '@/hooks/vera';
 import { clearStoredVeraBiometricSession } from '@/services/vera';
 import { isVeraSessionValid, useVeraStore } from '@/stores/vera.store';
 
@@ -9,6 +12,7 @@ export default function InteriorLayout() {
   const lockVeraSession = useVeraStore((state) => state.lockVeraSession);
   const sessionExpiresAt = useVeraStore((state) => state.sessionExpiresAt);
   const veraSessionToken = useVeraStore((state) => state.veraSessionToken);
+  const profileQuery = useVeraProfileQuery();
   const hasValidSession = isVeraSessionValid({
     isUnlocked,
     sessionExpiresAt,
@@ -40,5 +44,26 @@ export default function InteriorLayout() {
     return <Redirect href="/(exterior)/vera-unlock" />;
   }
 
+  if (profileQuery.isLoading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={colors.coral} size="large" />
+      </View>
+    );
+  }
+
+  if (profileQuery.isError || !profileQuery.data?.consentAccepted) {
+    return <Redirect href="/(exterior)/vera-consent" />;
+  }
+
   return <Stack screenOptions={{ headerShown: false }} />;
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.ink,
+  },
+});

@@ -160,7 +160,7 @@ export default function HomePreviewRoute() {
             dateLabel={formatCalendarHeading(selectedDate)}
             onNotificationsPress={() => setNotificationsVisible(true)}
             onGoToToday={goToToday}
-            onPrivateAccessPress={() => router.push("/(exterior)/vera-unlock")}
+            onPrivateAccessPress={() => router.push("/(exterior)/vera-consent")}
             hasUnreadNotifications={hasUnreadNotifications}
           />
           <CalendarGrid

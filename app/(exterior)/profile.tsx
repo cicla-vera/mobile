@@ -235,7 +235,12 @@ export default function ProfileRoute() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/(exterior)/data-import')}
+          onPress={() =>
+            router.push({
+              pathname: '/(exterior)/data-import',
+              params: { source: 'flo' },
+            })
+          }
           style={({ pressed }) => [
             styles.importCard,
             pressed && styles.importCardPressed,
@@ -245,9 +250,34 @@ export default function ProfileRoute() {
             <Feather name="upload-cloud" size={17} color={colors.blue} />
           </View>
           <View style={styles.importCopy}>
-            <AppText variant="label">Importar dados</AppText>
+            <AppText variant="label">Importar Flo</AppText>
             <AppText variant="caption" tone="muted">
               Trazer historico exportado do Flo.
+            </AppText>
+          </View>
+          <Feather name="chevron-right" size={18} color={colors.soft} />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={() =>
+            router.push({
+              pathname: '/(exterior)/data-import',
+              params: { source: 'apple-health' },
+            })
+          }
+          style={({ pressed }) => [
+            styles.importCard,
+            pressed && styles.importCardPressed,
+          ]}
+        >
+          <View style={styles.importIcon}>
+            <Feather name="heart" size={17} color={colors.blue} />
+          </View>
+          <View style={styles.importCopy}>
+            <AppText variant="label">Apple Health</AppText>
+            <AppText variant="caption" tone="muted">
+              Importar export.xml do app Saude.
             </AppText>
           </View>
           <Feather name="chevron-right" size={18} color={colors.soft} />

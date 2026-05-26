@@ -2,6 +2,8 @@ import { useEffect, type ReactNode } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
+import { isVeraDemoModeEnabled } from '@/constants/demo';
+import { startVeraDemoSession } from '@/services/demo/vera-demo-session.service';
 import { useAuthStore } from '@/stores/auth.store';
 
 type AuthSessionProviderProps = {
@@ -13,6 +15,11 @@ export function AuthSessionProvider({ children }: AuthSessionProviderProps) {
   const isHydrated = useAuthStore((state) => state.isHydrated);
 
   useEffect(() => {
+    if (isVeraDemoModeEnabled) {
+      startVeraDemoSession();
+      return;
+    }
+
     void hydrateSession();
   }, [hydrateSession]);
 

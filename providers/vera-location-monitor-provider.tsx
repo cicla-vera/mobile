@@ -14,6 +14,7 @@ import {
   watchVeraForegroundLocation,
   type VeraLocationSample,
 } from '@/services/vera';
+import { isVeraDemoModeEnabled } from '@/constants/demo';
 import { useAuthStore } from '@/stores/auth.store';
 import { useVeraStore } from '@/stores/vera.store';
 
@@ -62,6 +63,10 @@ export function VeraLocationMonitorProvider({
   }, [isStartingLocationAlert]);
 
   useEffect(() => {
+    if (isVeraDemoModeEnabled) {
+      return;
+    }
+
     if (!isAuthHydrated || !isAuthenticated || !shouldMonitor) {
       void stopVeraBackgroundLocationUpdates();
       return;

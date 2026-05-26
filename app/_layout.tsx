@@ -11,6 +11,7 @@ import { AuthSessionProvider } from '@/providers/auth-session-provider';
 import { LocalNotificationsProvider } from '@/providers/local-notifications-provider';
 import { QueryProvider } from '@/providers/query-provider';
 import { VeraActiveAlertProvider } from '@/providers/vera-active-alert-provider';
+import { VeraLocationMonitorProvider } from '@/providers/vera-location-monitor-provider';
 
 export default function RootLayout() {
   return (
@@ -19,8 +20,10 @@ export default function RootLayout() {
         <AuthSessionProvider>
           <LocalNotificationsProvider>
             <VeraActiveAlertProvider>
-              <StatusBar style="dark" />
-              <Stack screenOptions={{ headerShown: false }} />
+              <VeraLocationMonitorProvider>
+                <StatusBar style="dark" />
+                <Stack screenOptions={{ headerShown: false }} />
+              </VeraLocationMonitorProvider>
             </VeraActiveAlertProvider>
           </LocalNotificationsProvider>
         </AuthSessionProvider>

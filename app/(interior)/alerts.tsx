@@ -232,6 +232,13 @@ export default function VeraAlertsRoute() {
     });
   }
 
+  function openContactStatus(session: AlertSession) {
+    router.push({
+      pathname: "/(interior)/contact-dispatch-status",
+      params: { alertSessionId: session.id },
+    });
+  }
+
   return (
     <VaultScrollScreen keyboard>
       <VaultHeader
@@ -260,6 +267,7 @@ export default function VeraAlertsRoute() {
         <ActiveAlertPanel
           disabled={isMutating}
           onCancel={() => handleCloseAlert("CANCELLED")}
+          onOpenContactStatus={() => openContactStatus(activeAlert)}
           onOpenTimeline={() => openActiveTimeline(activeAlert)}
           onRefresh={() => void activeAlertQuery.refetch()}
           onResolve={() => handleCloseAlert("RESOLVED")}
@@ -433,6 +441,7 @@ function ManualAlertPanel({
 function ActiveAlertPanel({
   disabled,
   onCancel,
+  onOpenContactStatus,
   onOpenTimeline,
   onRefresh,
   onResolve,
@@ -441,6 +450,7 @@ function ActiveAlertPanel({
 }: {
   disabled: boolean;
   onCancel: () => void;
+  onOpenContactStatus: () => void;
   onOpenTimeline: () => void;
   onRefresh: () => void;
   onResolve: () => void;
@@ -514,6 +524,15 @@ function ActiveAlertPanel({
         variant="secondary"
       >
         Ver timeline
+      </Button>
+
+      <Button
+        accessibilityRole="button"
+        onPress={onOpenContactStatus}
+        style={styles.actionButtonStretch}
+        variant="secondary"
+      >
+        Status dos contatos
       </Button>
 
       <View style={styles.actionRow}>

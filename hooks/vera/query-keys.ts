@@ -31,4 +31,10 @@ export const veraQueryKeys = {
     [...veraQueryKeys.alertSessions(), alertSessionId, 'timeline'] as const,
   evidence: (alertSessionId: string) =>
     [...veraQueryKeys.alertSessions(), alertSessionId, 'evidence'] as const,
+  evidenceUploadQueue: (alertSessionId: string) =>
+    [
+      ...veraQueryKeys.alertSessions(),
+      alertSessionId,
+      'evidence-upload-queue',
+    ] as const,
 };

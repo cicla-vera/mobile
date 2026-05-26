@@ -13,6 +13,10 @@ import {
 
 import { AppText } from "@/components/ui/app-text";
 import { Screen } from "@/components/ui/screen";
+import {
+  EvidenceCapturePanel,
+  EvidenceUploadQueuePanel,
+} from "@/components/vera/evidence-capture-panel";
 import { colors, radius, spacing } from "@/constants/theme";
 import {
   useActiveAlertSessionQuery,
@@ -229,6 +233,10 @@ export default function VeraEvidenceRoute() {
               totalRecords={visibleRecords.length}
               totalSize={totalSize}
             />
+
+            <EvidenceCapturePanel alertSessionId={activeAlert.id} />
+
+            <EvidenceUploadQueuePanel alertSessionId={activeAlert.id} />
 
             <FilterPanel
               statusFilter={statusFilter}

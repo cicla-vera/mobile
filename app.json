@@ -25,6 +25,7 @@
         "backgroundColor": "#FFF7F2"
       },
       "edgeToEdgeEnabled": true,
+      "usesCleartextTraffic": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {

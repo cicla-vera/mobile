@@ -110,15 +110,19 @@ turn it into a component.
 
 ## Environment
 
-The backend URL is read from `EXPO_PUBLIC_API_URL`.
+The backend URL is resolved by platform. Platform-specific variables are checked
+first, then `EXPO_PUBLIC_API_URL`, then built-in local defaults.
 
 Common local values:
 
-- Web/iOS simulator: `http://localhost:3001/api`
-- Android emulator: `http://10.0.2.2:3001/api`
-- Physical phone: `http://YOUR_COMPUTER_LAN_IP:3001/api`
+- `EXPO_PUBLIC_API_URL_WEB=http://localhost:3001/api`
+- `EXPO_PUBLIC_API_URL_ANDROID=http://10.0.2.2:3001/api`
+- `EXPO_PUBLIC_API_URL_IOS=http://YOUR_COMPUTER_LAN_IP:3001/api`
+- `EXPO_PUBLIC_API_URL=` as an optional global fallback
 
-When using Expo tunnel, the phone still needs a backend URL it can reach.
+When using Expo tunnel, the phone still needs a backend URL it can reach. On
+BlueStacks, `10.0.2.2` reaches the Windows host, so WSL-hosted backends must be
+exposed through the host port.
 
 ## Validation
 

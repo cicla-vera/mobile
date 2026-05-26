@@ -8,6 +8,9 @@ import {
   LOCAL_NOTIFICATION_CHANNEL_NAME,
   LOCAL_NOTIFICATION_IDENTIFIER_LIST,
   LOCAL_NOTIFICATION_IDENTIFIERS,
+  VERA_ACTIVE_ALERT_NOTIFICATION_IDENTIFIER,
+  VERA_NOTIFICATION_CHANNEL_ID,
+  VERA_NOTIFICATION_CHANNEL_NAME,
 } from "@/constants/local-notifications";
 import {
   areLocalNotificationsEnabled,
@@ -24,6 +27,11 @@ export type LocalNotificationPermissionResult = {
   canAskAgain: boolean;
 };
 
+type VeraActiveAlertNotificationOptions = {
+  alertSessionId: string | null;
+  enabled: boolean;
+};
+
 export function isLocalNotificationsSupported() {
   return Platform.OS === "ios" || Platform.OS === "android";
 }
@@ -34,25 +42,40 @@ export async function configureLocalNotifications() {
   }
 
   Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-      shouldShowBanner: true,
-      shouldShowList: true,
-    }),
+    handleNotification: async (notification) => {
+      const isVeraStatus = isVeraActiveAlertNotification(
+        notification.request.content.data,
+      );
+
+      return {
+        shouldShowAlert: true,
+        shouldPlaySound: !isVeraStatus,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      };
+    },
   });
 
   if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync(
-      LOCAL_NOTIFICATION_CHANNEL_ID,
-      {
+    await Promise.all([
+      Notifications.setNotificationChannelAsync(LOCAL_NOTIFICATION_CHANNEL_ID, {
         name: LOCAL_NOTIFICATION_CHANNEL_NAME,
         importance: Notifications.AndroidImportance.DEFAULT,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: "#F2617E",
-      },
-    );
+      }),
+      Notifications.setNotificationChannelAsync(VERA_NOTIFICATION_CHANNEL_ID, {
+        name: VERA_NOTIFICATION_CHANNEL_NAME,
+        importance: Notifications.AndroidImportance.LOW,
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.SECRET,
+        showBadge: false,
+        sound: null,
+        enableVibrate: false,
+        vibrationPattern: [0],
+        lightColor: "#20257B",
+      }),
+    ]);
   }
 }
 
@@ -95,6 +118,64 @@ export async function cancelManagedLocalNotifications() {
       Notifications.cancelScheduledNotificationAsync(identifier),
     ),
   );
+}
+
+export async function cancelVeraActiveAlertNotification() {
+  if (!isLocalNotificationsSupported()) {
+    return;
+  }
+
+  await Promise.all([
+    Notifications.cancelScheduledNotificationAsync(
+      VERA_ACTIVE_ALERT_NOTIFICATION_IDENTIFIER,
+    ),
+    Notifications.dismissNotificationAsync(
+      VERA_ACTIVE_ALERT_NOTIFICATION_IDENTIFIER,
+    ).catch(() => undefined),
+  ]);
+}
+
+export async function syncVeraActiveAlertNotification({
+  alertSessionId,
+  enabled,
+}: VeraActiveAlertNotificationOptions) {
+  if (!isLocalNotificationsSupported()) {
+    return { scheduled: false, reason: "unsupported_platform" as const };
+  }
+
+  if (!alertSessionId || !enabled) {
+    await cancelVeraActiveAlertNotification();
+    return { scheduled: false, reason: "disabled" as const };
+  }
+
+  const permission = await Notifications.getPermissionsAsync();
+
+  if (!permission.granted) {
+    await cancelVeraActiveAlertNotification();
+    return { scheduled: false, reason: "permission_denied" as const };
+  }
+
+  await cancelVeraActiveAlertNotification();
+  await Notifications.scheduleNotificationAsync({
+    identifier: VERA_ACTIVE_ALERT_NOTIFICATION_IDENTIFIER,
+    content: {
+      title: "Modo reservado ativo",
+      body: "Toque para continuar.",
+      data: {
+        screen: "vera-active-alert",
+        alertSessionId,
+      },
+      sound: false,
+      badge: 0,
+      sticky: false,
+    },
+    trigger:
+      Platform.OS === "android"
+        ? { channelId: VERA_NOTIFICATION_CHANNEL_ID }
+        : null,
+  });
+
+  return { scheduled: true as const };
 }
 
 export async function disableLocalNotifications() {
@@ -150,6 +231,10 @@ function androidChannelTrigger() {
   return Platform.OS === "android"
     ? { channelId: LOCAL_NOTIFICATION_CHANNEL_ID }
     : {};
+}
+
+function isVeraActiveAlertNotification(data?: Record<string, unknown>) {
+  return data?.screen === "vera-active-alert";
 }
 
 async function scheduleDailyLogNotification(settings?: NotificationSettings) {

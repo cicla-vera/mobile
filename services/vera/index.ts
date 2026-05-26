@@ -1,4 +1,5 @@
 export * from './alert-sessions.service';
+export * from './active-alert-storage.service';
 export * from './emergency-contacts.service';
 export * from './evidence.service';
 export * from './native-capabilities.service';

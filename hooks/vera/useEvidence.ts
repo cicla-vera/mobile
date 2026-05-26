@@ -1,6 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { veraEvidenceService } from '@/services/vera';
+import {
+  getCachedEvidenceAnalysis,
+  setCachedEvidenceAnalysis,
+  veraEvidenceService,
+} from '@/services/vera';
 import { queryClient } from '@/services/query-client';
 import { useAuthStore } from '@/stores/auth.store';
 import type { UploadEvidenceRequest } from '@/types/vera.types';
@@ -13,6 +17,16 @@ export function useEvidenceRecordsQuery(alertSessionId: string) {
     queryKey: veraQueryKeys.evidence(alertSessionId),
     queryFn: () => veraEvidenceService.findEvidenceRecords(alertSessionId),
     enabled: isAuthenticated && Boolean(alertSessionId),
+  });
+}
+
+export function useCachedEvidenceAnalysisQuery(evidenceRecordId: string) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery({
+    queryKey: veraQueryKeys.evidenceAnalysis(evidenceRecordId),
+    queryFn: () => getCachedEvidenceAnalysis(evidenceRecordId),
+    enabled: isAuthenticated && Boolean(evidenceRecordId),
   });
 }
 
@@ -63,9 +77,15 @@ export function useAnalyzeEvidenceMutation() {
       evidenceRecordId: string;
     }) => veraEvidenceService.analyzeEvidence(alertSessionId, evidenceRecordId),
     onSuccess: async (analysis) => {
-      await queryClient.invalidateQueries({
-        queryKey: veraQueryKeys.alertTimeline(analysis.alertSessionId),
-      });
+      await setCachedEvidenceAnalysis(analysis);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: veraQueryKeys.alertTimeline(analysis.alertSessionId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: veraQueryKeys.evidenceAnalysis(analysis.evidenceRecordId),
+        }),
+      ]);
     },
   });
 }

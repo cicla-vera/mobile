@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
+    "start:ios-lan": "REACT_NATIVE_PACKAGER_HOSTNAME=192.168.100.8 expo start --lan --clear",
+    "start:bluestacks": "REACT_NATIVE_PACKAGER_HOSTNAME=10.0.2.2 expo start --lan --clear",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",

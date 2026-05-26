@@ -70,6 +70,23 @@ npm run start:ios-lan
 npm run start:bluestacks
 ```
 
+When running Expo from WSL into BlueStacks, Windows must expose both the
+backend port and the Metro port. If `exp://10.0.2.2:8081` does not open in Expo
+Go, run PowerShell as administrator and forward the current WSL IP:
+
+```powershell
+$wslIp = (wsl hostname -I).Trim().Split()[0]
+
+foreach ($port in @(3001, 8081)) {
+  netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=$port
+  netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=$port connectaddress=$wslIp connectport=$port
+
+  if (-not (Get-NetFirewallRule -DisplayName "Cicla Vera WSL $port" -ErrorAction SilentlyContinue)) {
+    New-NetFirewallRule -DisplayName "Cicla Vera WSL $port" -Direction Inbound -Action Allow -Protocol TCP -LocalPort $port
+  }
+}
+```
+
 ## Checks
 
 ```bash

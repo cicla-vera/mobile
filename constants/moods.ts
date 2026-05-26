@@ -24,7 +24,7 @@ export const MOOD_OPTIONS: MoodOption[] = [
   {
     id: "scared",
     label: "Com medo",
-    icon: "emoticon-confused-outline",
+    icon: "alert-circle",
     iconColor: "#4A225E",
   },
 ];

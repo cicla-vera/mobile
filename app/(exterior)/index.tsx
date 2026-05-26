@@ -6,7 +6,7 @@ import {
   CalendarGrid,
   CalendarHeader,
   CalendarWelcomeHeader,
-  VeraAccessEntry,
+  HomeTopBar,
   CyclePredictionCard,
   MoodCheckIn,
   NotificationsModal,
@@ -157,8 +157,10 @@ export default function HomePreviewRoute() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.mainSection}>
-          <VeraAccessEntry
-            onPress={() => router.push("/(exterior)/vera-consent")}
+          <HomeTopBar
+            onVeraPress={() => router.push("/(exterior)/vera-consent")}
+            onNotificationsPress={() => setNotificationsVisible(true)}
+            hasUnreadNotifications={hasUnreadNotifications}
           />
           <View style={styles.heroBlock}>
             <CalendarWelcomeHeader />
@@ -167,9 +169,7 @@ export default function HomePreviewRoute() {
           <View style={styles.calendarBlock}>
             <CalendarHeader
               dateLabel={formatCalendarHeading(selectedDate)}
-              onNotificationsPress={() => setNotificationsVisible(true)}
               onGoToToday={goToToday}
-              hasUnreadNotifications={hasUnreadNotifications}
             />
             <CalendarGrid
               weeks={weeks}

@@ -1,4 +1,3 @@
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   Image,
   Pressable,
@@ -7,6 +6,7 @@ import {
   View,
   type ImageSourcePropType,
 } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { MOOD_OPTIONS } from "@/constants/moods";
 import { colors, radius, spacing } from "@/constants/theme";
@@ -34,13 +34,13 @@ function MoodOptionCard({ option, selected, onPress }: MoodOptionCardProps) {
             style={styles.emoji}
             resizeMode="contain"
           />
-        ) : (
-          <MaterialCommunityIcons
-            name={option.icon as keyof typeof MaterialCommunityIcons.glyphMap}
+        ) : option.icon ? (
+          <Feather
+            name={option.icon as keyof typeof Feather.glyphMap}
             size={18}
             color={option.iconColor ?? colors.ink}
           />
-        )}
+        ) : null}
       </View>
       <Text
         style={[styles.optionLabel, selected && styles.optionLabelSelected]}

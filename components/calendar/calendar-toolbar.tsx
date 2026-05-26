@@ -1,5 +1,5 @@
-import { Link, type Href } from "expo-router";
 import { Feather } from "@expo/vector-icons";
+import { useRouter, type Href } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { colors } from "@/constants/theme";
@@ -9,20 +9,15 @@ type ToolbarAction = {
   label: string;
   href?: Href;
   onPress?: () => void;
-  showBadge?: boolean;
 };
 
 type CalendarToolbarProps = {
-  onNotificationsPress: () => void;
   onGoToToday: () => void;
-  hasUnreadNotifications?: boolean;
 };
 
-export function CalendarToolbar({
-  onNotificationsPress,
-  onGoToToday,
-  hasUnreadNotifications = false,
-}: CalendarToolbarProps) {
+export function CalendarToolbar({ onGoToToday }: CalendarToolbarProps) {
+  const router = useRouter();
+
   const actions: ToolbarAction[] = [
     { icon: "plus", label: "Registrar", href: "/(exterior)/log" },
     { icon: "bar-chart-2", label: "Historico", href: "/(exterior)/history" },
@@ -32,57 +27,32 @@ export function CalendarToolbar({
       href: "/(exterior)/insights",
     },
     { icon: "trending-up", label: "Graficos", href: "/(exterior)/charts" },
-    { icon: "user", label: "Perfil", href: "/(exterior)/profile" },
     { icon: "calendar", label: "Ir para hoje", onPress: onGoToToday },
-    {
-      icon: "bell",
-      label: "Notificações",
-      onPress: onNotificationsPress,
-      showBadge: hasUnreadNotifications,
-    },
-    { icon: "settings", label: "Configuracoes", href: "/(exterior)/settings" },
   ];
 
   return (
     <View style={styles.toolbar}>
       {actions.map((action) => (
-        <ToolbarButton key={action.label} action={action} />
-      ))}
-    </View>
-  );
-}
-
-function ToolbarButton({ action }: { action: ToolbarAction }) {
-  const icon = (
-    <>
-      <Feather name={action.icon} size={16} color={colors.ink} />
-      {action.showBadge ? <View style={styles.badge} /> : null}
-    </>
-  );
-
-  if (action.href) {
-    return (
-      <Link href={action.href} asChild>
         <Pressable
+          key={action.label}
           accessibilityRole="button"
           accessibilityLabel={action.label}
+          onPress={() => {
+            if (action.onPress) {
+              action.onPress();
+              return;
+            }
+
+            if (action.href) {
+              router.push(action.href);
+            }
+          }}
           style={styles.button}
         >
-          {icon}
+          <Feather name={action.icon} size={16} color={colors.ink} />
         </Pressable>
-      </Link>
-    );
-  }
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={action.label}
-      onPress={action.onPress}
-      style={styles.button}
-    >
-      {icon}
-    </Pressable>
+      ))}
+    </View>
   );
 }
 
@@ -97,14 +67,5 @@ const styles = StyleSheet.create({
     height: 16,
     alignItems: "center",
     justifyContent: "center",
-  },
-  badge: {
-    position: "absolute",
-    top: -1,
-    right: -2,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#DA1919",
   },
 });

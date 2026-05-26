@@ -6,17 +6,10 @@ import { spacing } from "@/constants/theme";
 
 type CalendarHeaderProps = {
   dateLabel: string;
-  onNotificationsPress: () => void;
   onGoToToday: () => void;
-  hasUnreadNotifications?: boolean;
 };
 
-export function CalendarHeader({
-  dateLabel,
-  onNotificationsPress,
-  onGoToToday,
-  hasUnreadNotifications,
-}: CalendarHeaderProps) {
+export function CalendarHeader({ dateLabel, onGoToToday }: CalendarHeaderProps) {
   return (
     <View style={styles.container}>
       <AppText variant="caption" tone="muted" style={styles.eyebrow}>
@@ -24,11 +17,7 @@ export function CalendarHeader({
       </AppText>
       <View style={styles.header}>
         <AppText style={styles.date}>{dateLabel}</AppText>
-        <CalendarToolbar
-          onNotificationsPress={onNotificationsPress}
-          onGoToToday={onGoToToday}
-          hasUnreadNotifications={hasUnreadNotifications}
-        />
+        <CalendarToolbar onGoToToday={onGoToToday} />
       </View>
     </View>
   );
@@ -39,7 +28,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   eyebrow: {
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   header: {
     flexDirection: "row",

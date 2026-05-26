@@ -43,6 +43,7 @@ export function VaultScrollScreen({
       ]}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled
     >
       {children}
     </ScrollView>

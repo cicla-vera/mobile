@@ -17,6 +17,7 @@ import {
   VaultHeader,
   VaultScrollScreen,
 } from "@/components/vera/vault-layout";
+import { LocationMapPicker } from "@/components/vera/location-map-picker";
 import { vaultFormStyles } from "@/components/vera/vault-form-styles";
 import { veraTheme } from "@/constants/vera-theme";
 import { colors, radius, spacing } from "@/constants/theme";
@@ -130,6 +131,17 @@ export default function VeraLocationsRoute() {
     updateFormField("radiusMeters", value.replace(/\D/g, "").slice(0, 5));
   }
 
+  function handleLocationChange(latitude: string, longitude: string) {
+    setForm((current) => ({
+      ...current,
+      latitude,
+      longitude,
+    }));
+    setFormError(null);
+    setFeedback(null);
+    resetMutationState();
+  }
+
   function handleCreateMode() {
     setEditingLocation(null);
     setForm(createEmptyForm());
@@ -165,8 +177,8 @@ export default function VeraLocationsRoute() {
       if (!permission.granted) {
         setFormError(
           permission.canAskAgain
-            ? "Permissao de localizacao negada. Voce ainda pode preencher as coordenadas manualmente."
-            : "Permissao de localizacao bloqueada. Preencha as coordenadas manualmente.",
+            ? "Permissao de localizacao negada. Toque no mapa para escolher o ponto."
+            : "Permissao de localizacao bloqueada. Toque no mapa para escolher o ponto.",
         );
         return;
       }
@@ -180,10 +192,10 @@ export default function VeraLocationsRoute() {
         latitude: formatCoordinate(currentLocation.coords.latitude),
         longitude: formatCoordinate(currentLocation.coords.longitude),
       }));
-      setFeedback("Coordenadas atuais preenchidas.");
+      setFeedback("Local atual marcado no mapa.");
     } catch {
       setFormError(
-        "Nao deu para obter sua localizacao agora. Preencha as coordenadas manualmente.",
+        "Nao deu para obter sua localizacao agora. Toque no mapa para escolher o ponto.",
       );
     } finally {
       setIsUsingCurrentLocation(false);
@@ -379,8 +391,6 @@ export default function VeraLocationsRoute() {
             value={form.type}
           />
 
-          <LocationPreview form={form} />
-
           <Pressable
             accessibilityRole="button"
             disabled={isUsingCurrentLocation || isMutating}
@@ -401,60 +411,26 @@ export default function VeraLocationsRoute() {
             <View style={styles.currentLocationCopy}>
               <AppText variant="label">Usar localizacao atual</AppText>
               <AppText variant="caption" tone="muted">
-                Se a permissao falhar, o formulario continua manual.
+                Centraliza o mapa no ponto onde voce esta agora.
               </AppText>
             </View>
           </Pressable>
 
-          <View style={styles.coordinateFields}>
-            <View style={styles.coordinateField}>
-              <TextField
-                accessibilityLabel="Latitude do local monitorado"
-                error={
-                  formError?.startsWith("Latitude") ? formError : undefined
-                }
-                inputMode="decimal"
-                keyboardType="numbers-and-punctuation"
-                label="Latitude"
-                maxLength={18}
-                onChangeText={(value) => updateFormField("latitude", value)}
-                placeholder="-3.731862"
-                returnKeyType="next"
-                value={form.latitude}
-              />
-            </View>
-
-            <View style={styles.coordinateField}>
-              <TextField
-                accessibilityLabel="Longitude do local monitorado"
-                error={
-                  formError?.startsWith("Longitude") ? formError : undefined
-                }
-                inputMode="decimal"
-                keyboardType="numbers-and-punctuation"
-                label="Longitude"
-                maxLength={18}
-                onChangeText={(value) => updateFormField("longitude", value)}
-                placeholder="-38.526669"
-                returnKeyType="next"
-                value={form.longitude}
-              />
-            </View>
-          </View>
-
-          <TextField
-            accessibilityLabel="Raio do local monitorado em metros"
-            error={formError?.startsWith("Raio") ? formError : undefined}
-            inputMode="numeric"
-            keyboardType="number-pad"
-            label="Raio em metros"
-            maxLength={5}
-            onChangeText={handleRadiusChange}
-            onSubmitEditing={handleSubmit}
-            placeholder="100"
-            returnKeyType="done"
-            value={form.radiusMeters}
+          <LocationMapPicker
+            disabled={isMutating || isUsingCurrentLocation}
+            latitude={form.latitude}
+            longitude={form.longitude}
+            radiusMeters={form.radiusMeters}
+            type={form.type}
+            onLocationChange={handleLocationChange}
+            onRadiusChange={handleRadiusChange}
           />
+
+          {formError?.startsWith("Latitude") ||
+          formError?.startsWith("Longitude") ||
+          formError?.startsWith("Raio") ? (
+            <Message text={formError} compact />
+          ) : null}
 
           <View style={styles.switchRow}>
             <View style={styles.switchIcon}>
@@ -592,11 +568,11 @@ function validateAndBuildPayload(
   }
 
   if (latitude === null || latitude < -90 || latitude > 90) {
-    return "Latitude deve ser um numero entre -90 e 90.";
+    return "Toque no mapa para escolher um ponto valido.";
   }
 
   if (longitude === null || longitude < -180 || longitude > 180) {
-    return "Longitude deve ser um numero entre -180 e 180.";
+    return "Toque no mapa para escolher um ponto valido.";
   }
 
   if (
@@ -710,43 +686,6 @@ function TypeOption({
         {label}
       </AppText>
     </Pressable>
-  );
-}
-
-function LocationPreview({ form }: { form: LocationFormState }) {
-  const hasCoordinates = Boolean(form.latitude.trim() && form.longitude.trim());
-
-  return (
-    <View style={styles.preview}>
-      <View style={styles.previewGrid}>
-        <View style={styles.previewLineHorizontal} />
-        <View style={styles.previewLineVertical} />
-        <View
-          style={[
-            styles.previewRadius,
-            form.type === "TRUSTED" && styles.previewRadiusTrusted,
-          ]}
-        />
-        <View
-          style={[
-            styles.previewPin,
-            form.type === "TRUSTED" && styles.previewPinTrusted,
-          ]}
-        >
-          <Feather name="map-pin" size={22} color={colors.ink} />
-        </View>
-      </View>
-      <View style={styles.previewCopy}>
-        <AppText variant="label">
-          {form.type === "RISK" ? "Zona de risco" : "Local confiavel"}
-        </AppText>
-        <AppText variant="caption" tone="muted">
-          {hasCoordinates
-            ? `${form.latitude || "-"}, ${form.longitude || "-"}`
-            : "Coordenadas pendentes"}
-        </AppText>
-      </View>
-    </View>
   );
 }
 
@@ -1001,65 +940,6 @@ const styles = StyleSheet.create({
   typeOptionTextActive: {
     color: colors.ink,
   },
-  preview: {
-    minHeight: 132,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(20, 16, 17, 0.1)",
-    borderRadius: radius.sm,
-    backgroundColor: colors.white,
-  },
-  previewGrid: {
-    minHeight: 92,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.shell,
-  },
-  previewLineHorizontal: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: "50%",
-    height: 1,
-    backgroundColor: "rgba(20, 16, 17, 0.08)",
-  },
-  previewLineVertical: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: "50%",
-    width: 1,
-    backgroundColor: "rgba(20, 16, 17, 0.08)",
-  },
-  previewRadius: {
-    width: 68,
-    height: 68,
-    borderWidth: 2,
-    borderColor: colors.coral,
-    borderRadius: 34,
-    backgroundColor: "rgba(242, 97, 126, 0.14)",
-  },
-  previewRadiusTrusted: {
-    borderColor: colors.mint,
-    backgroundColor: "rgba(142, 207, 184, 0.24)",
-  },
-  previewPin: {
-    position: "absolute",
-    width: 44,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 17,
-    backgroundColor: colors.coral,
-  },
-  previewPinTrusted: {
-    backgroundColor: colors.mint,
-  },
-  previewCopy: {
-    gap: 2,
-    paddingHorizontal: spacing[3],
-    paddingVertical: spacing[3],
-  },
   currentLocationButton: {
     minHeight: 64,
     flexDirection: "row",
@@ -1082,12 +962,6 @@ const styles = StyleSheet.create({
   currentLocationCopy: {
     flex: 1,
     gap: 2,
-  },
-  coordinateFields: {
-    gap: spacing[3],
-  },
-  coordinateField: {
-    minWidth: 0,
   },
   locationCard: {
     gap: spacing[4],

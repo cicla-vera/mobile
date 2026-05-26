@@ -1,0 +1,73 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
+
+import { cyclesService } from "@/services/cycles.service";
+import { queryClient } from "@/services/query-client";
+import { useAuthStore } from "@/stores/auth.store";
+import type { CreateCycleRequest, UpdateCycleRequest } from "@/types/api.types";
+
+export const cyclesQueryKey = ["cycles"] as const;
+export const cyclePredictionQueryKey = [
+  ...cyclesQueryKey,
+  "prediction",
+] as const;
+export const cycleHistoryQueryKey = [...cyclesQueryKey, "history"] as const;
+export const monthlySummaryQueryKey = (month: string) =>
+  [...cyclesQueryKey, "monthly-summary", month] as const;
+
+export function useCyclesQuery() {
+  return useQuery({
+    queryKey: cyclesQueryKey,
+    queryFn: cyclesService.findCycles,
+  });
+}
+
+export function useCyclePredictionQuery() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery({
+    queryKey: cyclePredictionQueryKey,
+    queryFn: cyclesService.predictCycle,
+    enabled: isAuthenticated,
+  });
+}
+
+export function useCycleHistoryQuery() {
+  return useQuery({
+    queryKey: cycleHistoryQueryKey,
+    queryFn: cyclesService.getCycleHistory,
+  });
+}
+
+export function useMonthlySummaryQuery(month: string) {
+  return useQuery({
+    queryKey: monthlySummaryQueryKey(month),
+    queryFn: () => cyclesService.getMonthlySummary(month),
+  });
+}
+
+export function useCreateCycleMutation() {
+  return useMutation({
+    mutationKey: [...cyclesQueryKey, "create"],
+    mutationFn: (payload: CreateCycleRequest) =>
+      cyclesService.createCycle(payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: cyclesQueryKey });
+    },
+  });
+}
+
+export function useUpdateCycleMutation() {
+  return useMutation({
+    mutationKey: [...cyclesQueryKey, "update"],
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateCycleRequest;
+    }) => cyclesService.updateCycle(id, payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: cyclesQueryKey });
+    },
+  });
+}

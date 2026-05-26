@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { colors, radius, shadow, spacing } from '@/constants/theme';
+import { colors, radius, spacing, surfaces } from '@/constants/theme';
 import { getApiErrorMessage } from '@/services/api-error';
 import type { CyclePrediction } from '@/types/api.types';
 import {
@@ -119,15 +119,7 @@ const styles = StyleSheet.create({
     marginTop: spacing[5],
     marginHorizontal: spacing[6],
     padding: spacing[5],
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(20, 16, 17, 0.08)',
-    backgroundColor: 'rgba(255, 255, 255, 0.78)',
-    shadowColor: shadow.color,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 14,
-    elevation: 3,
+    ...surfaces.card,
   },
   header: {
     flexDirection: 'row',
@@ -167,8 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing[2],
     padding: spacing[3],
-    borderRadius: radius.sm,
-    backgroundColor: 'rgba(255, 245, 236, 0.78)',
+    ...surfaces.inset,
   },
   metricWide: {
     minWidth: 200,

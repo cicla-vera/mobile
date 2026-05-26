@@ -406,3 +406,23 @@ export type SaveDailyLogRequest = {
   }>;
   note?: string;
 };
+
+export type NotificationSettings = {
+  id: string;
+  userId: string;
+  periodReminder: boolean;
+  ovulationReminder: boolean;
+  medicationReminder: boolean;
+  waterReminder: boolean;
+  reminderHour: number;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UpdateNotificationSettingsRequest = {
+  periodReminder?: boolean;
+  ovulationReminder?: boolean;
+  medicationReminder?: boolean;
+  waterReminder?: boolean;
+  reminderHour?: number;
+};

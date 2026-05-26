@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     alignSelf: 'stretch',
-    marginTop: spacing[5],
+    marginTop: spacing[6],
   },
   loader: {
     marginVertical: spacing[4],

@@ -757,6 +757,7 @@ const styles = StyleSheet.create({
   },
   primaryAction: {
     alignSelf: 'stretch',
+    marginTop: spacing[6],
   },
   secondaryAction: {
     alignSelf: 'stretch',

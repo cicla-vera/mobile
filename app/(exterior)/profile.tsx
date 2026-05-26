@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ImportSourceGrid, ProfileSectionCard } from '@/components/profile';
 import { AppText, Button, Screen, TextField } from '@/components/ui';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
 import { useLogout } from '@/hooks/useAuth';
@@ -143,12 +144,42 @@ export default function ProfileRoute() {
               {initials}
             </AppText>
           </View>
+
           <View style={styles.heroCopy}>
-            <AppText variant="heading">{displayName}</AppText>
-            <AppText tone="muted" style={styles.emailText}>
-              {displayEmail}
-            </AppText>
+            <View style={styles.heroMeta}>
+              <AppText
+                variant="heading"
+                tone="cream"
+                numberOfLines={1}
+                style={styles.heroName}
+              >
+                {displayName}
+              </AppText>
+              <AppText style={styles.emailSeparator}>·</AppText>
+              <AppText
+                style={styles.emailText}
+                numberOfLines={1}
+                ellipsizeMode="middle"
+              >
+                {displayEmail}
+              </AppText>
+            </View>
           </View>
+
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Sair da conta"
+            onPress={handleLogout}
+            style={({ pressed }) => [
+              styles.logoutButton,
+              pressed && styles.logoutButtonPressed,
+            ]}
+          >
+            <Feather name="log-out" size={15} color={colors.cream} />
+            <AppText variant="caption" tone="cream" style={styles.logoutText}>
+              Sair
+            </AppText>
+          </Pressable>
         </View>
 
         <View style={styles.infoGrid}>
@@ -164,14 +195,15 @@ export default function ProfileRoute() {
           />
         </View>
 
-        <View style={styles.formCard}>
-          <View style={styles.sectionHeader}>
-            <AppText variant="label">Dados pessoais</AppText>
-            {profileQuery.isLoading ? (
+        <ProfileSectionCard
+          title="Dados pessoais"
+          subtitle="Atualize nome, telefone e nascimento."
+          trailing={
+            profileQuery.isLoading ? (
               <ActivityIndicator color={colors.blue} size="small" />
-            ) : null}
-          </View>
-
+            ) : null
+          }
+        >
           {profileQuery.isError ? (
             <View style={styles.notice}>
               <Feather name="alert-circle" size={17} color={colors.danger} />
@@ -192,24 +224,30 @@ export default function ProfileRoute() {
               autoCapitalize="words"
               autoComplete="name"
               textContentType="name"
-              placeholder="Seu nome"
+              placeholder="Maria"
             />
-            <TextField
-              label="Telefone"
-              value={phone}
-              onChangeText={setPhone}
-              autoComplete="tel"
-              keyboardType="phone-pad"
-              textContentType="telephoneNumber"
-              placeholder="(00) 00000-0000"
-            />
-            <TextField
-              label="Nascimento"
-              value={birthDate}
-              onChangeText={setBirthDate}
-              keyboardType="numbers-and-punctuation"
-              placeholder="AAAA-MM-DD"
-            />
+            <View style={styles.fieldRow}>
+              <View style={styles.fieldHalf}>
+                <TextField
+                  label="Telefone"
+                  value={phone}
+                  onChangeText={setPhone}
+                  autoComplete="tel"
+                  keyboardType="phone-pad"
+                  textContentType="telephoneNumber"
+                  placeholder="81999999999"
+                />
+              </View>
+              <View style={styles.fieldHalf}>
+                <TextField
+                  label="Nascimento"
+                  value={birthDate}
+                  onChangeText={setBirthDate}
+                  keyboardType="numbers-and-punctuation"
+                  placeholder="1990-01-01"
+                />
+              </View>
+            </View>
           </View>
 
           {formError ? (
@@ -231,96 +269,14 @@ export default function ProfileRoute() {
           >
             Salvar perfil
           </Button>
-        </View>
+        </ProfileSectionCard>
 
-        <Pressable
-          accessibilityRole="button"
-          onPress={() =>
-            router.push({
-              pathname: '/(exterior)/data-import',
-              params: { source: 'flo' },
-            })
-          }
-          style={({ pressed }) => [
-            styles.importCard,
-            pressed && styles.importCardPressed,
-          ]}
+        <ProfileSectionCard
+          title="Importar dados"
+          subtitle="Flo, Apple Health e Health Connect."
         >
-          <View style={styles.importIcon}>
-            <Feather name="upload-cloud" size={17} color={colors.blue} />
-          </View>
-          <View style={styles.importCopy}>
-            <AppText variant="label">Importar Flo</AppText>
-            <AppText variant="caption" tone="muted">
-              Trazer historico exportado do Flo.
-            </AppText>
-          </View>
-          <Feather name="chevron-right" size={18} color={colors.soft} />
-        </Pressable>
-
-        <Pressable
-          accessibilityRole="button"
-          onPress={() =>
-            router.push({
-              pathname: '/(exterior)/data-import',
-              params: { source: 'apple-health' },
-            })
-          }
-          style={({ pressed }) => [
-            styles.importCard,
-            pressed && styles.importCardPressed,
-          ]}
-        >
-          <View style={styles.importIcon}>
-            <Feather name="heart" size={17} color={colors.blue} />
-          </View>
-          <View style={styles.importCopy}>
-            <AppText variant="label">Apple Health</AppText>
-            <AppText variant="caption" tone="muted">
-              Importar export.xml do app Saude.
-            </AppText>
-          </View>
-          <Feather name="chevron-right" size={18} color={colors.soft} />
-        </Pressable>
-
-        <Pressable
-          accessibilityRole="button"
-          onPress={() =>
-            router.push({
-              pathname: '/(exterior)/data-import',
-              params: { source: 'health-connect' },
-            })
-          }
-          style={({ pressed }) => [
-            styles.importCard,
-            pressed && styles.importCardPressed,
-          ]}
-        >
-          <View style={styles.importIcon}>
-            <Feather name="activity" size={17} color={colors.blue} />
-          </View>
-          <View style={styles.importCopy}>
-            <AppText variant="label">Health Connect</AppText>
-            <AppText variant="caption" tone="muted">
-              Importar JSON do Saude Connect.
-            </AppText>
-          </View>
-          <Feather name="chevron-right" size={18} color={colors.soft} />
-        </Pressable>
-
-        <Pressable
-          accessibilityRole="button"
-          onPress={handleLogout}
-          style={({ pressed }) => [
-            styles.logoutButton,
-            pressed && styles.logoutButtonPressed,
-          ]}
-        >
-          <Feather name="log-out" size={17} color={colors.danger} />
-          <AppText variant="label" style={styles.logoutText}>
-            Sair da conta
-          </AppText>
-        </Pressable>
+          <ImportSourceGrid />
+        </ProfileSectionCard>
       </ScrollView>
     </Screen>
   );
@@ -341,10 +297,15 @@ function InfoPill({
         <Feather name={icon} size={14} color={colors.blue} />
       </View>
       <View style={styles.infoCopy}>
-        <AppText variant="caption" tone="muted">
+        <AppText variant="caption" tone="muted" numberOfLines={1}>
           {label}
         </AppText>
-        <AppText variant="label">{value}</AppText>
+        <AppText variant="caption" tone="muted">
+          {' · '}
+        </AppText>
+        <AppText variant="label" numberOfLines={1} style={styles.infoValue}>
+          {value}
+        </AppText>
       </View>
     </View>
   );
@@ -407,11 +368,12 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: spacing[5],
+    gap: spacing[5],
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: spacing[3],
   },
   iconButton: {
     width: 42,
@@ -427,9 +389,8 @@ const styles = StyleSheet.create({
   heroCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing[4],
-    marginTop: spacing[5],
-    padding: spacing[5],
+    gap: spacing[3],
+    padding: spacing[4],
     borderRadius: radius.md,
     backgroundColor: colors.blue,
     shadowColor: shadow.color,
@@ -439,33 +400,54 @@ const styles = StyleSheet.create({
     elevation: shadow.elevation,
   },
   avatar: {
-    width: 66,
-    height: 66,
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 33,
+    borderRadius: 28,
     backgroundColor: colors.pink,
   },
   heroCopy: {
     flex: 1,
+    minWidth: 0,
+    justifyContent: 'center',
+  },
+  heroMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    columnGap: spacing[2],
+    rowGap: spacing[1],
+  },
+  heroName: {
+    flexShrink: 1,
+  },
+  emailSeparator: {
+    color: 'rgba(255, 245, 236, 0.48)',
+    fontSize: 16,
+    lineHeight: 24,
   },
   emailText: {
+    flexShrink: 1,
     color: 'rgba(255, 245, 236, 0.72)',
-    marginTop: spacing[1],
+    fontSize: 14,
+    lineHeight: 20,
   },
   infoGrid: {
     flexDirection: 'row',
     gap: spacing[3],
-    marginTop: spacing[4],
   },
   infoPill: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[3],
-    padding: spacing[4],
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
+    borderWidth: 1,
+    borderColor: 'rgba(20, 16, 17, 0.08)',
     borderRadius: radius.sm,
-    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+    backgroundColor: colors.white,
   },
   infoIcon: {
     width: 34,
@@ -477,26 +459,18 @@ const styles = StyleSheet.create({
   },
   infoCopy: {
     flex: 1,
-  },
-  formCard: {
-    marginTop: spacing[5],
-    padding: spacing[5],
-    borderWidth: 1,
-    borderColor: 'rgba(20, 16, 17, 0.08)',
-    borderRadius: radius.md,
-    backgroundColor: colors.white,
-  },
-  sectionHeader: {
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing[4],
+    flexWrap: 'wrap',
+  },
+  infoValue: {
+    flexShrink: 1,
   },
   notice: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
-    marginBottom: spacing[4],
     padding: spacing[3],
     borderRadius: radius.sm,
     backgroundColor: 'rgba(180, 35, 66, 0.08)',
@@ -508,58 +482,37 @@ const styles = StyleSheet.create({
   fields: {
     gap: spacing[4],
   },
+  fieldRow: {
+    flexDirection: 'row',
+    gap: spacing[3],
+  },
+  fieldHalf: {
+    flex: 1,
+  },
   formError: {
-    marginTop: spacing[4],
     color: colors.danger,
   },
   formFeedback: {
-    marginTop: spacing[4],
     color: colors.blue,
   },
   saveButton: {
     alignSelf: 'stretch',
-    marginTop: spacing[5],
-  },
-  importCard: {
-    minHeight: 68,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[3],
-    marginTop: spacing[5],
-    padding: spacing[4],
-    borderWidth: 1,
-    borderColor: 'rgba(20, 16, 17, 0.08)',
-    borderRadius: radius.sm,
-    backgroundColor: 'rgba(255, 255, 255, 0.72)',
-  },
-  importCardPressed: {
-    opacity: 0.72,
-  },
-  importIcon: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 18,
-    backgroundColor: colors.shell,
-  },
-  importCopy: {
-    flex: 1,
+    marginTop: spacing[6],
   },
   logoutButton: {
-    minHeight: 50,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing[2],
-    marginTop: spacing[5],
-    borderRadius: radius.pill,
-    backgroundColor: 'rgba(180, 35, 66, 0.08)',
+    gap: spacing[1],
+    minWidth: 52,
+    paddingHorizontal: spacing[2],
+    paddingVertical: spacing[2],
+    borderRadius: radius.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
   },
   logoutButtonPressed: {
     opacity: 0.72,
   },
   logoutText: {
-    color: colors.danger,
+    textAlign: 'center',
   },
 });

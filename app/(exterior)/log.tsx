@@ -357,7 +357,7 @@ export default function DailyLogRoute() {
               setSavedMessage(null);
               setNote(value);
             }}
-            placeholder="Escreva algo curto sobre o dia..."
+            placeholder="Nota do dia..."
             placeholderTextColor={colors.soft}
             style={styles.noteInput}
             textAlignVertical="top"
@@ -671,8 +671,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     color: colors.ink,
     fontSize: 15,
-    lineHeight: 21,
-    paddingHorizontal: spacing[4],
+    lineHeight: 20,
+    paddingHorizontal: spacing[3],
     paddingVertical: spacing[3],
   },
   error: {
@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
     color: colors.blue,
   },
   saveButton: {
-    marginTop: spacing[5],
+    marginTop: spacing[6],
     alignSelf: 'stretch',
   },
   summary: {

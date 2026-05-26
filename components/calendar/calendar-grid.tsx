@@ -72,7 +72,7 @@ export function CalendarGrid({
 
 const styles = StyleSheet.create({
   calendar: {
-    marginTop: spacing[4],
+    marginTop: 0,
   },
   topDivider: {
     height: 1,

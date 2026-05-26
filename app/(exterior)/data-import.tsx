@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     gap: spacing[3],
-    marginTop: spacing[5],
+    marginTop: spacing[6],
   },
   actionButton: {
     alignSelf: 'stretch',

@@ -13,6 +13,7 @@ import {
   PeriodMarkingCard,
 } from "@/components/calendar";
 import { DayDetailsSection } from "@/components/day";
+import { ActiveAlertIndicator } from "@/components/vera/active-alert-indicator";
 import { MOCK_NOTIFICATIONS } from "@/constants/notifications";
 import { Screen } from "@/components/ui/screen";
 import { spacing } from "@/constants/theme";
@@ -162,6 +163,7 @@ export default function HomePreviewRoute() {
             onNotificationsPress={() => setNotificationsVisible(true)}
             hasUnreadNotifications={hasUnreadNotifications}
           />
+          <ActiveAlertIndicator variant="exterior" />
           <View style={styles.heroBlock}>
             <CalendarWelcomeHeader />
             <MoodCheckIn dateKey={selectedDateKey} />

@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Screen } from '@/components/ui/screen';
+import { ActiveAlertIndicator } from '@/components/vera/active-alert-indicator';
 import { VaultActionRow, VaultHomeHeader } from '@/components/vera/vault-layout';
 import {
   VaultContactsRow,
@@ -45,6 +46,11 @@ export default function InteriorIndexRoute() {
         <VaultHomeHeader
           onLock={handleLock}
           onSettings={() => router.push('/(interior)/settings')}
+        />
+
+        <ActiveAlertIndicator
+          variant="interior"
+          style={styles.headerStatus}
         />
 
         <View style={styles.section}>
@@ -125,5 +131,8 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: spacing[1],
+  },
+  headerStatus: {
+    marginHorizontal: spacing[6],
   },
 });

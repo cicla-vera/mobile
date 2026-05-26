@@ -1,17 +1,18 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { cyclesService } from '@/services/cycles.service';
-import { queryClient } from '@/services/query-client';
-import type { CreateCycleRequest, UpdateCycleRequest } from '@/types/api.types';
+import { cyclesService } from "@/services/cycles.service";
+import { queryClient } from "@/services/query-client";
+import { useAuthStore } from "@/stores/auth.store";
+import type { CreateCycleRequest, UpdateCycleRequest } from "@/types/api.types";
 
-export const cyclesQueryKey = ['cycles'] as const;
+export const cyclesQueryKey = ["cycles"] as const;
 export const cyclePredictionQueryKey = [
   ...cyclesQueryKey,
-  'prediction',
+  "prediction",
 ] as const;
-export const cycleHistoryQueryKey = [...cyclesQueryKey, 'history'] as const;
+export const cycleHistoryQueryKey = [...cyclesQueryKey, "history"] as const;
 export const monthlySummaryQueryKey = (month: string) =>
-  [...cyclesQueryKey, 'monthly-summary', month] as const;
+  [...cyclesQueryKey, "monthly-summary", month] as const;
 
 export function useCyclesQuery() {
   return useQuery({
@@ -21,9 +22,12 @@ export function useCyclesQuery() {
 }
 
 export function useCyclePredictionQuery() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   return useQuery({
     queryKey: cyclePredictionQueryKey,
     queryFn: cyclesService.predictCycle,
+    enabled: isAuthenticated,
   });
 }
 
@@ -43,7 +47,7 @@ export function useMonthlySummaryQuery(month: string) {
 
 export function useCreateCycleMutation() {
   return useMutation({
-    mutationKey: [...cyclesQueryKey, 'create'],
+    mutationKey: [...cyclesQueryKey, "create"],
     mutationFn: (payload: CreateCycleRequest) =>
       cyclesService.createCycle(payload),
     onSuccess: async () => {
@@ -54,7 +58,7 @@ export function useCreateCycleMutation() {
 
 export function useUpdateCycleMutation() {
   return useMutation({
-    mutationKey: [...cyclesQueryKey, 'update'],
+    mutationKey: [...cyclesQueryKey, "update"],
     mutationFn: ({
       id,
       payload,

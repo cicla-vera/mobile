@@ -1,20 +1,21 @@
-import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import {
   CalendarGrid,
   CalendarHeader,
+  CalendarWelcomeHeader,
+  VeraAccessEntry,
   CyclePredictionCard,
   MoodCheckIn,
   NotificationsModal,
   PeriodMarkingCard,
 } from "@/components/calendar";
+import { DayDetailsSection } from "@/components/day";
 import { MOCK_NOTIFICATIONS } from "@/constants/notifications";
-import { AppText } from "@/components/ui/app-text";
 import { Screen } from "@/components/ui/screen";
-import { colors, radius, spacing } from "@/constants/theme";
+import { spacing } from "@/constants/theme";
 import {
   useCyclePredictionQuery,
   useCreateCycleMutation,
@@ -156,22 +157,27 @@ export default function HomePreviewRoute() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.mainSection}>
-          <CalendarHeader
-            dateLabel={formatCalendarHeading(selectedDate)}
-            onNotificationsPress={() => setNotificationsVisible(true)}
-            onGoToToday={goToToday}
-            onPrivateAccessPress={() => router.push("/(exterior)/vera-consent")}
-            hasUnreadNotifications={hasUnreadNotifications}
+          <VeraAccessEntry
+            onPress={() => router.push("/(exterior)/vera-consent")}
           />
-          <CalendarGrid
-            weeks={weeks}
-            monthLabel={formatMonthHeading(year, month)}
-            selectedDateKey={selectedDateKey}
-            onSelectDate={selectDate}
-            onPreviousMonth={() => shiftVisibleMonth(-1)}
-            onNextMonth={() => shiftVisibleMonth(1)}
-            onGoToToday={goToToday}
-          />
+          <CalendarWelcomeHeader />
+          <View style={styles.calendarBlock}>
+            <CalendarHeader
+              dateLabel={formatCalendarHeading(selectedDate)}
+              onNotificationsPress={() => setNotificationsVisible(true)}
+              onGoToToday={goToToday}
+              hasUnreadNotifications={hasUnreadNotifications}
+            />
+            <CalendarGrid
+              weeks={weeks}
+              monthLabel={formatMonthHeading(year, month)}
+              selectedDateKey={selectedDateKey}
+              onSelectDate={selectDate}
+              onPreviousMonth={() => shiftVisibleMonth(-1)}
+              onNextMonth={() => shiftVisibleMonth(1)}
+              onGoToToday={goToToday}
+            />
+          </View>
         </View>
 
         <CyclePredictionCard
@@ -191,34 +197,7 @@ export default function HomePreviewRoute() {
           onMarkEnd={handleMarkPeriodEnd}
         />
 
-        <Pressable
-          accessibilityRole="button"
-          onPress={() =>
-            router.push({
-              pathname: "/(exterior)/day",
-              params: { date: selectedDateKey },
-            })
-          }
-          style={({ pressed }) => [
-            styles.dayDetailsCard,
-            pressed && styles.dayDetailsPressed,
-          ]}
-        >
-          <View style={styles.dayDetailsIcon}>
-            <Feather name="calendar" size={18} color={colors.cream} />
-          </View>
-          <View style={styles.dayDetailsCopy}>
-            <AppText variant="label">Detalhes do dia</AppText>
-            <AppText
-              variant="caption"
-              tone="muted"
-              style={styles.dayDetailsText}
-            >
-              Veja humor, fluxo, sintomas e notas de {selectedDateKey}.
-            </AppText>
-          </View>
-          <Feather name="chevron-right" size={18} color={colors.soft} />
-        </Pressable>
+        <DayDetailsSection dateKey={selectedDateKey} />
 
         <MoodCheckIn dateKey={selectedDateKey} />
       </ScrollView>
@@ -240,40 +219,14 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    paddingTop: spacing[8],
+    paddingTop: spacing[10],
     paddingBottom: spacing[10],
   },
   mainSection: {
     paddingHorizontal: spacing[6],
+    gap: spacing[6],
   },
-  dayDetailsCard: {
-    minHeight: 78,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing[3],
-    marginTop: spacing[5],
-    marginHorizontal: spacing[6],
-    padding: spacing[4],
-    borderWidth: 1,
-    borderColor: "rgba(20, 16, 17, 0.08)",
-    borderRadius: radius.sm,
-    backgroundColor: "rgba(255, 255, 255, 0.74)",
-  },
-  dayDetailsPressed: {
-    opacity: 0.72,
-  },
-  dayDetailsIcon: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    backgroundColor: colors.blue,
-  },
-  dayDetailsCopy: {
-    flex: 1,
-  },
-  dayDetailsText: {
-    marginTop: 2,
+  calendarBlock: {
+    gap: spacing[1],
   },
 });

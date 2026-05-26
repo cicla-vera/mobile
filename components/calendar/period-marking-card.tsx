@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, radius, spacing, surfaces } from '@/constants/theme';
 import type { CycleLog } from '@/types/api.types';
 import {
   compareDateKeys,
@@ -244,10 +244,7 @@ const styles = StyleSheet.create({
     marginTop: spacing[5],
     marginHorizontal: spacing[6],
     padding: spacing[5],
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(20, 16, 17, 0.08)',
-    backgroundColor: 'rgba(255, 255, 255, 0.68)',
+    ...surfaces.card,
   },
   header: {
     flexDirection: 'row',

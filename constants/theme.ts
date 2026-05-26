@@ -78,10 +78,36 @@ export const shadow = {
   elevation: 5,
 } as const;
 
+export const surfaces = {
+  card: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: 'rgba(47, 37, 34, 0.1)',
+    borderRadius: radius.md,
+    shadowColor: shadow.color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  inset: {
+    backgroundColor: colors.cream,
+    borderWidth: 1,
+    borderColor: 'rgba(47, 37, 34, 0.08)',
+    borderRadius: radius.sm,
+  },
+} as const;
+
+export const formLayout = {
+  saveButtonTop: spacing[6],
+} as const;
+
 export const theme = {
   colors,
   spacing,
   radius,
   typography,
   shadow,
+  surfaces,
+  formLayout,
 } as const;

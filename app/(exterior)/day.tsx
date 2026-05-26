@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Button, Screen } from '@/components/ui';
+import { DayLogActionGrid } from '@/components/day';
+import { AppText, Screen } from '@/components/ui';
 import { FLOW_CHOICES, MOOD_CHOICES } from '@/constants/daily-log';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
 import { useCyclePredictionQuery, useCyclesQuery } from '@/hooks/useCycles';
@@ -67,62 +68,6 @@ export default function DayDetailsRoute() {
       cyclesQuery.refetch(),
       cyclePredictionQuery.refetch(),
     ]);
-  }
-
-  function goToLog() {
-    router.push({
-      pathname: '/(exterior)/log',
-      params: { date: dateKey },
-    });
-  }
-
-  function goToTemperature() {
-    router.push({
-      pathname: '/(exterior)/temperature',
-      params: { date: dateKey },
-    });
-  }
-
-  function goToWeight() {
-    router.push({
-      pathname: '/(exterior)/weight',
-      params: { date: dateKey },
-    });
-  }
-
-  function goToWater() {
-    router.push({
-      pathname: '/(exterior)/water',
-      params: { date: dateKey },
-    });
-  }
-
-  function goToActivity() {
-    router.push({
-      pathname: '/(exterior)/activity',
-      params: { date: dateKey },
-    });
-  }
-
-  function goToSleep() {
-    router.push({
-      pathname: '/(exterior)/sleep',
-      params: { date: dateKey },
-    });
-  }
-
-  function goToIntercourse() {
-    router.push({
-      pathname: '/(exterior)/intercourse',
-      params: { date: dateKey },
-    });
-  }
-
-  function goToMedications() {
-    router.push({
-      pathname: '/(exterior)/medications',
-      params: { date: dateKey },
-    });
   }
 
   return (
@@ -248,58 +193,10 @@ export default function DayDetailsRoute() {
           )}
         </View>
 
-        <Button onPress={goToLog} style={styles.actionButton}>
-          Adicionar registro
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={goToTemperature}
-          style={styles.secondaryActionButton}
-        >
-          Registrar temperatura
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={goToWeight}
-          style={styles.secondaryActionButton}
-        >
-          Registrar peso
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={goToWater}
-          style={styles.secondaryActionButton}
-        >
-          Registrar agua
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={goToActivity}
-          style={styles.secondaryActionButton}
-        >
-          Registrar atividade
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={goToSleep}
-          style={styles.secondaryActionButton}
-        >
-          Registrar sono
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={goToIntercourse}
-          style={styles.secondaryActionButton}
-        >
-          Registrar relacao
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={goToMedications}
-          style={styles.secondaryActionButton}
-        >
-          Registrar medicamento
-        </Button>
+        <View style={styles.actionsSection}>
+          <SectionHeader title="Registrar" detail="atalhos do dia" />
+          <DayLogActionGrid dateKey={dateKey} variant="full" />
+        </View>
       </ScrollView>
     </Screen>
   );
@@ -747,12 +644,21 @@ const styles = StyleSheet.create({
     marginTop: spacing[1],
   },
   section: {
-    marginTop: spacing[5],
+    marginTop: spacing[6],
     padding: spacing[5],
     borderWidth: 1,
     borderColor: 'rgba(20, 16, 17, 0.08)',
     borderRadius: radius.md,
     backgroundColor: colors.white,
+  },
+  actionsSection: {
+    marginTop: spacing[6],
+    padding: spacing[5],
+    borderWidth: 1,
+    borderColor: 'rgba(20, 16, 17, 0.08)',
+    borderRadius: radius.md,
+    backgroundColor: colors.white,
+    gap: spacing[4],
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -827,13 +733,5 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     flex: 1,
-  },
-  actionButton: {
-    alignSelf: 'stretch',
-    marginTop: spacing[5],
-  },
-  secondaryActionButton: {
-    alignSelf: 'stretch',
-    marginTop: spacing[3],
   },
 });

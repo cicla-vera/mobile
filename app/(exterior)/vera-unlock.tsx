@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     alignSelf: 'stretch',
+    marginTop: spacing[6],
   },
   statusText: {
     marginTop: -spacing[2],

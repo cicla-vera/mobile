@@ -3,6 +3,8 @@ export { CalendarGrid } from '@/components/calendar/calendar-grid';
 export { CalendarHeader } from '@/components/calendar/calendar-header';
 export { CalendarMonthNav } from '@/components/calendar/calendar-month-nav';
 export { CalendarToolbar } from '@/components/calendar/calendar-toolbar';
+export { CalendarWelcomeHeader } from '@/components/calendar/calendar-welcome-header';
+export { VeraAccessEntry } from '@/components/calendar/vera-access-entry';
 export { CycleInsightCard } from '@/components/calendar/cycle-insight-card';
 export { CyclePeriodCard } from '@/components/calendar/cycle-period-card';
 export { CyclePredictionCard } from '@/components/calendar/cycle-prediction-card';

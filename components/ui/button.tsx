@@ -3,11 +3,12 @@ import {
   ActivityIndicator,
   Pressable,
   StyleSheet,
+  View,
   type PressableProps,
   type ViewStyle,
 } from 'react-native';
 
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, radius, shadow, spacing } from '@/constants/theme';
 import { AppText } from '@/components/ui/app-text';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost';
@@ -22,6 +23,11 @@ type ButtonProps = PressableProps & {
 const variantStyles: Record<ButtonVariant, ViewStyle> = {
   primary: {
     backgroundColor: colors.blue,
+    shadowColor: shadow.color,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
   },
   secondary: {
     backgroundColor: colors.shell,
@@ -39,6 +45,12 @@ const labelTone: Record<ButtonVariant, 'cream' | 'ink' | 'blue'> = {
   ghost: 'blue',
 };
 
+const indicatorColor: Record<ButtonVariant, string> = {
+  primary: colors.cream,
+  secondary: colors.blue,
+  ghost: colors.blue,
+};
+
 export function Button({
   children,
   variant = 'primary',
@@ -47,28 +59,37 @@ export function Button({
   style,
   ...props
 }: ButtonProps) {
+  const isDisabled = disabled || loading;
+  const isStretch =
+    style?.width === '100%' || style?.alignSelf === 'stretch';
+
   return (
     <Pressable
       {...props}
-      disabled={disabled || loading}
+      accessibilityRole="button"
+      disabled={isDisabled}
       style={({ pressed }) => [
-        styles.base,
-        variantStyles[variant],
-        (disabled || loading) && styles.disabled,
-        pressed && !disabled && !loading && styles.pressed,
+        isStretch && styles.stretch,
         style,
-        style?.width === '100%' || style?.alignSelf === 'stretch'
-          ? styles.stretch
-          : null,
+        pressed && !isDisabled && styles.pressed,
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={colors.cream} />
-      ) : (
-        <AppText variant="label" tone={labelTone[variant]}>
-          {children}
-        </AppText>
-      )}
+      <View
+        style={[
+          styles.base,
+          variantStyles[variant],
+          isDisabled && styles.disabled,
+          isStretch && styles.fill,
+        ]}
+      >
+        {loading ? (
+          <ActivityIndicator color={indicatorColor[variant]} />
+        ) : (
+          <AppText variant="label" tone={labelTone[variant]} style={styles.label}>
+            {children}
+          </AppText>
+        )}
+      </View>
     </Pressable>
   );
 }
@@ -83,11 +104,18 @@ const styles = StyleSheet.create({
   },
   stretch: {
     alignSelf: 'stretch',
+    width: '100%',
+  },
+  fill: {
+    width: '100%',
   },
   disabled: {
-    opacity: 0.48,
+    opacity: 0.55,
   },
   pressed: {
     transform: [{ scale: 0.98 }],
+  },
+  label: {
+    textAlign: 'center',
   },
 });

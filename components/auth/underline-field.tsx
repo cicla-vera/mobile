@@ -53,12 +53,14 @@ const styles = StyleSheet.create({
   inputRow: {
     minHeight: 28,
     justifyContent: 'center',
+    width: '100%',
   },
   input: {
+    width: '100%',
     padding: 0,
     margin: 0,
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 20,
     color: colors.ink,
     fontWeight: '500',
   },

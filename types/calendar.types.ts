@@ -24,5 +24,7 @@ export type CalendarInsights = {
 export type MoodOption = {
   id: string;
   label: string;
-  image: number;
+  image?: number;
+  icon?: string;
+  iconColor?: string;
 };

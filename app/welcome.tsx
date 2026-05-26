@@ -2,7 +2,6 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Screen } from '@/components/ui';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
@@ -28,7 +27,6 @@ const highlights = [
 
 export default function WelcomeRoute() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const [loadingAction, setLoadingAction] = useState<
     'login' | 'register' | null
   >(null);
@@ -51,7 +49,7 @@ export default function WelcomeRoute() {
           styles.content,
           {
             paddingTop: spacing[7],
-            paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[6],
+            paddingBottom: spacing[8] + spacing[6],
           },
         ]}
         showsVerticalScrollIndicator={false}

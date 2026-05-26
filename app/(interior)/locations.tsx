@@ -1,14 +1,10 @@
 import { Feather } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Switch,
   View,
@@ -17,6 +13,12 @@ import {
 import { AppText } from "@/components/ui/app-text";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
+import {
+  VaultHeader,
+  VaultScrollScreen,
+} from "@/components/vera/vault-layout";
+import { vaultFormStyles } from "@/components/vera/vault-form-styles";
+import { veraTheme } from "@/constants/vera-theme";
 import { colors, radius, spacing } from "@/constants/theme";
 import {
   useCreateSafetyLocationMutation,
@@ -292,26 +294,21 @@ export default function VeraLocationsRoute() {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={styles.keyboard}
-    >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <Header />
+    <VaultScrollScreen keyboard>
+        <VaultHeader
+          title="Localizacoes"
+          subtitle="Locais onde o monitoramento sera ativado automaticamente"
+        />
 
         <View style={styles.summaryPanel}>
           <View style={styles.summaryIcon}>
             <Feather name="map-pin" size={20} color={colors.ink} />
           </View>
           <View style={styles.summaryCopy}>
-            <AppText variant="label" tone="cream">
+            <AppText variant="label" tone="ink">
               {activeCount} locais ativos
             </AppText>
-            <AppText variant="caption" style={styles.darkMuted}>
+            <AppText variant="caption" style={styles.mutedText}>
               {inactiveCount > 0
                 ? `${inactiveCount} locais inativos ficam fora do monitoramento.`
                 : `${riskCount} zonas de risco ativas.`}
@@ -322,7 +319,7 @@ export default function VeraLocationsRoute() {
         {locationsQuery.isLoading ? (
           <View style={styles.loadingPanel}>
             <ActivityIndicator color={colors.mint} size="large" />
-            <AppText variant="caption" style={styles.darkMuted}>
+            <AppText variant="caption" style={styles.mutedText}>
               Carregando locais...
             </AppText>
           </View>
@@ -464,7 +461,7 @@ export default function VeraLocationsRoute() {
               <Feather
                 name={form.enabled ? "check-circle" : "minus-circle"}
                 size={17}
-                color={colors.cream}
+                color={colors.ink}
               />
             </View>
             <View style={styles.switchCopy}>
@@ -522,11 +519,11 @@ export default function VeraLocationsRoute() {
         <View style={styles.listSection}>
           <View style={styles.listHeader}>
             <View>
-              <AppText variant="label" tone="pink" style={styles.eyebrow}>
-                Lista
-              </AppText>
-              <AppText variant="heading" tone="cream">
+              <AppText variant="label" style={styles.listTitle}>
                 Locais cadastrados
+              </AppText>
+              <AppText variant="caption" style={styles.mutedText}>
+                Toque para editar ou desativar um local.
               </AppText>
             </View>
             <Pressable
@@ -541,9 +538,9 @@ export default function VeraLocationsRoute() {
               ]}
             >
               {locationsQuery.isFetching ? (
-                <ActivityIndicator color={colors.cream} />
+                <ActivityIndicator color={veraTheme.icon} />
               ) : (
-                <Feather name="refresh-cw" size={18} color={colors.cream} />
+                <Feather name="refresh-cw" size={18} color={veraTheme.icon} />
               )}
             </Pressable>
           </View>
@@ -551,10 +548,10 @@ export default function VeraLocationsRoute() {
           {!locationsQuery.isLoading && locations.length === 0 ? (
             <View style={styles.emptyState}>
               <Feather name="map" size={24} color={colors.mint} />
-              <AppText variant="label" tone="cream">
+              <AppText variant="label" tone="ink">
                 Nenhum local ainda
               </AppText>
-              <AppText variant="caption" style={styles.darkMuted}>
+              <AppText variant="caption" style={styles.mutedText}>
                 Cadastre zonas de risco ou locais confiaveis para monitoramento.
               </AppText>
             </View>
@@ -574,8 +571,7 @@ export default function VeraLocationsRoute() {
             />
           ))}
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    </VaultScrollScreen>
   );
 }
 
@@ -634,30 +630,6 @@ function parseCoordinate(value: string) {
   }
 
   return parsed;
-}
-
-function Header() {
-  return (
-    <View style={styles.header}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Voltar"
-        onPress={() => router.back()}
-        style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-      >
-        <Feather name="arrow-left" size={20} color={colors.cream} />
-      </Pressable>
-
-      <View style={styles.headerCopy}>
-        <AppText variant="label" tone="pink" style={styles.eyebrow}>
-          Vera
-        </AppText>
-        <AppText variant="title" tone="cream">
-          Locais
-        </AppText>
-      </View>
-    </View>
-  );
 }
 
 function TypeSelector({
@@ -814,7 +786,7 @@ function LocationCard({
           <Feather
             name={isRisk ? "alert-triangle" : "home"}
             size={18}
-            color={location.enabled ? colors.ink : colors.cream}
+            color={location.enabled ? colors.ink : veraTheme.icon}
           />
         </View>
 
@@ -917,7 +889,7 @@ function StatusBadge({ enabled }: { enabled: boolean }) {
       <Feather
         name={enabled ? "check" : "minus"}
         size={14}
-        color={enabled ? colors.ink : colors.cream}
+        color={enabled ? colors.ink : veraTheme.icon}
       />
       <AppText
         variant="caption"
@@ -1006,109 +978,7 @@ function formatDate(value: string) {
 }
 
 const styles = StyleSheet.create({
-  keyboard: {
-    flex: 1,
-    backgroundColor: colors.ink,
-  },
-  scroll: {
-    flex: 1,
-    backgroundColor: colors.ink,
-  },
-  content: {
-    flexGrow: 1,
-    gap: spacing[4],
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[7],
-    paddingBottom: spacing[10],
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing[4],
-    marginBottom: spacing[2],
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.16)",
-    borderRadius: 22,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
-  },
-  pressed: {
-    opacity: 0.72,
-  },
-  headerCopy: {
-    flex: 1,
-  },
-  eyebrow: {
-    textTransform: "uppercase",
-  },
-  summaryPanel: {
-    minHeight: 86,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing[3],
-    padding: spacing[4],
-    borderWidth: 1,
-    borderColor: "rgba(142, 207, 184, 0.22)",
-    borderRadius: radius.sm,
-    backgroundColor: "rgba(142, 207, 184, 0.1)",
-  },
-  summaryIcon: {
-    width: 42,
-    height: 42,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 21,
-    backgroundColor: colors.mint,
-  },
-  summaryCopy: {
-    flex: 1,
-  },
-  darkMuted: {
-    color: "rgba(255, 245, 236, 0.7)",
-  },
-  loadingPanel: {
-    minHeight: 150,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing[3],
-    borderRadius: radius.sm,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
-  },
-  panel: {
-    gap: spacing[4],
-    padding: spacing[4],
-    borderRadius: radius.sm,
-    backgroundColor: colors.cream,
-  },
-  panelTitle: {
-    textTransform: "uppercase",
-  },
-  formHeader: {
-    minHeight: 44,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: spacing[3],
-  },
-  formHeaderCopy: {
-    flex: 1,
-    gap: 2,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(20, 16, 17, 0.12)",
-    borderRadius: 20,
-    backgroundColor: colors.shell,
-  },
+  ...vaultFormStyles,
   typeSelector: {
     flexDirection: "row",
     gap: spacing[2],
@@ -1219,79 +1089,13 @@ const styles = StyleSheet.create({
   coordinateField: {
     minWidth: 0,
   },
-  switchRow: {
-    minHeight: 76,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing[3],
-  },
-  switchIcon: {
-    width: 38,
-    height: 38,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 19,
-    backgroundColor: colors.ink,
-  },
-  switchCopy: {
-    flex: 1,
-    gap: 2,
-  },
-  stretchButton: {
-    alignSelf: "stretch",
-  },
-  feedback: {
-    minHeight: 38,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing[2],
-    paddingHorizontal: spacing[3],
-    borderRadius: radius.sm,
-    backgroundColor: "rgba(142, 207, 184, 0.32)",
-  },
-  feedbackText: {
-    flex: 1,
-    color: colors.ink,
-  },
-  listSection: {
-    gap: spacing[3],
-    paddingTop: spacing[2],
-  },
-  listHeader: {
-    minHeight: 52,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: spacing[3],
-  },
-  refreshButton: {
-    width: 44,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.16)",
-    borderRadius: 22,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
-  },
-  emptyState: {
-    minHeight: 160,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing[2],
-    padding: spacing[5],
-    borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.14)",
-    borderRadius: radius.sm,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
-  },
   locationCard: {
     gap: spacing[4],
     padding: spacing[4],
     borderWidth: 1,
-    borderColor: "rgba(20, 16, 17, 0.08)",
+    borderColor: veraTheme.panelBorder,
     borderRadius: radius.sm,
-    backgroundColor: colors.cream,
+    backgroundColor: veraTheme.panelBackground,
   },
   locationCardInactive: {
     opacity: 0.74,
@@ -1318,7 +1122,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mint,
   },
   locationAvatarInactive: {
-    backgroundColor: colors.ink,
+    backgroundColor: veraTheme.chipBackgroundMuted,
   },
   locationCopy: {
     flex: 1,
@@ -1339,13 +1143,13 @@ const styles = StyleSheet.create({
     gap: spacing[2],
     paddingHorizontal: spacing[3],
     borderRadius: radius.pill,
-    backgroundColor: colors.ink,
+    backgroundColor: veraTheme.chipBackgroundMuted,
   },
   badgeActive: {
     backgroundColor: colors.mint,
   },
   badgeText: {
-    color: colors.cream,
+    color: colors.ink,
     fontWeight: "800",
   },
   badgeTextActive: {

@@ -1,14 +1,10 @@
 import { Feather } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
@@ -16,6 +12,12 @@ import {
 import { AppText } from "@/components/ui/app-text";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
+import {
+  VaultHeader,
+  VaultScrollScreen,
+} from "@/components/vera/vault-layout";
+import { vaultFormStyles } from "@/components/vera/vault-form-styles";
+import { veraTheme } from "@/constants/vera-theme";
 import { colors, radius, spacing } from "@/constants/theme";
 import {
   useActiveAlertSessionQuery,
@@ -226,21 +228,16 @@ export default function VeraAlertsRoute() {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={styles.keyboard}
-    >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <Header />
+    <VaultScrollScreen keyboard>
+        <VaultHeader
+          title="Central de alertas"
+          subtitle="Acionamento manual e acompanhamento de sessoes ativas"
+        />
 
         {activeAlertQuery.isLoading ? (
           <View style={styles.loadingPanel}>
             <ActivityIndicator color={colors.mint} size="large" />
-            <AppText variant="caption" style={styles.darkMuted}>
+            <AppText variant="caption" style={styles.mutedText}>
               Verificando alerta ativo...
             </AppText>
           </View>
@@ -294,8 +291,7 @@ export default function VeraAlertsRoute() {
             antes de iniciar ou encerrar uma sessao.
           </AppText>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    </VaultScrollScreen>
   );
 }
 
@@ -314,30 +310,6 @@ function buildStartPayload(
         }
       : {}),
   };
-}
-
-function Header() {
-  return (
-    <View style={styles.header}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Voltar"
-        onPress={() => router.back()}
-        style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-      >
-        <Feather name="arrow-left" size={20} color={colors.cream} />
-      </Pressable>
-
-      <View style={styles.headerCopy}>
-        <AppText variant="label" tone="pink" style={styles.eyebrow}>
-          Vera
-        </AppText>
-        <AppText variant="title" tone="cream">
-          Alertas
-        </AppText>
-      </View>
-    </View>
-  );
 }
 
 function ManualAlertPanel({
@@ -474,10 +446,10 @@ function ActiveAlertPanel({
           <Feather name="activity" size={22} color={colors.ink} />
         </View>
         <View style={styles.activeCopy}>
-          <AppText variant="label" tone="cream">
+          <AppText variant="label" tone="ink">
             Alerta ativo
           </AppText>
-          <AppText variant="caption" style={styles.darkMuted}>
+          <AppText variant="caption" style={styles.mutedText}>
             Iniciado em {formatDateTime(session.startedAt)}
           </AppText>
         </View>
@@ -493,9 +465,9 @@ function ActiveAlertPanel({
           ]}
         >
           {refreshing ? (
-            <ActivityIndicator color={colors.cream} />
+            <ActivityIndicator color={veraTheme.icon} />
           ) : (
-            <Feather name="refresh-cw" size={18} color={colors.cream} />
+            <Feather name="refresh-cw" size={18} color={veraTheme.icon} />
           )}
         </Pressable>
       </View>
@@ -557,7 +529,7 @@ function StatusTile({ label, value }: { label: string; value: string }) {
       <AppText variant="caption" style={styles.statusTileLabel}>
         {label}
       </AppText>
-      <AppText variant="label" tone="cream">
+      <AppText variant="label" tone="ink">
         {value}
       </AppText>
     </View>
@@ -689,63 +661,7 @@ function formatDateTime(value: string) {
 }
 
 const styles = StyleSheet.create({
-  keyboard: {
-    flex: 1,
-    backgroundColor: colors.ink,
-  },
-  scroll: {
-    flex: 1,
-    backgroundColor: colors.ink,
-  },
-  content: {
-    flexGrow: 1,
-    gap: spacing[4],
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[7],
-    paddingBottom: spacing[10],
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing[4],
-    marginBottom: spacing[2],
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.16)",
-    borderRadius: 22,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
-  },
-  pressed: {
-    opacity: 0.72,
-  },
-  headerCopy: {
-    flex: 1,
-  },
-  eyebrow: {
-    textTransform: "uppercase",
-  },
-  darkMuted: {
-    color: "rgba(255, 245, 236, 0.7)",
-  },
-  loadingPanel: {
-    minHeight: 150,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing[3],
-    borderRadius: radius.sm,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
-  },
-  panel: {
-    gap: spacing[4],
-    padding: spacing[4],
-    borderRadius: radius.sm,
-    backgroundColor: colors.cream,
-  },
+  ...vaultFormStyles,
   panelHeader: {
     minHeight: 54,
     flexDirection: "row",
@@ -825,9 +741,9 @@ const styles = StyleSheet.create({
     gap: spacing[4],
     padding: spacing[4],
     borderWidth: 1,
-    borderColor: "rgba(242, 97, 126, 0.26)",
+    borderColor: "rgba(242, 97, 126, 0.28)",
     borderRadius: radius.sm,
-    backgroundColor: "rgba(180, 35, 66, 0.18)",
+    backgroundColor: veraTheme.panelBackground,
   },
   activeHeader: {
     minHeight: 54,
@@ -848,14 +764,12 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   refreshButton: {
-    width: 42,
-    height: 42,
+    width: 40,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.16)",
-    borderRadius: 21,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
+    borderRadius: 20,
+    backgroundColor: veraTheme.backButtonBackground,
   },
   statusGrid: {
     flexDirection: "row",
@@ -869,19 +783,19 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingHorizontal: spacing[3],
     borderRadius: radius.sm,
-    backgroundColor: "rgba(255, 245, 236, 0.1)",
+    backgroundColor: veraTheme.summaryBackground,
   },
   statusTileLabel: {
-    color: "rgba(255, 245, 236, 0.66)",
+    color: veraTheme.sectionSubtitle,
     textTransform: "uppercase",
   },
   detailPanel: {
     gap: spacing[3],
     padding: spacing[3],
     borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.1)",
+    borderColor: veraTheme.panelBorder,
     borderRadius: radius.sm,
-    backgroundColor: "rgba(20, 16, 17, 0.18)",
+    backgroundColor: veraTheme.emptyBackground,
   },
   metaRow: {
     minHeight: 34,
@@ -894,10 +808,10 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   metaLabel: {
-    color: "rgba(255, 245, 236, 0.58)",
+    color: veraTheme.mutedText,
   },
   metaValue: {
-    color: colors.cream,
+    color: colors.ink,
     fontWeight: "800",
   },
   actionRow: {
@@ -926,13 +840,13 @@ const styles = StyleSheet.create({
     gap: spacing[3],
     padding: spacing[3],
     borderWidth: 1,
-    borderColor: "rgba(142, 207, 184, 0.2)",
+    borderColor: veraTheme.summaryBorder,
     borderRadius: radius.sm,
-    backgroundColor: "rgba(142, 207, 184, 0.08)",
+    backgroundColor: veraTheme.summaryBackground,
   },
   infoText: {
     flex: 1,
-    color: "rgba(255, 245, 236, 0.74)",
+    color: veraTheme.mutedText,
   },
   message: {
     flexDirection: "row",
@@ -940,7 +854,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
     padding: spacing[3],
     borderRadius: radius.sm,
-    backgroundColor: colors.cream,
+    backgroundColor: veraTheme.panelBackground,
   },
   messageCompact: {
     backgroundColor: "rgba(180, 35, 66, 0.08)",

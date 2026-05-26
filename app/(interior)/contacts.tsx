@@ -1,13 +1,9 @@
 import { Feather } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Switch,
   View,
@@ -16,6 +12,12 @@ import {
 import { AppText } from "@/components/ui/app-text";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
+import {
+  VaultHeader,
+  VaultScrollScreen,
+} from "@/components/vera/vault-layout";
+import { vaultFormStyles } from "@/components/vera/vault-form-styles";
+import { veraTheme } from "@/constants/vera-theme";
 import { colors, radius, spacing } from "@/constants/theme";
 import {
   useCreateEmergencyContactMutation,
@@ -241,26 +243,21 @@ export default function VeraContactsRoute() {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={styles.keyboard}
-    >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <Header />
+    <VaultScrollScreen keyboard>
+        <VaultHeader
+          title="Contatos de emergencia"
+          subtitle="Quem pode receber alertas caso algo ocorra com voce"
+        />
 
         <View style={styles.summaryPanel}>
           <View style={styles.summaryIcon}>
             <Feather name="phone-call" size={20} color={colors.ink} />
           </View>
           <View style={styles.summaryCopy}>
-            <AppText variant="label" tone="cream">
+            <AppText variant="label" tone="ink">
               {activeCount} contatos ativos
             </AppText>
-            <AppText variant="caption" style={styles.darkMuted}>
+            <AppText variant="caption" style={styles.mutedText}>
               {inactiveCount > 0
                 ? `${inactiveCount} contatos inativos ficam fora dos alertas.`
                 : "Prioridade menor aparece primeiro nos acionamentos."}
@@ -271,7 +268,7 @@ export default function VeraContactsRoute() {
         {contactsQuery.isLoading ? (
           <View style={styles.loadingPanel}>
             <ActivityIndicator color={colors.mint} size="large" />
-            <AppText variant="caption" style={styles.darkMuted}>
+            <AppText variant="caption" style={styles.mutedText}>
               Carregando contatos...
             </AppText>
           </View>
@@ -377,7 +374,7 @@ export default function VeraContactsRoute() {
               <Feather
                 name={form.enabled ? "check-circle" : "minus-circle"}
                 size={17}
-                color={colors.cream}
+                color={colors.ink}
               />
             </View>
             <View style={styles.switchCopy}>
@@ -434,11 +431,11 @@ export default function VeraContactsRoute() {
         <View style={styles.listSection}>
           <View style={styles.listHeader}>
             <View>
-              <AppText variant="label" tone="pink" style={styles.eyebrow}>
-                Lista
-              </AppText>
-              <AppText variant="heading" tone="cream">
+              <AppText variant="label" style={styles.listTitle}>
                 Contatos cadastrados
+              </AppText>
+              <AppText variant="caption" style={styles.mutedText}>
+                Toque para editar ou desativar um contato.
               </AppText>
             </View>
             <Pressable
@@ -453,9 +450,9 @@ export default function VeraContactsRoute() {
               ]}
             >
               {contactsQuery.isFetching ? (
-                <ActivityIndicator color={colors.cream} />
+                <ActivityIndicator color={veraTheme.icon} />
               ) : (
-                <Feather name="refresh-cw" size={18} color={colors.cream} />
+                <Feather name="refresh-cw" size={18} color={veraTheme.icon} />
               )}
             </Pressable>
           </View>
@@ -466,7 +463,7 @@ export default function VeraContactsRoute() {
               <AppText variant="label" tone="cream">
                 Nenhum contato ainda
               </AppText>
-              <AppText variant="caption" style={styles.darkMuted}>
+              <AppText variant="caption" style={styles.mutedText}>
                 Cadastre pelo menos uma pessoa confiavel para acionamentos.
               </AppText>
             </View>
@@ -486,8 +483,7 @@ export default function VeraContactsRoute() {
             />
           ))}
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    </VaultScrollScreen>
   );
 }
 
@@ -538,30 +534,6 @@ function validateAndBuildPayload(
   return payload;
 }
 
-function Header() {
-  return (
-    <View style={styles.header}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Voltar"
-        onPress={() => router.back()}
-        style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-      >
-        <Feather name="arrow-left" size={20} color={colors.cream} />
-      </Pressable>
-
-      <View style={styles.headerCopy}>
-        <AppText variant="label" tone="pink" style={styles.eyebrow}>
-          Vera
-        </AppText>
-        <AppText variant="title" tone="cream">
-          Contatos
-        </AppText>
-      </View>
-    </View>
-  );
-}
-
 function ContactCard({
   contact,
   disabled,
@@ -595,7 +567,7 @@ function ContactCard({
           <Feather
             name={contact.enabled ? "user-check" : "user-x"}
             size={18}
-            color={contact.enabled ? colors.ink : colors.cream}
+            color={contact.enabled ? colors.ink : veraTheme.icon}
           />
         </View>
 
@@ -697,7 +669,7 @@ function StatusBadge({ enabled }: { enabled: boolean }) {
       <Feather
         name={enabled ? "check" : "minus"}
         size={14}
-        color={enabled ? colors.ink : colors.cream}
+        color={enabled ? colors.ink : veraTheme.icon}
       />
       <AppText
         variant="caption"
@@ -774,46 +746,7 @@ function formatDate(value: string) {
 }
 
 const styles = StyleSheet.create({
-  keyboard: {
-    flex: 1,
-    backgroundColor: colors.ink,
-  },
-  scroll: {
-    flex: 1,
-    backgroundColor: colors.ink,
-  },
-  content: {
-    flexGrow: 1,
-    gap: spacing[4],
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[7],
-    paddingBottom: spacing[10],
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing[4],
-    marginBottom: spacing[2],
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.16)",
-    borderRadius: 22,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
-  },
-  pressed: {
-    opacity: 0.72,
-  },
-  headerCopy: {
-    flex: 1,
-  },
-  eyebrow: {
-    textTransform: "uppercase",
-  },
+  ...vaultFormStyles,
   summaryPanel: {
     minHeight: 86,
     flexDirection: "row",
@@ -821,9 +754,9 @@ const styles = StyleSheet.create({
     gap: spacing[3],
     padding: spacing[4],
     borderWidth: 1,
-    borderColor: "rgba(142, 207, 184, 0.22)",
+    borderColor: veraTheme.summaryBorder,
     borderRadius: radius.sm,
-    backgroundColor: "rgba(142, 207, 184, 0.1)",
+    backgroundColor: veraTheme.summaryBackground,
   },
   summaryIcon: {
     width: 42,
@@ -831,13 +764,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
-    backgroundColor: colors.mint,
+    backgroundColor: veraTheme.chipBackground,
   },
   summaryCopy: {
     flex: 1,
   },
-  darkMuted: {
-    color: "rgba(255, 245, 236, 0.7)",
+  mutedText: {
+    color: veraTheme.mutedText,
   },
   loadingPanel: {
     minHeight: 150,
@@ -845,13 +778,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: spacing[3],
     borderRadius: radius.sm,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
+    backgroundColor: veraTheme.loadingBackground,
   },
   panel: {
     gap: spacing[4],
     padding: spacing[4],
+    borderWidth: 1,
+    borderColor: veraTheme.panelBorder,
     borderRadius: radius.sm,
-    backgroundColor: colors.cream,
+    backgroundColor: veraTheme.panelBackground,
   },
   panelTitle: {
     textTransform: "uppercase",
@@ -898,7 +833,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
-    backgroundColor: colors.ink,
+    backgroundColor: veraTheme.chipBackgroundMuted,
   },
   switchCopy: {
     flex: 1,
@@ -931,15 +866,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: spacing[3],
   },
+  listTitle: {
+    textTransform: "uppercase",
+    color: veraTheme.sectionTitle,
+  },
   refreshButton: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.16)",
-    borderRadius: 22,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
+    borderRadius: 20,
+    backgroundColor: veraTheme.backButtonBackground,
   },
   emptyState: {
     minHeight: 160,
@@ -948,17 +885,17 @@ const styles = StyleSheet.create({
     gap: spacing[2],
     padding: spacing[5],
     borderWidth: 1,
-    borderColor: "rgba(255, 245, 236, 0.14)",
+    borderColor: veraTheme.emptyBorder,
     borderRadius: radius.sm,
-    backgroundColor: "rgba(255, 245, 236, 0.08)",
+    backgroundColor: veraTheme.emptyBackground,
   },
   contactCard: {
     gap: spacing[4],
     padding: spacing[4],
     borderWidth: 1,
-    borderColor: "rgba(20, 16, 17, 0.08)",
+    borderColor: veraTheme.panelBorder,
     borderRadius: radius.sm,
-    backgroundColor: colors.cream,
+    backgroundColor: veraTheme.panelBackground,
   },
   contactCardInactive: {
     opacity: 0.74,
@@ -979,10 +916,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
-    backgroundColor: colors.mint,
+    backgroundColor: veraTheme.chipBackground,
   },
   contactAvatarInactive: {
-    backgroundColor: colors.ink,
+    backgroundColor: veraTheme.chipBackgroundMuted,
   },
   contactCopy: {
     flex: 1,
@@ -1003,13 +940,13 @@ const styles = StyleSheet.create({
     gap: spacing[2],
     paddingHorizontal: spacing[3],
     borderRadius: radius.pill,
-    backgroundColor: colors.ink,
+    backgroundColor: veraTheme.chipBackgroundMuted,
   },
   badgeActive: {
     backgroundColor: colors.mint,
   },
   badgeText: {
-    color: colors.cream,
+    color: colors.ink,
     fontWeight: "800",
   },
   badgeTextActive: {
@@ -1060,12 +997,12 @@ const styles = StyleSheet.create({
     opacity: 0.48,
   },
   message: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing[2],
     padding: spacing[3],
     borderRadius: radius.sm,
-    backgroundColor: colors.cream,
+    backgroundColor: veraTheme.panelBackground,
   },
   messageCompact: {
     backgroundColor: "rgba(180, 35, 66, 0.08)",

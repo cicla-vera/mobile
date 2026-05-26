@@ -10,7 +10,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Screen, TextField } from '@/components/ui';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
@@ -33,7 +32,6 @@ export default function WeightRoute() {
     typeof params.date === 'string' && isDateKey(params.date)
       ? params.date
       : selectedDateKey;
-  const insets = useSafeAreaInsets();
   const [weight, setWeight] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -105,7 +103,7 @@ export default function WeightRoute() {
         style={styles.scroll}
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[6] },
+          { paddingBottom: spacing[8] + spacing[6] },
         ]}
         refreshControl={
           <RefreshControl

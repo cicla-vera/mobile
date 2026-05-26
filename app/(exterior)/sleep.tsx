@@ -10,7 +10,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Screen, TextField } from '@/components/ui';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
@@ -67,7 +66,6 @@ export default function SleepRoute() {
     typeof params.date === 'string' && isDateKey(params.date)
       ? params.date
       : selectedDateKey;
-  const insets = useSafeAreaInsets();
   const [hours, setHours] = useState('');
   const [quality, setQuality] = useState<SleepQuality>('GOOD');
   const [formError, setFormError] = useState<string | null>(null);
@@ -149,7 +147,7 @@ export default function SleepRoute() {
         style={styles.scroll}
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[6] },
+          { paddingBottom: spacing[8] + spacing[6] },
         ]}
         refreshControl={
           <RefreshControl

@@ -1,98 +1,67 @@
 import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { Screen } from '@/components/ui/screen';
+import { VaultHeader, VaultScrollScreen } from '@/components/vera/vault-layout';
+import { veraTheme } from '@/constants/vera-theme';
 import { colors, radius, spacing } from '@/constants/theme';
 
 type InteriorPlaceholderProps = {
   title: string;
+  subtitle?: string;
   detail: string;
   icon: keyof typeof Feather.glyphMap;
 };
 
 export function InteriorPlaceholder({
   title,
+  subtitle,
   detail,
   icon,
 }: InteriorPlaceholderProps) {
   return (
-    <Screen padded={false}>
-      <View style={styles.screen}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Voltar"
-          onPress={() => router.back()}
-          style={({ pressed }) => [
-            styles.backButton,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Feather name="arrow-left" size={20} color={colors.cream} />
-        </Pressable>
+    <VaultScrollScreen contentContainerStyle={styles.content}>
+      <VaultHeader title={title} subtitle={subtitle} />
 
-        <View style={styles.content}>
-          <View style={styles.mark}>
-            <Feather name={icon} size={24} color={colors.cream} />
-          </View>
-          <AppText variant="label" tone="pink" style={styles.eyebrow}>
-            Vera
-          </AppText>
-          <AppText variant="title" tone="cream" style={styles.title}>
-            {title}
-          </AppText>
-          <AppText style={styles.detail}>{detail}</AppText>
+      <View style={styles.panel}>
+        <View style={styles.mark}>
+          <Feather name={icon} size={24} color={colors.ink} />
         </View>
+        <AppText style={styles.detail}>{detail}</AppText>
       </View>
-    </Screen>
+    </VaultScrollScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[7],
-    backgroundColor: colors.ink,
+  content: {
+    flexGrow: 1,
   },
-  backButton: {
-    width: 44,
-    height: 44,
+  panel: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: spacing[4],
+    minHeight: 280,
+    padding: spacing[6],
     borderWidth: 1,
-    borderColor: 'rgba(255, 245, 236, 0.16)',
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 245, 236, 0.08)',
-  },
-  pressed: {
-    opacity: 0.72,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingBottom: spacing[16],
+    borderColor: veraTheme.panelBorder,
+    borderRadius: radius.sm,
+    backgroundColor: veraTheme.panelBackground,
   },
   mark: {
-    width: 58,
-    height: 58,
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing[5],
-    borderRadius: radius.pill,
-    backgroundColor: colors.plum,
-  },
-  eyebrow: {
-    marginBottom: spacing[2],
-    textTransform: 'uppercase',
-  },
-  title: {
-    maxWidth: 320,
+    borderRadius: 28,
+    backgroundColor: veraTheme.chipBackgroundMuted,
   },
   detail: {
-    maxWidth: 330,
-    marginTop: spacing[4],
-    color: 'rgba(255, 245, 236, 0.72)',
+    maxWidth: 300,
+    fontSize: 14,
+    lineHeight: 21,
+    textAlign: 'center',
+    color: veraTheme.mutedText,
   },
 });

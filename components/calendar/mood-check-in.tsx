@@ -1,3 +1,4 @@
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   Image,
   Pressable,
@@ -10,20 +11,15 @@ import {
 import { MOOD_OPTIONS } from "@/constants/moods";
 import { colors, radius, spacing } from "@/constants/theme";
 import { useCycleStore } from "@/stores/cycle.store";
+import type { MoodOption } from "@/types/calendar.types";
 
 type MoodOptionCardProps = {
-  label: string;
-  image: ImageSourcePropType;
+  option: MoodOption;
   selected: boolean;
   onPress: () => void;
 };
 
-function MoodOptionCard({
-  label,
-  image,
-  selected,
-  onPress,
-}: MoodOptionCardProps) {
+function MoodOptionCard({ option, selected, onPress }: MoodOptionCardProps) {
   return (
     <Pressable
       accessibilityRole="button"
@@ -32,12 +28,25 @@ function MoodOptionCard({
       style={styles.option}
     >
       <View style={[styles.card, selected && styles.cardSelected]}>
-        <Image source={image} style={styles.emoji} resizeMode="contain" />
+        {option.image ? (
+          <Image
+            source={option.image as ImageSourcePropType}
+            style={styles.emoji}
+            resizeMode="contain"
+          />
+        ) : (
+          <MaterialCommunityIcons
+            name={option.icon as keyof typeof MaterialCommunityIcons.glyphMap}
+            size={18}
+            color={option.iconColor ?? colors.ink}
+          />
+        )}
       </View>
       <Text
         style={[styles.optionLabel, selected && styles.optionLabelSelected]}
+        numberOfLines={2}
       >
-        {label}
+        {option.label}
       </Text>
     </Pressable>
   );
@@ -70,8 +79,7 @@ export function MoodCheckIn({ dateKey }: MoodCheckInProps) {
         {MOOD_OPTIONS.map((option) => (
           <MoodOptionCard
             key={option.id}
-            label={option.label}
-            image={option.image}
+            option={option}
             selected={selectedMoodId === option.id}
             onPress={() => handleSelect(option.id)}
           />
@@ -83,32 +91,34 @@ export function MoodCheckIn({ dateKey }: MoodCheckInProps) {
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: spacing[6],
-    paddingHorizontal: spacing[6],
+    gap: spacing[2],
   },
   title: {
     color: colors.soft,
-    fontSize: 16,
-    lineHeight: 29,
-    fontWeight: "400",
-    marginBottom: spacing[4],
+    fontSize: 11,
+    lineHeight: 16,
+    fontWeight: "500",
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
   },
   optionsRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: spacing[1],
   },
   option: {
-    width: 66,
+    flex: 1,
+    minWidth: 0,
     alignItems: "center",
   },
   card: {
-    width: 66,
-    height: 65,
-    borderRadius: radius.md,
+    width: "100%",
+    maxWidth: 48,
+    height: 46,
+    borderRadius: radius.sm,
     backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: "transparent",
   },
   cardSelected: {
@@ -116,14 +126,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.shell,
   },
   emoji: {
-    width: 24,
-    height: 24,
+    width: 18,
+    height: 18,
   },
   optionLabel: {
     marginTop: spacing[1],
     color: colors.ink,
-    fontSize: 10,
-    lineHeight: 18,
+    fontSize: 9,
+    lineHeight: 13,
+    textAlign: "center",
   },
   optionLabelSelected: {
     color: colors.blue,

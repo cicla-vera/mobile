@@ -10,7 +10,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Screen, TextField } from '@/components/ui';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
@@ -66,7 +65,6 @@ export default function ActivityRoute() {
     typeof params.date === 'string' && isDateKey(params.date)
       ? params.date
       : selectedDateKey;
-  const insets = useSafeAreaInsets();
   const [type, setType] = useState<ActivityType>('WALKING');
   const [intensity, setIntensity] = useState<ActivityIntensity>('LOW');
   const [duration, setDuration] = useState('');
@@ -160,7 +158,7 @@ export default function ActivityRoute() {
         style={styles.scroll}
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[6] },
+          { paddingBottom: spacing[8] + spacing[6] },
         ]}
         refreshControl={
           <RefreshControl

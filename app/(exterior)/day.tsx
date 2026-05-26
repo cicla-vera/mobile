@@ -9,7 +9,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DayLogActionGrid } from '@/components/day';
 import { AppText, Screen } from '@/components/ui';
@@ -36,7 +35,6 @@ export default function DayDetailsRoute() {
     typeof params.date === 'string' && isDateKey(params.date)
       ? params.date
       : selectedDateKey;
-  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (dateKey !== selectedDateKey) {
@@ -76,7 +74,7 @@ export default function DayDetailsRoute() {
         style={styles.scroll}
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[6] },
+          { paddingBottom: spacing[8] + spacing[6] },
         ]}
         refreshControl={
           <RefreshControl

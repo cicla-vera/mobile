@@ -4,10 +4,7 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Switch,
   View,
@@ -16,6 +13,12 @@ import {
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/text-field';
+import { vaultFormStyles } from '@/components/vera/vault-form-styles';
+import {
+  VaultHeader,
+  VaultScrollScreen,
+} from '@/components/vera/vault-layout';
+import { veraTheme } from '@/constants/vera-theme';
 import { colors, radius, spacing } from '@/constants/theme';
 import {
   useSetVeraPinMutation,
@@ -141,21 +144,16 @@ export default function VeraSettingsRoute() {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.keyboard}
-    >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <Header />
+    <VaultScrollScreen keyboard>
+        <VaultHeader
+          title="Seguranca Vera"
+          subtitle="PIN, permissoes e estado do perfil privado"
+        />
 
         {profileQuery.isLoading ? (
           <View style={styles.loadingPanel}>
             <ActivityIndicator color={colors.mint} size="large" />
-            <AppText variant="caption" style={styles.darkMuted}>
+            <AppText variant="caption" style={styles.mutedText}>
               Carregando perfil Vera...
             </AppText>
           </View>
@@ -176,10 +174,10 @@ export default function VeraSettingsRoute() {
                 <Feather name="shield" size={20} color={colors.ink} />
               </View>
               <View style={styles.summaryCopy}>
-                <AppText variant="label" tone="cream">
+                <AppText variant="label" tone="ink">
                   {profile.veraEnabled ? 'Perfil Vera ativo' : 'Perfil Vera pausado'}
                 </AppText>
-                <AppText variant="caption" style={styles.darkMuted}>
+                <AppText variant="caption" style={styles.mutedText}>
                   {profile.consentAcceptedAt
                     ? `Consentimento registrado em ${formatDate(profile.consentAcceptedAt)}`
                     : 'Consentimento ainda nao registrado'}
@@ -351,32 +349,7 @@ export default function VeraSettingsRoute() {
             </View>
           </>
         ) : null}
-      </ScrollView>
-    </KeyboardAvoidingView>
-  );
-}
-
-function Header() {
-  return (
-    <View style={styles.header}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Voltar"
-        onPress={() => router.back()}
-        style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-      >
-        <Feather name="arrow-left" size={20} color={colors.cream} />
-      </Pressable>
-
-      <View style={styles.headerCopy}>
-        <AppText variant="label" tone="pink" style={styles.eyebrow}>
-          Vera
-        </AppText>
-        <AppText variant="title" tone="cream">
-          Seguranca
-        </AppText>
-      </View>
-    </View>
+      </VaultScrollScreen>
   );
 }
 
@@ -427,7 +400,7 @@ function StatusBadge({ ok }: { ok: boolean }) {
       <Feather
         name={ok ? 'check' : 'minus'}
         size={14}
-        color={ok ? colors.ink : colors.cream}
+        color={ok ? colors.ink : veraTheme.icon}
       />
       <AppText variant="caption" style={[styles.badgeText, ok && styles.badgeTextOk]}>
         {ok ? 'Ativo' : 'Pendente'}
@@ -481,88 +454,7 @@ function formatDate(value: string | null) {
 }
 
 const styles = StyleSheet.create({
-  keyboard: {
-    flex: 1,
-    backgroundColor: colors.ink,
-  },
-  scroll: {
-    flex: 1,
-    backgroundColor: colors.ink,
-  },
-  content: {
-    flexGrow: 1,
-    gap: spacing[4],
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[7],
-    paddingBottom: spacing[10],
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[4],
-    marginBottom: spacing[2],
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 245, 236, 0.16)',
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 245, 236, 0.08)',
-  },
-  pressed: {
-    opacity: 0.72,
-  },
-  headerCopy: {
-    flex: 1,
-  },
-  eyebrow: {
-    textTransform: 'uppercase',
-  },
-  loadingPanel: {
-    minHeight: 150,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing[3],
-    borderRadius: radius.sm,
-    backgroundColor: 'rgba(255, 245, 236, 0.08)',
-  },
-  summaryPanel: {
-    minHeight: 86,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[3],
-    padding: spacing[4],
-    borderWidth: 1,
-    borderColor: 'rgba(142, 207, 184, 0.22)',
-    borderRadius: radius.sm,
-    backgroundColor: 'rgba(142, 207, 184, 0.1)',
-  },
-  summaryIcon: {
-    width: 42,
-    height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 21,
-    backgroundColor: colors.mint,
-  },
-  summaryCopy: {
-    flex: 1,
-  },
-  darkMuted: {
-    color: 'rgba(255, 245, 236, 0.7)',
-  },
-  panel: {
-    gap: spacing[4],
-    padding: spacing[4],
-    borderRadius: radius.sm,
-    backgroundColor: colors.cream,
-  },
-  panelTitle: {
-    textTransform: 'uppercase',
-  },
+  ...vaultFormStyles,
   settingRow: {
     minHeight: 76,
     flexDirection: 'row',
@@ -578,7 +470,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 19,
-    backgroundColor: colors.ink,
+    backgroundColor: veraTheme.chipBackgroundMuted,
   },
   settingCopy: {
     flex: 1,
@@ -600,13 +492,13 @@ const styles = StyleSheet.create({
     gap: spacing[2],
     paddingHorizontal: spacing[3],
     borderRadius: radius.pill,
-    backgroundColor: colors.ink,
+    backgroundColor: veraTheme.chipBackgroundMuted,
   },
   badgeOk: {
     backgroundColor: colors.mint,
   },
   badgeText: {
-    color: colors.cream,
+    color: colors.ink,
     fontWeight: '800',
   },
   badgeTextOk: {
@@ -634,7 +526,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
     padding: spacing[3],
     borderRadius: radius.sm,
-    backgroundColor: colors.cream,
+    backgroundColor: veraTheme.panelBackground,
   },
   messageCompact: {
     backgroundColor: 'rgba(180, 35, 66, 0.08)',

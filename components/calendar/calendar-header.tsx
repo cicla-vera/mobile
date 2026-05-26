@@ -18,18 +18,29 @@ export function CalendarHeader({
   hasUnreadNotifications,
 }: CalendarHeaderProps) {
   return (
-    <View style={styles.header}>
-      <AppText style={styles.date}>{dateLabel}</AppText>
-      <CalendarToolbar
-        onNotificationsPress={onNotificationsPress}
-        onGoToToday={onGoToToday}
-        hasUnreadNotifications={hasUnreadNotifications}
-      />
+    <View style={styles.container}>
+      <AppText variant="caption" tone="muted" style={styles.eyebrow}>
+        seu calendario
+      </AppText>
+      <View style={styles.header}>
+        <AppText style={styles.date}>{dateLabel}</AppText>
+        <CalendarToolbar
+          onNotificationsPress={onNotificationsPress}
+          onGoToToday={onGoToToday}
+          hasUnreadNotifications={hasUnreadNotifications}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    gap: spacing[2],
+  },
+  eyebrow: {
+    textTransform: 'uppercase',
+  },
   header: {
     flexDirection: "row",
     alignItems: "flex-end",

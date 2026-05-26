@@ -13,9 +13,6 @@ export function CalendarWelcomeHeader() {
 
   return (
     <View style={styles.container}>
-      <AppText variant="caption" tone="muted" style={styles.eyebrow}>
-        seu calendario
-      </AppText>
       <AppText variant="heading" style={styles.title}>
         {getWelcomeMessage(firstNameSource)}
       </AppText>
@@ -26,9 +23,6 @@ export function CalendarWelcomeHeader() {
 const styles = StyleSheet.create({
   container: {
     gap: spacing[2],
-  },
-  eyebrow: {
-    textTransform: 'uppercase',
   },
   title: {
     color: colors.ink,

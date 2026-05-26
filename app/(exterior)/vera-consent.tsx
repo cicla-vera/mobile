@@ -233,7 +233,7 @@ export default function VeraConsentRoute() {
           >
             <View style={[styles.checkbox, accepted && styles.checkboxActive]}>
               {accepted ? (
-                <Feather name="check" size={16} color={colors.cream} />
+                <Feather name="check" size={22} color={colors.cream} />
               ) : null}
             </View>
             <AppText style={styles.consentText}>
@@ -285,7 +285,7 @@ function PermissionRow({
     <Card style={styles.permissionCard}>
       <View style={styles.permissionTop}>
         <View style={styles.permissionIcon}>
-          <Feather name={item.icon} size={18} color={colors.cream} />
+          <Feather name={item.icon} size={22} color={colors.cream} />
         </View>
         <View style={styles.permissionCopy}>
           <AppText variant="label">{item.title}</AppText>
@@ -318,7 +318,7 @@ function PermissionRow({
             <ActivityIndicator color={colors.blue} size="small" />
           ) : (
             <>
-              <Feather name="unlock" size={15} color={colors.blue} />
+              <Feather name="unlock" size={22} color={colors.blue} />
               <AppText variant="caption" tone="blue" style={styles.buttonText}>
                 Permitir
               </AppText>
@@ -339,7 +339,7 @@ function InfoStrip({
 }) {
   return (
     <View style={styles.infoStrip}>
-      <Feather name={icon} size={17} color={colors.blue} />
+      <Feather name={icon} size={20} color={colors.blue} />
       <AppText variant="caption" tone="muted" style={styles.infoText}>
         {text}
       </AppText>
@@ -350,7 +350,7 @@ function InfoStrip({
 function Message({ text }: { text: string }) {
   return (
     <View style={styles.message}>
-      <Feather name="alert-circle" size={17} color={colors.danger} />
+      <Feather name="alert-circle" size={20} color={colors.danger} />
       <AppText variant="caption" style={styles.messageText}>
         {text}
       </AppText>
@@ -647,8 +647,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   permissionIcon: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 19,
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
   },
   statusPill: {
     minWidth: 86,
-    minHeight: 28,
+    minHeight: 44,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing[2],
@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
   },
   permissionButton: {
     minWidth: 98,
-    minHeight: 38,
+    minHeight: 48,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

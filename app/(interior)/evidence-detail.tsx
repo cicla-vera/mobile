@@ -303,7 +303,7 @@ function IntegrityPanel({
     <View style={styles.panel}>
       <View style={styles.panelHeader}>
         <View style={styles.panelIcon}>
-          <Feather name="shield" size={18} color={colors.ink} />
+          <Feather name="shield" size={22} color={colors.ink} />
         </View>
         <View style={styles.panelCopy}>
           <AppText variant="label">Integridade</AppText>
@@ -337,7 +337,7 @@ function IntegrityPanel({
         >
           <Feather
             name={verification.matches ? "check" : "alert-triangle"}
-            size={15}
+            size={22}
             color={verification.matches ? colors.ink : colors.danger}
           />
           <AppText
@@ -374,7 +374,7 @@ function RetentionPanel({ record }: { record: EvidenceRecord }) {
     <View style={styles.panel}>
       <View style={styles.panelHeader}>
         <View style={styles.panelIcon}>
-          <Feather name="eye-off" size={18} color={colors.ink} />
+          <Feather name="eye-off" size={22} color={colors.ink} />
         </View>
         <View style={styles.panelCopy}>
           <AppText variant="label">Retencao e visibilidade</AppText>
@@ -414,7 +414,7 @@ function MetadataPanel({ record }: { record: EvidenceRecord }) {
     <View style={styles.panel}>
       <View style={styles.panelHeader}>
         <View style={styles.panelIcon}>
-          <Feather name="list" size={18} color={colors.ink} />
+          <Feather name="list" size={22} color={colors.ink} />
         </View>
         <View style={styles.panelCopy}>
           <AppText variant="label">Metadados</AppText>
@@ -459,7 +459,7 @@ function AnalysisPanel({
     <View style={styles.panel}>
       <View style={styles.panelHeader}>
         <View style={styles.panelIcon}>
-          <Feather name="cpu" size={18} color={colors.ink} />
+          <Feather name="cpu" size={22} color={colors.ink} />
         </View>
         <View style={styles.panelCopy}>
           <AppText variant="label">Analise IA</AppText>
@@ -512,7 +512,7 @@ function AnalysisPanel({
           ) : null}
           {analysis.failureReason ? (
             <View style={styles.failureBox}>
-              <Feather name="alert-circle" size={16} color={colors.danger} />
+              <Feather name="alert-circle" size={22} color={colors.danger} />
               <AppText variant="caption" style={styles.failureText}>
                 {analysis.failureReason}
               </AppText>
@@ -523,7 +523,7 @@ function AnalysisPanel({
         <View style={styles.analysisEmpty}>
           <Feather
             name={evidenceIcon[record.type]}
-            size={18}
+            size={22}
             color={colors.plum}
           />
           <AppText
@@ -571,7 +571,7 @@ function InfoRow({
 }) {
   return (
     <View style={styles.infoRow}>
-      <Feather name={icon} size={15} color={colors.plum} />
+      <Feather name={icon} size={22} color={colors.plum} />
       <View style={styles.infoCopy}>
         <AppText variant="caption" tone="muted">
           {label}
@@ -611,7 +611,7 @@ function EmptyState({
 function Message({ text }: { text: string }) {
   return (
     <View style={styles.message}>
-      <Feather name="alert-circle" size={17} color={colors.danger} />
+      <Feather name="alert-circle" size={20} color={colors.danger} />
       <AppText variant="caption" style={styles.messageText}>
         {text}
       </AppText>
@@ -815,8 +815,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   panelIcon: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
@@ -863,7 +863,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   infoRow: {
-    minHeight: 36,
+    minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[3],

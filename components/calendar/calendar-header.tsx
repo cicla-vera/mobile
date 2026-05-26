@@ -17,8 +17,8 @@ export function CalendarHeader({ dateLabel, onGoToToday }: CalendarHeaderProps) 
       </AppText>
       <View style={styles.header}>
         <AppText style={styles.date}>{dateLabel}</AppText>
-        <CalendarToolbar onGoToToday={onGoToToday} />
       </View>
+      <CalendarToolbar onGoToToday={onGoToToday} />
     </View>
   );
 }
@@ -31,11 +31,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    minHeight: 58,
-    paddingBottom: spacing[1],
+    minHeight: 32,
   },
   date: {
     fontSize: 16,

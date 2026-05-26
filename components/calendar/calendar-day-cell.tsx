@@ -80,6 +80,7 @@ export function CalendarDayCell({
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected }}
+      hitSlop={6}
       onPress={onPress}
       style={({ pressed }) => [styles.wrapper, pressed && styles.pressed]}
     >
@@ -109,12 +110,12 @@ export function CalendarDayCell({
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: 28,
+    width: 32,
     alignItems: "center",
   },
   cell: {
-    width: 28,
-    height: 24,
+    width: 32,
+    height: 28,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -123,22 +124,22 @@ const styles = StyleSheet.create({
   },
   marker: {
     position: "absolute",
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
   },
   selectedRing: {
     position: "absolute",
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     borderWidth: 1.5,
     borderColor: colors.blue,
   },
   label: {
     color: colors.ink,
-    fontSize: 8,
-    lineHeight: 15,
+    fontSize: 10,
+    lineHeight: 16,
     zIndex: 1,
   },
   labelSelected: {
@@ -147,11 +148,11 @@ const styles = StyleSheet.create({
   todayLabel: {
     marginTop: 1,
     color: colors.ink,
-    fontSize: 4,
-    lineHeight: 7,
+    fontSize: 6,
+    lineHeight: 9,
   },
   todaySpacer: {
-    height: 8,
+    height: 10,
   },
   pressed: {
     opacity: 0.85,

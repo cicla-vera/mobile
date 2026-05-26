@@ -105,7 +105,7 @@ export function LocalNotificationsPanel() {
 
       {!notificationsSupported ? (
         <View style={styles.notice}>
-          <Feather name="smartphone" size={16} color={colors.muted} />
+          <Feather name="smartphone" size={22} color={colors.muted} />
           <AppText variant="caption" tone="muted" style={styles.noticeText}>
             Disponivel apenas no app iOS ou Android.
           </AppText>
@@ -114,7 +114,7 @@ export function LocalNotificationsPanel() {
 
       {permissionDenied ? (
         <View style={styles.warning}>
-          <Feather name="alert-circle" size={16} color={colors.danger} />
+          <Feather name="alert-circle" size={22} color={colors.danger} />
           <AppText variant="caption" style={styles.warningText}>
             Permissao negada. Ative nas configuracoes do sistema.
           </AppText>
@@ -123,7 +123,7 @@ export function LocalNotificationsPanel() {
 
       {feedback ? (
         <View style={styles.feedback}>
-          <Feather name="check-circle" size={16} color={colors.blue} />
+          <Feather name="check-circle" size={22} color={colors.blue} />
           <AppText variant="caption" tone="blue">
             {feedback}
           </AppText>
@@ -153,7 +153,7 @@ export function LocalNotificationsPanel() {
             styles.rescheduleButtonDisabled,
         ]}
       >
-        <Feather name="refresh-cw" size={15} color={colors.blue} />
+        <Feather name="refresh-cw" size={22} color={colors.blue} />
         <AppText variant="caption" tone="blue" style={styles.rescheduleLabel}>
           Reagendar com a previsao atual
         </AppText>
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     gap: spacing[2],
     marginTop: spacing[4],
-    minHeight: 36,
+    minHeight: 48,
     paddingHorizontal: spacing[3],
     borderRadius: radius.sm,
     backgroundColor: colors.shell,

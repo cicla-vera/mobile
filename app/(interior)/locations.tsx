@@ -356,7 +356,7 @@ export default function VeraLocationsRoute() {
                   isMutating && styles.disabledAction,
                 ]}
               >
-                <Feather name="x" size={18} color={colors.ink} />
+                <Feather name="x" size={22} color={colors.ink} />
               </Pressable>
             ) : null}
           </View>
@@ -395,7 +395,7 @@ export default function VeraLocationsRoute() {
               {isUsingCurrentLocation ? (
                 <ActivityIndicator color={colors.ink} />
               ) : (
-                <Feather name="crosshair" size={17} color={colors.ink} />
+                <Feather name="crosshair" size={20} color={colors.ink} />
               )}
             </View>
             <View style={styles.currentLocationCopy}>
@@ -460,7 +460,7 @@ export default function VeraLocationsRoute() {
             <View style={styles.switchIcon}>
               <Feather
                 name={form.enabled ? "check-circle" : "minus-circle"}
-                size={17}
+                size={20}
                 color={colors.ink}
               />
             </View>
@@ -495,7 +495,7 @@ export default function VeraLocationsRoute() {
 
           {feedback ? (
             <View style={styles.feedback}>
-              <Feather name="check" size={16} color={colors.ink} />
+              <Feather name="check" size={22} color={colors.ink} />
               <AppText variant="caption" style={styles.feedbackText}>
                 {feedback}
               </AppText>
@@ -540,7 +540,7 @@ export default function VeraLocationsRoute() {
               {locationsQuery.isFetching ? (
                 <ActivityIndicator color={veraTheme.icon} />
               ) : (
-                <Feather name="refresh-cw" size={18} color={veraTheme.icon} />
+                <Feather name="refresh-cw" size={22} color={veraTheme.icon} />
               )}
             </Pressable>
           </View>
@@ -700,7 +700,7 @@ function TypeOption({
     >
       <Feather
         name={icon}
-        size={16}
+        size={22}
         color={selected ? colors.ink : colors.muted}
       />
       <AppText
@@ -733,7 +733,7 @@ function LocationPreview({ form }: { form: LocationFormState }) {
             form.type === "TRUSTED" && styles.previewPinTrusted,
           ]}
         >
-          <Feather name="map-pin" size={16} color={colors.ink} />
+          <Feather name="map-pin" size={22} color={colors.ink} />
         </View>
       </View>
       <View style={styles.previewCopy}>
@@ -785,7 +785,7 @@ function LocationCard({
         >
           <Feather
             name={isRisk ? "alert-triangle" : "home"}
-            size={18}
+            size={22}
             color={location.enabled ? colors.ink : veraTheme.icon}
           />
         </View>
@@ -867,7 +867,7 @@ function ActionButton({
     >
       <Feather
         name={icon}
-        size={15}
+        size={22}
         color={destructive ? colors.danger : colors.blue}
       />
       <AppText
@@ -888,7 +888,7 @@ function StatusBadge({ enabled }: { enabled: boolean }) {
     <View style={[styles.badge, enabled && styles.badgeActive]}>
       <Feather
         name={enabled ? "check" : "minus"}
-        size={14}
+        size={22}
         color={enabled ? colors.ink : veraTheme.icon}
       />
       <AppText
@@ -910,7 +910,7 @@ function MetaPill({
 }) {
   return (
     <View style={styles.metaPill}>
-      <Feather name={icon} size={13} color={colors.muted} />
+      <Feather name={icon} size={22} color={colors.muted} />
       <AppText variant="caption" tone="muted">
         {text}
       </AppText>
@@ -931,7 +931,7 @@ function Message({
 }) {
   return (
     <View style={[styles.message, compact && styles.messageCompact]}>
-      <Feather name="alert-circle" size={17} color={colors.danger} />
+      <Feather name="alert-circle" size={20} color={colors.danger} />
       <AppText variant="caption" style={styles.messageText}>
         {text}
       </AppText>
@@ -1045,8 +1045,8 @@ const styles = StyleSheet.create({
   },
   previewPin: {
     position: "absolute",
-    width: 34,
-    height: 34,
+    width: 44,
+    height: 44,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 17,
@@ -1072,8 +1072,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   currentLocationIcon: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
@@ -1111,8 +1111,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   locationAvatar: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
@@ -1137,7 +1137,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   badge: {
-    minHeight: 28,
+    minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[2],
@@ -1161,7 +1161,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   metaPill: {
-    minHeight: 30,
+    minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[2],
@@ -1175,7 +1175,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   actionButton: {
-    minHeight: 38,
+    minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -1215,7 +1215,7 @@ const styles = StyleSheet.create({
     color: colors.danger,
   },
   messageAction: {
-    minHeight: 30,
+    minHeight: 44,
     justifyContent: "center",
     paddingHorizontal: spacing[2],
   },

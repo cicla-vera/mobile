@@ -134,7 +134,7 @@ export default function AlertTimelineRoute() {
             {timelineQuery.isRefetching ? (
               <ActivityIndicator color={veraTheme.icon} />
             ) : (
-              <Feather name="refresh-cw" size={18} color={veraTheme.icon} />
+              <Feather name="refresh-cw" size={22} color={veraTheme.icon} />
             )}
           </Pressable>
         }
@@ -205,7 +205,7 @@ function TimelineSummary({
     <VaultPanel>
       <View style={styles.summaryHeader}>
         <View style={styles.summaryIcon}>
-          <Feather name="activity" size={19} color={colors.ink} />
+          <Feather name="activity" size={24} color={colors.ink} />
         </View>
         <View style={styles.summaryCopy}>
           <AppText variant="label" style={styles.panelTitle}>
@@ -244,7 +244,7 @@ function TimelineEventCard({
         <View style={[styles.eventDot, { backgroundColor: copy.tone }]}>
           <Feather
             name={copy.icon}
-            size={15}
+            size={22}
             color={copy.tone === colors.mint ? colors.ink : colors.cream}
           />
         </View>
@@ -322,7 +322,7 @@ function InfoRow({
 }) {
   return (
     <View style={styles.infoRow}>
-      <Feather name={icon} size={15} color={colors.plum} />
+      <Feather name={icon} size={22} color={colors.plum} />
       <View style={styles.infoCopy}>
         <AppText variant="caption" style={styles.infoLabel}>
           {label}
@@ -338,7 +338,7 @@ function InfoRow({
 function Message({ text }: { text: string }) {
   return (
     <View style={styles.message}>
-      <Feather name="alert-circle" size={17} color={colors.danger} />
+      <Feather name="alert-circle" size={20} color={colors.danger} />
       <AppText variant="caption" style={styles.messageText}>
         {text}
       </AppText>
@@ -478,8 +478,8 @@ const styles = StyleSheet.create({
     opacity: 0.48,
   },
   refreshButton: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
@@ -495,8 +495,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   summaryIcon: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
@@ -542,7 +542,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   eventRail: {
-    width: 40,
+    width: 48,
     alignItems: "center",
   },
   railLine: {
@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   eventBadge: {
-    minHeight: 26,
+    minHeight: 44,
     justifyContent: "center",
     paddingHorizontal: spacing[2],
     borderRadius: radius.pill,
@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   infoRow: {
-    minHeight: 34,
+    minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[3],

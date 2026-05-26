@@ -38,7 +38,7 @@ export default function SettingsRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <AppText variant="caption" tone="muted" style={styles.eyebrow}>
             Configuracoes
@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,

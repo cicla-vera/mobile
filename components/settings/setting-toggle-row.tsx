@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Switch, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, iconSize, spacing, touchTarget } from '@/constants/theme';
 
 type SettingToggleRowProps = {
   icon: keyof typeof Feather.glyphMap;
@@ -24,7 +24,7 @@ export function SettingToggleRow({
   return (
     <View style={styles.row}>
       <View style={styles.iconWrap}>
-        <Feather name={icon} size={16} color={colors.blue} />
+        <Feather name={icon} size={iconSize.sm} color={colors.blue} />
       </View>
       <View style={styles.copy}>
         <AppText variant="label">{title}</AppText>
@@ -53,16 +53,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[3],
+    minHeight: touchTarget.comfortable,
     paddingVertical: spacing[4],
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(20, 16, 17, 0.06)',
   },
   iconWrap: {
-    width: 36,
-    height: 36,
+    width: touchTarget.min,
+    height: touchTarget.min,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 18,
+    borderRadius: touchTarget.min / 2,
     backgroundColor: colors.shell,
   },
   copy: {

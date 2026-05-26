@@ -73,7 +73,7 @@ export function NotificationSettingsPanel() {
 
       {errorMessage ? (
         <View style={styles.notice}>
-          <Feather name="alert-circle" size={16} color={colors.danger} />
+          <Feather name="alert-circle" size={22} color={colors.danger} />
           <AppText variant="caption" style={styles.noticeText}>
             {errorMessage}
           </AppText>
@@ -82,7 +82,7 @@ export function NotificationSettingsPanel() {
 
       {feedback ? (
         <View style={styles.feedback}>
-          <Feather name="check-circle" size={16} color={colors.blue} />
+          <Feather name="check-circle" size={22} color={colors.blue} />
           <AppText variant="caption" tone="blue">
             {feedback}
           </AppText>

@@ -1,3 +1,4 @@
+export { a11yStyles, backIconColor, iconSize, touchTarget } from '@/components/ui/a11y-styles';
 export { AppText } from '@/components/ui/app-text';
 export { Button } from '@/components/ui/button';
 export { Card } from '@/components/ui/card';

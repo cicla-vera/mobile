@@ -25,7 +25,7 @@ export function CalendarMonthNav({
         onPress={onPrevious}
         style={styles.navButton}
       >
-        <Feather name="chevron-left" size={18} color={colors.ink} />
+        <Feather name="chevron-left" size={22} color={colors.ink} />
       </Pressable>
 
       <Pressable
@@ -43,7 +43,7 @@ export function CalendarMonthNav({
         onPress={onNext}
         style={styles.navButton}
       >
-        <Feather name="chevron-right" size={18} color={colors.ink} />
+        <Feather name="chevron-right" size={22} color={colors.ink} />
       </Pressable>
     </View>
   );
@@ -58,16 +58,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[2],
   },
   navButton: {
-    width: 32,
-    height: 32,
+    width: 44,
+    height: 44,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 16,
+    borderRadius: 22,
     backgroundColor: colors.shell,
   },
   labelButton: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
+    minHeight: 44,
     paddingHorizontal: spacing[2],
   },
   label: {

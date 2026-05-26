@@ -56,7 +56,7 @@ export default function HistoryRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="blue" style={styles.eyebrow}>
@@ -79,7 +79,7 @@ export default function HistoryRoute() {
 
         {errorMessage ? (
           <View style={styles.notice}>
-            <Feather name="alert-circle" size={18} color={colors.danger} />
+            <Feather name="alert-circle" size={22} color={colors.danger} />
             <AppText variant="caption" style={styles.errorText}>
               {errorMessage}
             </AppText>
@@ -183,7 +183,7 @@ function RegularityCard({
   return (
     <View style={styles.regularityCard}>
       <View style={[styles.regularityIcon, { backgroundColor: copy.color }]}>
-        <Feather name={copy.icon} size={16} color={colors.cream} />
+        <Feather name={copy.icon} size={22} color={colors.cream} />
       </View>
       <View style={styles.regularityCopy}>
         <AppText variant="label">{copy.title}</AppText>
@@ -231,7 +231,7 @@ function SmallPill({
     <View style={[styles.pill, muted && styles.pillMuted]}>
       <Feather
         name={icon}
-        size={12}
+        size={22}
         color={muted ? colors.muted : colors.blue}
       />
       <AppText
@@ -328,8 +328,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -401,8 +401,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   regularityIcon: {
-    width: 34,
-    height: 34,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 17,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     marginTop: spacing[6],
   },
   listHeader: {
-    minHeight: 28,
+    minHeight: 44,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   pill: {
-    minHeight: 28,
+    minHeight: 44,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[1],

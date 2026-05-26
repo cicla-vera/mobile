@@ -181,7 +181,7 @@ export default function DailyLogRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="pink" style={styles.eyebrow}>
@@ -488,7 +488,7 @@ function SummaryLine({
 }) {
   return (
     <View style={styles.summaryLine}>
-      <Feather name={icon} size={14} color={colors.blue} />
+      <Feather name={icon} size={22} color={colors.blue} />
       <AppText variant="caption" style={styles.summaryText}>
         {label}
       </AppText>
@@ -524,8 +524,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   todayButton: {
-    minHeight: 36,
+    minHeight: 48,
     justifyContent: 'center',
     paddingHorizontal: spacing[4],
     borderRadius: radius.pill,
@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   moodChip: {
-    minHeight: 38,
+    minHeight: 48,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   symptomChip: {
-    minHeight: 34,
+    minHeight: 48,
     justifyContent: 'center',
     paddingHorizontal: spacing[3],
     borderRadius: radius.pill,
@@ -650,8 +650,8 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   intensityButton: {
-    width: 34,
-    height: 30,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(20, 16, 17, 0.08)',
   },
   summaryHeader: {
-    minHeight: 22,
+    minHeight: 44,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

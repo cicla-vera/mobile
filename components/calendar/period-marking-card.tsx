@@ -79,7 +79,7 @@ export function PeriodMarkingCard({
     <View style={styles.card}>
       <View style={styles.header}>
         <View style={styles.iconBubble}>
-          <Feather name="droplet" size={15} color={colors.cream} />
+          <Feather name="droplet" size={22} color={colors.cream} />
         </View>
         <View style={styles.copy}>
           <AppText variant="label" style={styles.title}>
@@ -156,7 +156,7 @@ function PeriodAction({
     >
       <Feather
         name={loading ? 'loader' : icon}
-        size={15}
+        size={22}
         color={disabled ? colors.soft : colors.blue}
       />
       <AppText
@@ -252,9 +252,9 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconBubble: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.pink,
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     marginTop: spacing[4],
   },
   action: {
-    minHeight: 38,
+    minHeight: 48,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',

@@ -77,7 +77,7 @@ export function VaultContactsRow({
         style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
       >
         <View style={[styles.avatarCircle, styles.addCircle]}>
-          <Feather name="plus" size={16} color={colors.ink} />
+          <Feather name="plus" size={22} color={colors.ink} />
         </View>
         <AppText style={styles.chipLabel}>Adicionar</AppText>
       </Pressable>
@@ -134,7 +134,7 @@ export function VaultLocationsRow({
         style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
       >
         <View style={[styles.avatarCircle, styles.addCircle]}>
-          <Feather name="plus" size={16} color={colors.ink} />
+          <Feather name="plus" size={22} color={colors.ink} />
         </View>
         <AppText style={styles.chipLabel}>Adicionar</AppText>
       </Pressable>
@@ -176,7 +176,7 @@ export function VaultRecordingsRow({ records, loading }: VaultRecordingsRowProps
           onPress={() => router.push('/(interior)/evidence')}
           style={({ pressed }) => [styles.emptyRecording, pressed && styles.pressed]}
         >
-          <Feather name="archive" size={18} color={colors.muted} />
+          <Feather name="archive" size={22} color={colors.muted} />
           <AppText style={styles.emptyRecordingText}>
             Nenhuma gravacao no cofre
           </AppText>
@@ -193,7 +193,7 @@ export function VaultRecordingsRow({ records, loading }: VaultRecordingsRowProps
             <View style={styles.recordingIcon}>
               <Feather
                 name={getRecordingIcon(record.type)}
-                size={18}
+                size={22}
                 color={colors.ink}
               />
             </View>
@@ -217,7 +217,7 @@ export function VaultHelpResourcesRow() {
       {VERA_HELP_RESOURCES.map((resource) => (
         <View key={resource.id} style={styles.helpChip}>
           <View style={styles.helpBadge}>
-            <Feather name="heart" size={14} color={colors.pink} />
+            <Feather name="heart" size={22} color={colors.pink} />
           </View>
           <AppText style={styles.helpLabel} numberOfLines={2}>
             {resource.name}
@@ -296,8 +296,8 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   recordingIcon: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
@@ -333,8 +333,8 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   helpBadge: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,

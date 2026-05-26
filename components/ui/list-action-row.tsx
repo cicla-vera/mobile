@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, iconSize, radius, spacing, touchTarget } from '@/constants/theme';
 
 type ListActionRowProps = {
   title: string;
@@ -36,7 +36,7 @@ export function ListActionRow({
       <View style={styles.row}>
         {icon ? (
           <View style={styles.icon}>
-            <Feather name={icon} size={17} color={colors.blue} />
+            <Feather name={icon} size={iconSize.sm} color={colors.blue} />
           </View>
         ) : null}
 
@@ -59,7 +59,7 @@ export function ListActionRow({
         <View style={styles.trailing}>
           <Feather
             name="chevron-right"
-            size={18}
+            size={iconSize.md}
             color={isFooter ? colors.blue : colors.soft}
           />
         </View>
@@ -79,8 +79,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     width: '100%',
+    minHeight: touchTarget.comfortable,
     paddingTop: spacing[4],
-    paddingBottom: spacing[1],
+    paddingBottom: spacing[3],
     borderTopWidth: 1,
     borderTopColor: 'rgba(20, 16, 17, 0.06)',
   },
@@ -95,12 +96,12 @@ const styles = StyleSheet.create({
     opacity: 0.72,
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: touchTarget.comfortable,
+    height: touchTarget.comfortable,
     flexShrink: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: touchTarget.comfortable / 2,
     backgroundColor: colors.shell,
   },
   copy: {

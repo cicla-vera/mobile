@@ -35,7 +35,7 @@ export function ReminderHourPicker({
         </View>
         {selectedHour !== undefined ? (
           <View style={styles.selectedBadge}>
-            <Feather name="clock" size={12} color={colors.white} />
+            <Feather name="clock" size={22} color={colors.white} />
             <Text style={styles.selectedBadgeText}>
               {formatReminderHour(selectedHour)}
             </Text>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     opacity: 0.88,
   },
   option: {
-    minHeight: 36,
+    minHeight: 48,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing[2],

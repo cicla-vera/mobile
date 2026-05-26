@@ -37,7 +37,7 @@ function MoodOptionCard({ option, selected, onPress }: MoodOptionCardProps) {
         ) : option.icon ? (
           <Feather
             name={option.icon as keyof typeof Feather.glyphMap}
-            size={18}
+            size={24}
             color={option.iconColor ?? colors.ink}
           />
         ) : null}
@@ -95,15 +95,15 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.soft,
-    fontSize: 11,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     fontWeight: "500",
     letterSpacing: 0.4,
     textTransform: "uppercase",
   },
   optionsRow: {
     flexDirection: "row",
-    gap: spacing[1],
+    gap: spacing[2],
   },
   option: {
     flex: 1,
@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
-    maxWidth: 48,
-    height: 46,
+    maxWidth: 56,
+    height: 52,
     borderRadius: radius.sm,
     backgroundColor: colors.white,
     alignItems: "center",
@@ -126,14 +126,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.shell,
   },
   emoji: {
-    width: 18,
-    height: 18,
+    width: 24,
+    height: 24,
   },
   optionLabel: {
     marginTop: spacing[1],
     color: colors.ink,
-    fontSize: 9,
-    lineHeight: 13,
+    fontSize: 11,
+    lineHeight: 15,
     textAlign: "center",
   },
   optionLabelSelected: {

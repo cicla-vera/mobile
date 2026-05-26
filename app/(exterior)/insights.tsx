@@ -99,7 +99,7 @@ export default function InsightsRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="pink" style={styles.eyebrow}>
@@ -118,7 +118,7 @@ export default function InsightsRoute() {
             onPress={() => handleShiftMonth(-1)}
             style={styles.monthButton}
           >
-            <Feather name="chevron-left" size={18} color={colors.ink} />
+            <Feather name="chevron-left" size={22} color={colors.ink} />
           </Pressable>
           <View style={styles.monthCopy}>
             <AppText variant="label">{monthTitle}</AppText>
@@ -134,7 +134,7 @@ export default function InsightsRoute() {
             onPress={() => handleShiftMonth(1)}
             style={styles.monthButton}
           >
-            <Feather name="chevron-right" size={18} color={colors.ink} />
+            <Feather name="chevron-right" size={22} color={colors.ink} />
           </Pressable>
         </View>
 
@@ -149,7 +149,7 @@ export default function InsightsRoute() {
 
         {errorMessage ? (
           <View style={styles.notice}>
-            <Feather name="alert-circle" size={18} color={colors.danger} />
+            <Feather name="alert-circle" size={22} color={colors.danger} />
             <AppText variant="caption" style={styles.errorText}>
               {errorMessage}
             </AppText>
@@ -171,7 +171,7 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
     <>
       <View style={styles.heroCard}>
         <View style={styles.heroIcon}>
-          <Feather name="star" size={18} color={colors.cream} />
+          <Feather name="star" size={22} color={colors.cream} />
         </View>
         <View style={styles.heroCopy}>
           <AppText variant="label">{getSummaryHeadline(summary)}</AppText>
@@ -216,7 +216,7 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
               </AppText>
             </View>
             <View style={styles.largePill}>
-              <Feather name="calendar" size={13} color={colors.blue} />
+              <Feather name="calendar" size={22} color={colors.blue} />
               <AppText variant="caption" tone="blue" style={styles.pillText}>
                 {formatDays(summary.cycles.periodDays)}
               </AppText>
@@ -392,7 +392,7 @@ function MetricCard({
   return (
     <View style={styles.metricCard}>
       <View style={styles.metricIcon}>
-        <Feather name={icon} size={14} color={colors.blue} />
+        <Feather name={icon} size={22} color={colors.blue} />
       </View>
       <AppText variant="caption" tone="muted" style={styles.metricLabel}>
         {label}
@@ -421,7 +421,7 @@ function HealthTile({
   return (
     <View style={styles.healthTile}>
       <View style={styles.healthHeader}>
-        <Feather name={icon} size={15} color={colors.plum} />
+        <Feather name={icon} size={22} color={colors.plum} />
         <AppText variant="caption" tone="muted" style={styles.healthLabel}>
           {label}
         </AppText>
@@ -449,7 +449,7 @@ function CareCard({
 }) {
   return (
     <View style={styles.careCard}>
-      <Feather name={icon} size={17} color={colors.coral} />
+      <Feather name={icon} size={20} color={colors.coral} />
       <AppText variant="caption" tone="muted" style={styles.healthLabel}>
         {label}
       </AppText>
@@ -484,7 +484,7 @@ function DistributionList({
     <View style={styles.distributionCard}>
       <View style={styles.cardHeader}>
         <View style={styles.cardTitle}>
-          <Feather name={icon} size={15} color={colors.blue} />
+          <Feather name={icon} size={22} color={colors.blue} />
           <AppText variant="label">{title}</AppText>
         </View>
         {footer ? (
@@ -527,7 +527,7 @@ function SymptomList({
     <View style={styles.distributionCard}>
       <View style={styles.cardHeader}>
         <View style={styles.cardTitle}>
-          <Feather name="target" size={15} color={colors.blue} />
+          <Feather name="target" size={22} color={colors.blue} />
           <AppText variant="label">Sintomas</AppText>
         </View>
         <AppText variant="caption" tone="muted">
@@ -594,7 +594,7 @@ function EmptyState({
 }) {
   return (
     <View style={[styles.emptyState, compact && styles.emptyStateCompact]}>
-      <Feather name="calendar" size={18} color={colors.soft} />
+      <Feather name="calendar" size={22} color={colors.soft} />
       <AppText variant="caption" tone="muted" style={styles.emptyText}>
         {text}
       </AppText>
@@ -762,8 +762,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -790,8 +790,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.72)',
   },
   monthButton: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -835,8 +835,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   heroIcon: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 19,
@@ -903,7 +903,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   largePill: {
-    minHeight: 30,
+    minHeight: 44,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[1],

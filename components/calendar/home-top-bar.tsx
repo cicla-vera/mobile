@@ -30,7 +30,7 @@ export function HomeTopBar({
           onPress={onNotificationsPress}
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
         >
-          <Feather name="bell" size={20} color={colors.ink} />
+          <Feather name="bell" size={24} color={colors.ink} />
           {hasUnreadNotifications ? <View style={styles.badge} /> : null}
         </Pressable>
 
@@ -41,7 +41,7 @@ export function HomeTopBar({
           onPress={() => router.push('/(exterior)/settings')}
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
         >
-          <Feather name="settings" size={20} color={colors.ink} />
+          <Feather name="settings" size={24} color={colors.ink} />
         </Pressable>
 
         <Pressable
@@ -51,7 +51,7 @@ export function HomeTopBar({
           onPress={() => router.push('/(exterior)/profile')}
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
         >
-          <Feather name="user" size={20} color={colors.ink} />
+          <Feather name="user" size={24} color={colors.ink} />
         </Pressable>
       </View>
     </View>
@@ -68,11 +68,11 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing[2],
+    gap: spacing[3],
   },
   iconButton: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    top: 9,
-    right: 9,
+    top: 11,
+    right: 11,
     width: 7,
     height: 7,
     borderRadius: 4,

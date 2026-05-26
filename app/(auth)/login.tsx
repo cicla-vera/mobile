@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   messageSection: {
     alignSelf: 'center',
-    minHeight: 24,
+    minHeight: 44,
     justifyContent: 'center',
     marginTop: spacing[5],
     marginBottom: spacing[5],

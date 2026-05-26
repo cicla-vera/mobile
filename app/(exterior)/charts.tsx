@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import { AppText, Screen } from '@/components/ui';
-import { colors, radius, shadow, spacing } from '@/constants/theme';
+import { colors, iconSize, radius, shadow, spacing, touchTarget } from '@/constants/theme';
 import { useHistoryChartsQuery } from '@/hooks/useHistoryCharts';
 import { getApiErrorMessage } from '@/services/api-error';
 import type {
@@ -105,7 +105,7 @@ export default function ChartsRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={iconSize.lg} color={colors.ink} />
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="blue" style={styles.eyebrow}>
@@ -601,8 +601,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 38,
-    height: 38,
+    width: touchTarget.comfortable,
+    height: touchTarget.comfortable,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -785,11 +785,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 245, 236, 0.82)',
   },
   moodIcon: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 15,
+    borderRadius: 20,
   },
   moodChipLabel: {
     marginTop: spacing[2],

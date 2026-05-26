@@ -40,7 +40,7 @@ export function CyclePredictionCard({
           </AppText>
         </View>
         <View style={styles.moon}>
-          <Feather name="moon" size={18} color={colors.cream} />
+          <Feather name="moon" size={22} color={colors.cream} />
         </View>
       </View>
 
@@ -100,7 +100,7 @@ function PredictionMetric({
   return (
     <View style={[styles.metric, wide && styles.metricWide]}>
       <View style={styles.metricIcon}>
-        <Feather name={icon} size={14} color={colors.blue} />
+        <Feather name={icon} size={22} color={colors.blue} />
       </View>
       <View style={styles.metricCopy}>
         <AppText variant="caption" tone="muted" style={styles.metricLabel}>
@@ -139,8 +139,8 @@ const styles = StyleSheet.create({
     lineHeight: 30,
   },
   moon: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 18,

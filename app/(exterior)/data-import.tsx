@@ -245,7 +245,7 @@ export default function DataImportRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="muted" style={styles.eyebrow}>
@@ -278,7 +278,7 @@ export default function DataImportRoute() {
           {selectedFile ? (
             <View style={styles.filePreview}>
               <View style={styles.fileIcon}>
-                <Feather name="file-text" size={18} color={colors.blue} />
+                <Feather name="file-text" size={22} color={colors.blue} />
               </View>
               <View style={styles.fileCopy}>
                 <AppText variant="label">{selectedFile.name}</AppText>
@@ -290,7 +290,7 @@ export default function DataImportRoute() {
             </View>
           ) : (
             <View style={styles.emptyBlock}>
-              <Feather name="file-plus" size={18} color={colors.soft} />
+              <Feather name="file-plus" size={22} color={colors.soft} />
               <AppText variant="caption" tone="muted" style={styles.emptyText}>
                 {config.emptyText}
               </AppText>
@@ -299,7 +299,7 @@ export default function DataImportRoute() {
 
           {errorMessage ? (
             <View style={styles.notice}>
-              <Feather name="alert-circle" size={17} color={colors.danger} />
+              <Feather name="alert-circle" size={20} color={colors.danger} />
               <AppText variant="caption" style={styles.noticeText}>
                 {errorMessage}
               </AppText>
@@ -362,7 +362,7 @@ export default function DataImportRoute() {
             </>
           ) : (
             <View style={styles.emptyBlock}>
-              <Feather name="bar-chart-2" size={18} color={colors.soft} />
+              <Feather name="bar-chart-2" size={22} color={colors.soft} />
               <AppText variant="caption" tone="muted" style={styles.emptyText}>
                 O resumo aparece aqui depois da importacao.
               </AppText>
@@ -515,8 +515,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,
@@ -591,8 +591,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream,
   },
   fileIcon: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,

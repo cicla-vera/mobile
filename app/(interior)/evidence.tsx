@@ -239,7 +239,7 @@ export default function VeraEvidenceRoute() {
 
             {feedback ? (
               <View style={styles.feedback}>
-                <Feather name="check" size={16} color={colors.ink} />
+                <Feather name="check" size={22} color={colors.ink} />
                 <AppText variant="caption" style={styles.feedbackText}>
                   {feedback}
                 </AppText>
@@ -430,7 +430,7 @@ function FilterChip({
     >
       <Feather
         name={icon}
-        size={14}
+        size={22}
         color={selected ? colors.ink : colors.cream}
       />
       <AppText
@@ -471,7 +471,7 @@ function EvidenceCard({
         >
           <Feather
             name={evidenceIcon[record.type]}
-            size={18}
+            size={22}
             color={record.type === "IMAGE" ? colors.ink : colors.cream}
           />
         </View>
@@ -495,7 +495,7 @@ function EvidenceCard({
               pressed && styles.pressed,
             ]}
           >
-            <Feather name="chevron-right" size={18} color={colors.blue} />
+            <Feather name="chevron-right" size={22} color={colors.blue} />
           </Pressable>
 
           <Pressable
@@ -509,7 +509,7 @@ function EvidenceCard({
               disabled && styles.disabledAction,
             ]}
           >
-            <Feather name="eye-off" size={17} color={colors.danger} />
+            <Feather name="eye-off" size={20} color={colors.danger} />
           </Pressable>
         </View>
       </View>
@@ -571,7 +571,7 @@ function MetaRow({
 }) {
   return (
     <View style={styles.metaRow}>
-      <Feather name={icon} size={15} color={colors.plum} />
+      <Feather name={icon} size={22} color={colors.plum} />
       <View style={styles.metaCopy}>
         <AppText variant="caption" tone="muted">
           {label}
@@ -619,7 +619,7 @@ function Message({
 }) {
   return (
     <View style={styles.message}>
-      <Feather name="alert-circle" size={17} color={colors.danger} />
+      <Feather name="alert-circle" size={20} color={colors.danger} />
       <AppText variant="caption" style={styles.messageText}>
         {text}
       </AppText>
@@ -829,8 +829,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   summaryIcon: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
@@ -880,7 +880,7 @@ const styles = StyleSheet.create({
     paddingRight: spacing[4],
   },
   filterChip: {
-    minHeight: 34,
+    minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[2],
@@ -941,8 +941,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   recordTypeIcon: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
@@ -961,16 +961,16 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   detailButton: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
     backgroundColor: "rgba(32, 37, 123, 0.08)",
   },
   hideButton: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
@@ -980,7 +980,7 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   metaRow: {
-    minHeight: 34,
+    minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[3],

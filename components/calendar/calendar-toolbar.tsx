@@ -2,7 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter, type Href } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
-import { colors } from "@/constants/theme";
+import { colors, radius, spacing } from "@/constants/theme";
 
 type ToolbarAction = {
   icon: keyof typeof Feather.glyphMap;
@@ -47,9 +47,9 @@ export function CalendarToolbar({ onGoToToday }: CalendarToolbarProps) {
               router.push(action.href);
             }
           }}
-          style={styles.button}
+          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
         >
-          <Feather name={action.icon} size={16} color={colors.ink} />
+          <Feather name={action.icon} size={22} color={colors.ink} />
         </Pressable>
       ))}
     </View>
@@ -60,12 +60,19 @@ const styles = StyleSheet.create({
   toolbar: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    justifyContent: "flex-end",
+    flexWrap: "wrap",
+    gap: spacing[2],
   },
   button: {
-    width: 16,
-    height: 16,
+    width: 44,
+    height: 44,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: radius.pill,
+    backgroundColor: colors.shell,
+  },
+  buttonPressed: {
+    opacity: 0.72,
   },
 });

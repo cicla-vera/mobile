@@ -18,7 +18,7 @@ import {
 import { VeraLogo } from '@/components/brand/vera-logo';
 import { AppText } from '@/components/ui/app-text';
 import { veraTheme } from '@/constants/vera-theme';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, iconSize, radius, spacing, touchTarget } from '@/constants/theme';
 
 type VaultScrollScreenProps = {
   children: ReactNode;
@@ -95,7 +95,7 @@ export function VaultHeader({
         onPress={onBack}
         style={({ pressed }) => [layoutStyles.backButton, pressed && layoutStyles.pressed]}
       >
-        <Feather name="arrow-left" size={20} color={veraTheme.icon} />
+        <Feather name="arrow-left" size={iconSize.lg} color={veraTheme.icon} />
       </Pressable>
 
       <View style={layoutStyles.headerCopy}>
@@ -137,7 +137,7 @@ export function VaultActionRow({
       >
         <View style={layoutStyles.actionRow}>
           <View style={layoutStyles.actionRowIcon}>
-            <Feather name={icon} size={16} color={veraTheme.icon} />
+            <Feather name={icon} size={iconSize.sm} color={veraTheme.icon} />
           </View>
 
           <AppText style={layoutStyles.actionRowText} numberOfLines={2}>
@@ -145,7 +145,7 @@ export function VaultActionRow({
           </AppText>
 
           <View style={layoutStyles.actionRowTrailing}>
-            <Feather name="chevron-right" size={16} color={veraTheme.icon} />
+            <Feather name="chevron-right" size={iconSize.sm} color={veraTheme.icon} />
           </View>
         </View>
       </Pressable>
@@ -168,7 +168,7 @@ export function VaultHomeHeader({ onLock, onSettings }: VaultHomeHeaderProps) {
         onPress={onLock}
         style={({ pressed }) => [layoutStyles.iconButton, pressed && layoutStyles.pressed]}
       >
-        <Feather name="lock" size={18} color={veraTheme.icon} />
+        <Feather name="lock" size={iconSize.md} color={veraTheme.icon} />
       </Pressable>
 
       <VeraLogo width={86} style={layoutStyles.homeLogo} />
@@ -180,7 +180,7 @@ export function VaultHomeHeader({ onLock, onSettings }: VaultHomeHeaderProps) {
         onPress={onSettings}
         style={({ pressed }) => [layoutStyles.iconButton, pressed && layoutStyles.pressed]}
       >
-        <Feather name="settings" size={18} color={veraTheme.icon} />
+        <Feather name="settings" size={iconSize.md} color={veraTheme.icon} />
       </Pressable>
     </View>
   );
@@ -225,12 +225,12 @@ const layoutStyles = StyleSheet.create({
     marginBottom: spacing[1],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: touchTarget.comfortable,
+    height: touchTarget.comfortable,
     flexShrink: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: touchTarget.comfortable / 2,
     backgroundColor: veraTheme.backButtonBackground,
   },
   headerCopy: {
@@ -239,8 +239,8 @@ const layoutStyles = StyleSheet.create({
     gap: spacing[1],
   },
   headerSpacer: {
-    width: 40,
-    height: 40,
+    width: touchTarget.comfortable,
+    height: touchTarget.comfortable,
     flexShrink: 0,
   },
   headerTrailing: {
@@ -262,7 +262,7 @@ const layoutStyles = StyleSheet.create({
     color: veraTheme.sectionSubtitle,
   },
   homeHeader: {
-    minHeight: 44,
+    minHeight: touchTarget.comfortable,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -273,11 +273,11 @@ const layoutStyles = StyleSheet.create({
     flex: 1,
   },
   iconButton: {
-    width: 40,
-    height: 40,
+    width: touchTarget.comfortable,
+    height: touchTarget.comfortable,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: touchTarget.comfortable / 2,
     backgroundColor: veraTheme.backButtonBackground,
   },
   panel: {
@@ -299,20 +299,20 @@ const layoutStyles = StyleSheet.create({
     paddingBottom: spacing[2],
   },
   actionRowPressable: {
-    minHeight: 48,
+    minHeight: touchTarget.comfortable,
     paddingHorizontal: spacing[4],
     borderRadius: radius.sm,
     backgroundColor: veraTheme.linkBackground,
   },
   actionRow: {
-    minHeight: 48,
+    minHeight: touchTarget.comfortable,
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'nowrap',
     gap: spacing[3],
   },
   actionRowIcon: {
-    width: 20,
+    width: iconSize.lg,
     flexShrink: 0,
     alignItems: 'center',
     justifyContent: 'center',

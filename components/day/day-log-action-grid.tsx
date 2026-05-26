@@ -46,7 +46,7 @@ export function DayLogActionGrid({
             ]}
           >
             <View style={styles.compactIcon}>
-              <Feather name={action.icon} size={15} color={colors.blue} />
+              <Feather name={action.icon} size={22} color={colors.blue} />
             </View>
             <AppText variant="caption" style={styles.compactLabel}>
               {action.shortLabel}
@@ -78,7 +78,7 @@ export function DayLogActionGrid({
             ]}
           >
             <View style={styles.fullIcon}>
-              <Feather name={action.icon} size={16} color={colors.blue} />
+              <Feather name={action.icon} size={22} color={colors.blue} />
             </View>
             <AppText variant="label" style={styles.fullLabel}>
               {action.shortLabel}
@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream,
   },
   fullIcon: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 18,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   compactAction: {
     width: '31%',
-    minHeight: 84,
+    minHeight: 96,
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing[2],
@@ -144,11 +144,11 @@ const styles = StyleSheet.create({
     ...surfaces.inset,
   },
   compactIcon: {
-    width: 32,
-    height: 32,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 16,
+    borderRadius: 20,
     backgroundColor: colors.shell,
   },
   compactLabel: {

@@ -311,7 +311,7 @@ export default function VeraSettingsRoute() {
 
               {pinFeedback ? (
                 <View style={styles.feedback}>
-                  <Feather name="check" size={16} color={colors.ink} />
+                  <Feather name="check" size={22} color={colors.ink} />
                   <AppText variant="caption" style={styles.feedbackText}>
                     {pinFeedback}
                   </AppText>
@@ -371,7 +371,7 @@ function SettingRow({
   return (
     <View style={[styles.settingRow, disabled && styles.disabledRow]}>
       <View style={styles.settingIcon}>
-        <Feather name={icon} size={17} color={colors.cream} />
+        <Feather name={icon} size={20} color={colors.cream} />
       </View>
       <View style={styles.settingCopy}>
         <AppText variant="label">{title}</AppText>
@@ -399,7 +399,7 @@ function StatusBadge({ ok }: { ok: boolean }) {
     <View style={[styles.badge, ok && styles.badgeOk]}>
       <Feather
         name={ok ? 'check' : 'minus'}
-        size={14}
+        size={22}
         color={ok ? colors.ink : veraTheme.icon}
       />
       <AppText variant="caption" style={[styles.badgeText, ok && styles.badgeTextOk]}>
@@ -422,7 +422,7 @@ function Message({
 }) {
   return (
     <View style={[styles.message, compact && styles.messageCompact]}>
-      <Feather name="alert-circle" size={17} color={colors.danger} />
+      <Feather name="alert-circle" size={20} color={colors.danger} />
       <AppText variant="caption" style={styles.messageText}>
         {text}
       </AppText>
@@ -465,8 +465,8 @@ const styles = StyleSheet.create({
     opacity: 0.58,
   },
   settingIcon: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 19,
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   badge: {
-    minHeight: 28,
+    minHeight: 44,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   feedback: {
-    minHeight: 38,
+    minHeight: 48,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     color: colors.danger,
   },
   messageAction: {
-    minHeight: 30,
+    minHeight: 44,
     justifyContent: 'center',
     paddingHorizontal: spacing[2],
   },

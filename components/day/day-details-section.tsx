@@ -55,7 +55,7 @@ export function DayDetailsSection({ dateKey }: DayDetailsSectionProps) {
             pressed && styles.openButtonPressed,
           ]}
         >
-          <Feather name="arrow-up-right" size={18} color={colors.cream} />
+          <Feather name="arrow-up-right" size={22} color={colors.cream} />
         </Pressable>
       </View>
 
@@ -101,11 +101,11 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   openButton: {
-    width: 42,
-    height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 21,
+    width: 48,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 24,
     backgroundColor: colors.blue,
   },
   openButtonPressed: {

@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { vaultLayoutStyles } from '@/components/vera/vault-layout';
 import { veraTheme } from '@/constants/vera-theme';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, radius, spacing, touchTarget } from '@/constants/theme';
 
 export const vaultFormStyles = StyleSheet.create({
   ...vaultLayoutStyles,
@@ -18,11 +18,11 @@ export const vaultFormStyles = StyleSheet.create({
     backgroundColor: veraTheme.summaryBackground,
   },
   summaryIcon: {
-    width: 42,
-    height: 42,
+    width: touchTarget.comfortable,
+    height: touchTarget.comfortable,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 21,
+    borderRadius: touchTarget.comfortable / 2,
     backgroundColor: veraTheme.chipBackground,
   },
   summaryCopy: {
@@ -56,7 +56,7 @@ export const vaultFormStyles = StyleSheet.create({
     color: veraTheme.sectionTitle,
   },
   formHeader: {
-    minHeight: 44,
+    minHeight: touchTarget.comfortable,
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
@@ -67,21 +67,21 @@ export const vaultFormStyles = StyleSheet.create({
     gap: 2,
   },
   iconButton: {
-    width: 40,
-    height: 40,
+    width: touchTarget.comfortable,
+    height: touchTarget.comfortable,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: veraTheme.panelBorder,
-    borderRadius: 20,
+    borderRadius: touchTarget.comfortable / 2,
     backgroundColor: veraTheme.backButtonBackground,
   },
   switchIcon: {
-    width: 38,
-    height: 38,
+    width: touchTarget.min,
+    height: touchTarget.min,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 19,
+    borderRadius: touchTarget.min / 2,
     backgroundColor: veraTheme.chipBackgroundMuted,
   },
   switchCopy: {
@@ -98,7 +98,7 @@ export const vaultFormStyles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   feedback: {
-    minHeight: 38,
+    minHeight: touchTarget.comfortable,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[2],
@@ -122,11 +122,11 @@ export const vaultFormStyles = StyleSheet.create({
     gap: spacing[3],
   },
   refreshButton: {
-    width: 40,
-    height: 40,
+    width: touchTarget.comfortable,
+    height: touchTarget.comfortable,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: touchTarget.comfortable / 2,
     backgroundColor: veraTheme.backButtonBackground,
   },
   emptyState: {
@@ -156,7 +156,7 @@ export const vaultFormStyles = StyleSheet.create({
     color: colors.danger,
   },
   messageAction: {
-    minHeight: 30,
+    minHeight: touchTarget.min,
     justifyContent: 'center',
     paddingHorizontal: spacing[2],
   },

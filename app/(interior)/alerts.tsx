@@ -283,7 +283,7 @@ export default function VeraAlertsRoute() {
 
       {feedback ? (
         <View style={styles.feedback}>
-          <Feather name="check" size={16} color={colors.ink} />
+          <Feather name="check" size={22} color={colors.ink} />
           <AppText variant="caption" style={styles.feedbackText}>
             {feedback}
           </AppText>
@@ -291,7 +291,7 @@ export default function VeraAlertsRoute() {
       ) : null}
 
       <View style={styles.infoPanel}>
-        <Feather name="shield" size={17} color={colors.mint} />
+        <Feather name="shield" size={20} color={colors.mint} />
         <AppText variant="caption" style={styles.infoText}>
           Acoes de alerta ficam dentro da camada Vera e exigem confirmacao antes
           de iniciar ou encerrar uma sessao.
@@ -381,7 +381,7 @@ function ManualAlertPanel({
           {isReadingLocation ? (
             <ActivityIndicator color={colors.ink} />
           ) : (
-            <Feather name="crosshair" size={17} color={colors.ink} />
+            <Feather name="crosshair" size={20} color={colors.ink} />
           )}
         </View>
         <View style={styles.locationCopy}>
@@ -475,7 +475,7 @@ function ActiveAlertPanel({
           {refreshing ? (
             <ActivityIndicator color={veraTheme.icon} />
           ) : (
-            <Feather name="refresh-cw" size={18} color={veraTheme.icon} />
+            <Feather name="refresh-cw" size={22} color={veraTheme.icon} />
           )}
         </Pressable>
       </View>
@@ -564,7 +564,7 @@ function MetaRow({
 }) {
   return (
     <View style={styles.metaRow}>
-      <Feather name={icon} size={16} color={colors.mint} />
+      <Feather name={icon} size={22} color={colors.mint} />
       <View style={styles.metaCopy}>
         <AppText variant="caption" style={styles.metaLabel}>
           {label}
@@ -590,7 +590,7 @@ function Message({
 }) {
   return (
     <View style={[styles.message, compact && styles.messageCompact]}>
-      <Feather name="alert-circle" size={17} color={colors.danger} />
+      <Feather name="alert-circle" size={20} color={colors.danger} />
       <AppText variant="caption" style={styles.messageText}>
         {text}
       </AppText>
@@ -686,8 +686,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   panelIconDanger: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
@@ -716,8 +716,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   locationIcon: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
@@ -781,8 +781,8 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   refreshButton: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
@@ -815,7 +815,7 @@ const styles = StyleSheet.create({
     backgroundColor: veraTheme.emptyBackground,
   },
   metaRow: {
-    minHeight: 34,
+    minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[3],
@@ -838,7 +838,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   feedback: {
-    minHeight: 38,
+    minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[2],
@@ -881,7 +881,7 @@ const styles = StyleSheet.create({
     color: colors.danger,
   },
   messageAction: {
-    minHeight: 30,
+    minHeight: 44,
     justifyContent: "center",
     paddingHorizontal: spacing[2],
   },

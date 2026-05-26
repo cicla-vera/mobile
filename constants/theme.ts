@@ -102,6 +102,19 @@ export const formLayout = {
   saveButtonTop: spacing[6],
 } as const;
 
+/** Minimum touch targets and icon sizes for accessibility (WCAG / platform HIG). */
+export const touchTarget = {
+  min: 44,
+  comfortable: 48,
+} as const;
+
+export const iconSize = {
+  xs: 16,
+  sm: 18,
+  md: 22,
+  lg: 24,
+} as const;
+
 export const theme = {
   colors,
   spacing,
@@ -110,4 +123,6 @@ export const theme = {
   shadow,
   surfaces,
   formLayout,
+  touchTarget,
+  iconSize,
 } as const;

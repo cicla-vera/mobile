@@ -26,7 +26,7 @@ export function ImportSourceGrid() {
           ]}
         >
           <View style={styles.icon}>
-            <Feather name={item.icon} size={16} color={colors.blue} />
+            <Feather name={item.icon} size={22} color={colors.blue} />
           </View>
           <AppText variant="caption" style={styles.label}>
             {item.shortLabel}
@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
     opacity: 0.72,
   },
   icon: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 18,

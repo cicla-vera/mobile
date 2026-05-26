@@ -92,7 +92,7 @@ export default function DayDetailsRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="muted" style={styles.eyebrow}>
@@ -129,7 +129,7 @@ export default function DayDetailsRoute() {
           <View style={styles.flagsRow}>
             {dayFlags.map((flag) => (
               <View key={flag.label} style={styles.flag}>
-                <Feather name={flag.icon} size={13} color={colors.cream} />
+                <Feather name={flag.icon} size={22} color={colors.cream} />
                 <AppText variant="caption" tone="cream">
                   {flag.label}
                 </AppText>
@@ -140,7 +140,7 @@ export default function DayDetailsRoute() {
 
         {loadError ? (
           <View style={styles.notice}>
-            <Feather name="alert-circle" size={18} color={colors.danger} />
+            <Feather name="alert-circle" size={22} color={colors.danger} />
             <AppText variant="caption" style={styles.noticeText}>
               {getApiErrorMessage(loadError, 'Nao deu para carregar esse dia.')}
             </AppText>
@@ -212,7 +212,7 @@ function MetricCard({
   return (
     <View style={styles.metricCard}>
       <View style={styles.metricIcon}>
-        <Feather name={icon} size={14} color={colors.blue} />
+        <Feather name={icon} size={22} color={colors.blue} />
       </View>
       <AppText variant="caption" tone="muted" style={styles.metricLabel}>
         {label}
@@ -265,7 +265,7 @@ function CyclePanel({
   return (
     <View style={styles.cyclePanel}>
       <View style={styles.cycleIcon}>
-        <Feather name="droplet" size={18} color={colors.cream} />
+        <Feather name="droplet" size={22} color={colors.cream} />
       </View>
       <View style={styles.cycleCopy}>
         <AppText variant="label">
@@ -370,7 +370,7 @@ function DetailGroup({
     <View style={styles.detailGroup}>
       <View style={styles.detailGroupHeader}>
         <View style={styles.detailIcon}>
-          <Feather name={icon} size={14} color={colors.blue} />
+          <Feather name={icon} size={22} color={colors.blue} />
         </View>
         <AppText variant="label">{title}</AppText>
       </View>
@@ -399,7 +399,7 @@ function EmptyBlock({
 }) {
   return (
     <View style={styles.emptyBlock}>
-      <Feather name={icon} size={18} color={colors.soft} />
+      <Feather name={icon} size={22} color={colors.soft} />
       <AppText variant="caption" tone="muted" style={styles.emptyText}>
         {text}
       </AppText>
@@ -538,8 +538,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,
@@ -627,8 +627,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.76)',
   },
   metricIcon: {
-    width: 34,
-    height: 34,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 17,
@@ -677,8 +677,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.shell,
   },
   cycleIcon: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,

@@ -129,7 +129,7 @@ export default function ProfileRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <AppText variant="caption" tone="muted" style={styles.eyebrow}>
             Perfil
@@ -173,7 +173,7 @@ export default function ProfileRoute() {
               pressed && styles.logoutButtonPressed,
             ]}
           >
-            <Feather name="log-out" size={15} color={colors.cream} />
+            <Feather name="log-out" size={22} color={colors.cream} />
             <AppText variant="caption" tone="cream" style={styles.logoutText}>
               Sair
             </AppText>
@@ -204,7 +204,7 @@ export default function ProfileRoute() {
         >
           {profileQuery.isError ? (
             <View style={styles.notice}>
-              <Feather name="alert-circle" size={17} color={colors.danger} />
+              <Feather name="alert-circle" size={20} color={colors.danger} />
               <AppText variant="caption" style={styles.noticeText}>
                 {getApiErrorMessage(
                   profileQuery.error,
@@ -292,7 +292,7 @@ function InfoPill({
   return (
     <View style={styles.infoPill}>
       <View style={styles.infoIcon}>
-        <Feather name={icon} size={14} color={colors.blue} />
+        <Feather name={icon} size={22} color={colors.blue} />
       </View>
       <View style={styles.infoCopy}>
         <AppText variant="caption" tone="muted" numberOfLines={1}>
@@ -374,8 +374,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,
@@ -448,8 +448,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   infoIcon: {
-    width: 34,
-    height: 34,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 17,

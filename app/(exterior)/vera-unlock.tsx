@@ -205,7 +205,7 @@ export default function VeraUnlockRoute() {
         <View style={styles.form}>
           {profileError ? (
             <View style={styles.message}>
-              <Feather name="alert-circle" size={17} color={colors.danger} />
+              <Feather name="alert-circle" size={20} color={colors.danger} />
               <AppText variant="caption" style={styles.messageText}>
                 {profileError}
               </AppText>

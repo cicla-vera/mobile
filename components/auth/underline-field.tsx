@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     color: colors.coffee,
   },
   inputRow: {
-    minHeight: 28,
+    minHeight: 44,
     justifyContent: 'center',
     width: '100%',
   },

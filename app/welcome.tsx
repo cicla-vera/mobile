@@ -77,7 +77,7 @@ export default function WelcomeRoute() {
           {highlights.map((item) => (
             <View key={item.title} style={styles.featureRow}>
               <View style={styles.featureIcon}>
-                <Feather name={item.icon} size={17} color={colors.cream} />
+                <Feather name={item.icon} size={20} color={colors.cream} />
               </View>
               <View style={styles.featureCopy}>
                 <AppText variant="label">{item.title}</AppText>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     left: 8,
     top: 108,
     width: 168,
-    height: 34,
+    height: 44,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(32, 37, 123, 0.28)',
@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   featureIcon: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 18,

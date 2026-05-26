@@ -123,7 +123,7 @@ export default function WeightRoute() {
             onPress={() => router.back()}
             style={styles.iconButton}
           >
-            <Feather name="arrow-left" size={19} color={colors.ink} />
+            <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="muted" style={styles.eyebrow}>
@@ -152,7 +152,7 @@ export default function WeightRoute() {
 
         {loadError ? (
           <View style={styles.notice}>
-            <Feather name="alert-circle" size={18} color={colors.danger} />
+            <Feather name="alert-circle" size={22} color={colors.danger} />
             <AppText variant="caption" style={styles.noticeText}>
               {getApiErrorMessage(loadError, 'Nao deu para carregar pesos.')}
             </AppText>
@@ -259,7 +259,7 @@ function WeightList({
   if (entries.length === 0) {
     return (
       <View style={styles.emptyBlock}>
-        <Feather name="trending-up" size={18} color={colors.soft} />
+        <Feather name="trending-up" size={22} color={colors.soft} />
         <AppText variant="caption" tone="muted" style={styles.emptyText}>
           {emptyText}
         </AppText>
@@ -272,7 +272,7 @@ function WeightList({
       {entries.map((entry) => (
         <View key={entry.id} style={styles.entryRow}>
           <View style={styles.entryIcon}>
-            <Feather name="trending-up" size={15} color={colors.blue} />
+            <Feather name="trending-up" size={22} color={colors.blue} />
           </View>
           <View style={styles.entryCopy}>
             <AppText variant="label">{formatWeight(entry.weight)}</AppText>
@@ -286,7 +286,7 @@ function WeightList({
             onPress={() => onDelete(entry)}
             style={styles.deleteButton}
           >
-            <Feather name="trash-2" size={16} color={colors.danger} />
+            <Feather name="trash-2" size={22} color={colors.danger} />
           </Pressable>
         </View>
       ))}
@@ -342,8 +342,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   iconButton: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,
@@ -463,8 +463,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream,
   },
   entryIcon: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 18,
@@ -474,8 +474,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   deleteButton: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 19,

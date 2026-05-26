@@ -18,7 +18,7 @@ export function VeraAccessEntry({ onPress }: VeraAccessEntryProps) {
         pressed && styles.entryPressed,
       ]}
     >
-      <MoonMark size={28} />
+      <MoonMark size={36} />
     </Pressable>
   );
 }
@@ -26,6 +26,10 @@ export function VeraAccessEntry({ onPress }: VeraAccessEntryProps) {
 const styles = StyleSheet.create({
   entry: {
     alignSelf: 'flex-start',
+    minWidth: 48,
+    minHeight: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   entryPressed: {
     opacity: 0.72,

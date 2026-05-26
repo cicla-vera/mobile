@@ -16,6 +16,7 @@ import { Screen } from "@/components/ui/screen";
 import { colors, radius, spacing } from "@/constants/theme";
 import {
   useAnalyzeEvidenceMutation,
+  useCachedEvidenceAnalysisQuery,
   useEvidenceRecordsQuery,
   useVerifyEvidenceMutation,
 } from "@/hooks/vera";
@@ -58,6 +59,7 @@ export default function VeraEvidenceDetailRoute() {
   const alertSessionId = normalizeParam(params.alertSessionId);
   const evidenceRecordId = normalizeParam(params.evidenceRecordId);
   const evidenceQuery = useEvidenceRecordsQuery(alertSessionId);
+  const cachedAnalysisQuery = useCachedEvidenceAnalysisQuery(evidenceRecordId);
   const verifyEvidenceMutation = useVerifyEvidenceMutation();
   const analyzeEvidenceMutation = useAnalyzeEvidenceMutation();
   const [verification, setVerification] = useState<EvidenceVerification | null>(
@@ -97,6 +99,7 @@ export default function VeraEvidenceDetailRoute() {
     !queryError &&
     Boolean(evidenceQuery.data) &&
     !record;
+  const displayedAnalysis = analysis ?? cachedAnalysisQuery.data ?? null;
 
   async function handleVerify() {
     if (!record) {
@@ -187,7 +190,7 @@ export default function VeraEvidenceDetailRoute() {
             <MetadataPanel record={record} />
 
             <AnalysisPanel
-              analysis={analysis}
+              analysis={displayedAnalysis}
               loading={analyzeEvidenceMutation.isPending}
               onAnalyze={() => void handleAnalyze()}
               record={record}
@@ -464,7 +467,7 @@ function AnalysisPanel({
         <View style={styles.panelCopy}>
           <AppText variant="label">Analise IA</AppText>
           <AppText variant="caption" tone="muted">
-            Solicita uma leitura assistida quando o servico estiver disponivel.
+            Leitura de apoio, sem substituir avaliacao humana ou juridica.
           </AppText>
         </View>
       </View>
@@ -502,10 +505,11 @@ function AnalysisPanel({
                   : "Nao"
             }
           />
+          <DetectedSignalsBox signals={analysis.detectedSignals} />
           {analysis.summary ? (
             <View style={styles.summaryBox}>
               <AppText variant="caption" tone="muted">
-                Resumo
+                Resumo de apoio
               </AppText>
               <AppText style={styles.summaryText}>{analysis.summary}</AppText>
             </View>
@@ -531,7 +535,7 @@ function AnalysisPanel({
             tone="muted"
             style={styles.analysisEmptyText}
           >
-            Nenhuma analise foi solicitada nesta visualizacao.
+            Nenhum resultado de apoio salvo para esta evidencia.
           </AppText>
         </View>
       )}
@@ -543,6 +547,41 @@ function AnalysisPanel({
       >
         Solicitar analise
       </Button>
+    </View>
+  );
+}
+
+function DetectedSignalsBox({ signals }: { signals: unknown }) {
+  const entries = getDetectedSignalEntries(signals);
+
+  if (entries.length === 0) {
+    return (
+      <View style={styles.summaryBox}>
+        <AppText variant="caption" tone="muted">
+          Sinais detectados
+        </AppText>
+        <AppText style={styles.summaryText}>
+          Nenhum sinal estruturado foi retornado.
+        </AppText>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.signalList}>
+      <AppText variant="caption" tone="muted">
+        Sinais detectados
+      </AppText>
+      {entries.map(([key, value]) => (
+        <View key={key} style={styles.signalRow}>
+          <AppText variant="caption" style={styles.signalKey}>
+            {formatSignalKey(key)}
+          </AppText>
+          <AppText variant="caption" style={styles.signalValue}>
+            {formatSignalValue(value)}
+          </AppText>
+        </View>
+      ))}
     </View>
   );
 }
@@ -643,6 +682,38 @@ function formatMetadataValue(value: VeraMetadataValue) {
   const text = String(value);
 
   return text.length > 120 ? `${text.slice(0, 117)}...` : text;
+}
+
+function getDetectedSignalEntries(signals: unknown) {
+  if (!signals || typeof signals !== "object" || Array.isArray(signals)) {
+    return [];
+  }
+
+  return Object.entries(signals as Record<string, unknown>).slice(0, 8);
+}
+
+function formatSignalKey(key: string) {
+  return key
+    .replace(/[_-]/g, " ")
+    .replace(/\b\w/g, (match) => match.toUpperCase());
+}
+
+function formatSignalValue(value: unknown) {
+  if (value === null || value === undefined) {
+    return "Nao informado";
+  }
+
+  if (Array.isArray(value)) {
+    return value.length === 0
+      ? "Nenhum"
+      : value.map((item) => String(item)).join(", ");
+  }
+
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+
+  return String(value);
 }
 
 function formatAnalysisStatus(analysis: EvidenceAnalysis) {
@@ -905,6 +976,26 @@ const styles = StyleSheet.create({
   summaryText: {
     color: colors.ink,
     lineHeight: 21,
+  },
+  signalList: {
+    gap: spacing[2],
+    marginTop: spacing[2],
+    padding: spacing[3],
+    borderRadius: radius.sm,
+    backgroundColor: "rgba(32, 37, 123, 0.06)",
+  },
+  signalRow: {
+    gap: spacing[1],
+    paddingBottom: spacing[2],
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(20, 16, 17, 0.08)",
+  },
+  signalKey: {
+    color: colors.plum,
+    fontWeight: "800",
+  },
+  signalValue: {
+    color: colors.ink,
   },
   failureBox: {
     minHeight: 42,

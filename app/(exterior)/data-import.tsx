@@ -10,7 +10,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Screen } from '@/components/ui';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
@@ -127,7 +126,6 @@ const counterLabels: Array<{
 export default function DataImportRoute() {
   const params = useLocalSearchParams<{ source?: string }>();
   const config = importConfigs[getImportSource(params.source)];
-  const insets = useSafeAreaInsets();
   const importFloMutation = useImportFloMutation();
   const importAppleHealthMutation = useImportAppleHealthMutation();
   const importHealthConnectMutation = useImportHealthConnectMutation();
@@ -236,7 +234,7 @@ export default function DataImportRoute() {
         style={styles.scroll}
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[6] },
+          { paddingBottom: spacing[8] + spacing[6] },
         ]}
         showsVerticalScrollIndicator={false}
       >

@@ -21,4 +21,10 @@ export const MOOD_OPTIONS: MoodOption[] = [
     label: "Triste",
     image: require("@/assets/images/moods/mood-sad.png"),
   },
+  {
+    id: "scared",
+    label: "Com medo",
+    icon: "emoticon-confused-outline",
+    iconColor: "#4A225E",
+  },
 ];

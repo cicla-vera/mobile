@@ -1,7 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { NotificationSettingsPanel } from '@/components/settings';
 import { AppText, ListActionRow, Screen } from '@/components/ui';
@@ -10,7 +9,6 @@ import { useNotificationSettingsQuery } from '@/hooks/useNotificationSettings';
 
 export default function SettingsRoute() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const settingsQuery = useNotificationSettingsQuery();
 
   return (
@@ -21,7 +19,7 @@ export default function SettingsRoute() {
           styles.content,
           {
             paddingTop: spacing[5],
-            paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[6],
+            paddingBottom: spacing[8] + spacing[6],
           },
         ]}
         refreshControl={

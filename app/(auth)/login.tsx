@@ -10,7 +10,6 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CiclaVeraLogo } from '@/components/auth/cicla-vera-logo';
 import { UnderlineField } from '@/components/auth/underline-field';
@@ -22,7 +21,6 @@ import { useLoginMutation } from '@/hooks/useAuth';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
   const loginMutation = useLoginMutation();
 
@@ -74,7 +72,7 @@ export default function LoginScreen() {
           {
             paddingHorizontal: horizontalPadding,
             paddingTop: spacing[10],
-            paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[8],
+            paddingBottom: spacing[8] + spacing[8],
           },
         ]}
         keyboardShouldPersistTaps="handled"

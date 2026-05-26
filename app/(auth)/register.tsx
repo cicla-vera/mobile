@@ -9,7 +9,6 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CiclaVeraLogo } from '@/components/auth/cicla-vera-logo';
 import { UnderlineField } from '@/components/auth/underline-field';
@@ -21,7 +20,6 @@ import { getApiErrorMessage } from '@/services/api-error';
 
 export default function RegisterScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
   const registerMutation = useRegisterMutation();
 
@@ -74,7 +72,7 @@ export default function RegisterScreen() {
           {
             paddingHorizontal: horizontalPadding,
             paddingTop: spacing[10],
-            paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[8],
+            paddingBottom: spacing[8] + spacing[8],
           },
         ]}
         keyboardShouldPersistTaps="handled"

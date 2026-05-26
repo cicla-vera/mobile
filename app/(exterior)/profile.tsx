@@ -10,7 +10,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ImportSourceGrid, ProfileSectionCard } from '@/components/profile';
 import { AppText, Button, Screen, TextField } from '@/components/ui';
@@ -25,7 +24,6 @@ import { useAuthStore } from '@/stores/auth.store';
 
 export default function ProfileRoute() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const logout = useLogout();
   const cachedUser = useAuthStore((state) => state.user);
   const profileQuery = useUserProfileQuery();
@@ -110,7 +108,7 @@ export default function ProfileRoute() {
           styles.content,
           {
             paddingTop: spacing[5],
-            paddingBottom: Math.max(insets.bottom, spacing[8]) + spacing[6],
+            paddingBottom: spacing[8] + spacing[6],
           },
         ]}
         refreshControl={

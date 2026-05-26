@@ -160,7 +160,10 @@ export default function HomePreviewRoute() {
           <VeraAccessEntry
             onPress={() => router.push("/(exterior)/vera-consent")}
           />
-          <CalendarWelcomeHeader />
+          <View style={styles.heroBlock}>
+            <CalendarWelcomeHeader />
+            <MoodCheckIn dateKey={selectedDateKey} />
+          </View>
           <View style={styles.calendarBlock}>
             <CalendarHeader
               dateLabel={formatCalendarHeading(selectedDate)}
@@ -198,8 +201,6 @@ export default function HomePreviewRoute() {
         />
 
         <DayDetailsSection dateKey={selectedDateKey} />
-
-        <MoodCheckIn dateKey={selectedDateKey} />
       </ScrollView>
 
       <NotificationsModal
@@ -225,6 +226,9 @@ const styles = StyleSheet.create({
   mainSection: {
     paddingHorizontal: spacing[6],
     gap: spacing[6],
+  },
+  heroBlock: {
+    gap: spacing[3],
   },
   calendarBlock: {
     gap: spacing[1],

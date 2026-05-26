@@ -4,6 +4,7 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useAuthStore } from '@/stores/auth.store';
 import { colors } from '@/constants/theme';
+import { isVeraDemoModeEnabled } from '@/constants/demo';
 import { hasSeenOnboarding } from '@/services/onboarding-storage';
 
 export default function IndexRoute() {
@@ -53,6 +54,10 @@ export default function IndexRoute() {
   }
 
   if (isAuthenticated) {
+    if (isVeraDemoModeEnabled) {
+      return <Redirect href="/(interior)" />;
+    }
+
     return <Redirect href="/(exterior)" />;
   }
 

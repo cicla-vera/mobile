@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Screen } from '@/components/ui/screen';
+import { VeraDemoBanner } from '@/components/demo/vera-demo-banner';
 import { ActiveAlertIndicator } from '@/components/vera/active-alert-indicator';
 import { VaultActionRow, VaultHomeHeader } from '@/components/vera/vault-layout';
 import {
@@ -47,6 +48,8 @@ export default function InteriorIndexRoute() {
           onLock={handleLock}
           onSettings={() => router.push('/(interior)/settings')}
         />
+
+        <VeraDemoBanner />
 
         <ActiveAlertIndicator
           variant="interior"

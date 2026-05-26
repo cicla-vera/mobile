@@ -28,19 +28,25 @@ cp .env.example .env
 
 ## Environment
 
-The app reads the backend URL from `EXPO_PUBLIC_API_URL`.
+The app resolves the backend URL by platform. Platform-specific variables are
+checked first, then `EXPO_PUBLIC_API_URL`, then built-in local defaults.
 
 ```env
-EXPO_PUBLIC_API_URL=http://localhost:3001/api
+EXPO_PUBLIC_API_URL_WEB=http://localhost:3001/api
+EXPO_PUBLIC_API_URL_ANDROID=http://10.0.2.2:3001/api
+EXPO_PUBLIC_API_URL_IOS=http://YOUR_COMPUTER_LAN_IP:3001/api
+EXPO_PUBLIC_API_URL=
 ```
 
 Useful local values:
 
-- iOS simulator or web: `http://localhost:3001/api`
-- Android emulator: `http://10.0.2.2:3001/api`
+- Web or iOS simulator: `http://localhost:3001/api`
+- Android emulator/BlueStacks: `http://10.0.2.2:3001/api`
 - Physical phone: `http://YOUR_COMPUTER_LAN_IP:3001/api`
 
-When testing through Expo tunnel, use a backend URL reachable by the phone.
+When testing through Expo tunnel or a physical phone, use a backend URL
+reachable by that device. On BlueStacks, `10.0.2.2` points to the Windows host,
+so the backend must be exposed on the Windows host port as well.
 
 ## Run
 

@@ -91,6 +91,9 @@ SMOKE_AUTH_EMAIL=user@example.com SMOKE_AUTH_PASSWORD=password npm run smoke:aut
 
 ## Project Structure
 
+Detailed folder and workflow conventions live in
+[`docs/MOBILE_STRUCTURE.md`](docs/MOBILE_STRUCTURE.md).
+
 ```text
 app/
   (auth)/       authentication screens

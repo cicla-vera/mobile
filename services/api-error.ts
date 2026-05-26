@@ -62,6 +62,20 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
       return "Sessao de alerta nao encontrada.";
     }
 
+    if (
+      message ===
+      "Emergency contacts can only be notified for active alert sessions."
+    ) {
+      return "Contatos so podem ser acionados em uma sessao ativa.";
+    }
+
+    if (
+      message ===
+      "Emergency contacts can only be notified for critical alerts."
+    ) {
+      return "Contatos so podem ser acionados quando a sessao estiver critica.";
+    }
+
     return message;
   }
 

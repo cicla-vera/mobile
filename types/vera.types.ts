@@ -192,6 +192,31 @@ export type AlertTimeline = {
   events: AlertEvent[];
 };
 
+export type EmergencyDispatchStatus = 'sent' | 'failed';
+
+export type EmergencyDispatchAttempt = {
+  contactId: string;
+  contactName: string;
+  priority: number;
+  maskedPhone: string;
+  status: EmergencyDispatchStatus;
+  eventType: Extract<
+    AlertEventType,
+    'CONTACT_NOTIFIED' | 'CONTACT_NOTIFICATION_FAILED'
+  >;
+  provider: string;
+  providerMessageId?: string;
+  reason?: string;
+  message: string;
+};
+
+export type EmergencyDispatchResponse = {
+  alertSessionId: string;
+  level: AlertLevel;
+  providerConfigured: boolean;
+  attempts: EmergencyDispatchAttempt[];
+};
+
 export type EvidenceRecord = {
   id: string;
   userId: string;

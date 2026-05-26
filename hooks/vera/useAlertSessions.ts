@@ -110,11 +110,18 @@ export function useDispatchEmergencyContactsMutation() {
     mutationKey: [...veraQueryKeys.alertSessions(), 'dispatch-contacts'],
     mutationFn: (id: string) =>
       veraAlertSessionsService.dispatchEmergencyContacts(id),
-    onSuccess: async (session) => {
-      queryClient.setQueryData(veraQueryKeys.alertSession(session.id), session);
-      await queryClient.invalidateQueries({
-        queryKey: veraQueryKeys.alertSessions(),
-      });
+    onSuccess: async (response) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: veraQueryKeys.activeAlertSession(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: veraQueryKeys.alertSession(response.alertSessionId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: veraQueryKeys.alertTimeline(response.alertSessionId),
+        }),
+      ]);
     },
   });
 }

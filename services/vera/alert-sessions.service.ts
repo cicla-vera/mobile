@@ -5,6 +5,7 @@ import type {
   AlertTimeline,
   CloseAlertSessionRequest,
   CreateAlertEventRequest,
+  EmergencyDispatchResponse,
   StartLocationAlertSessionRequest,
   StartManualAlertSessionRequest,
 } from '@/types/vera.types';
@@ -58,7 +59,7 @@ export async function closeAlertSession(
 }
 
 export async function dispatchEmergencyContacts(id: string) {
-  const response = await api.post<AlertSession>(
+  const response = await api.post<EmergencyDispatchResponse>(
     `/vera/alert-sessions/${id}/dispatch-contacts`,
   );
 

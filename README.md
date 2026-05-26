@@ -55,6 +55,21 @@ npm run start
 npm run web
 ```
 
+For device-specific Expo hostnames, configure these local-only values in
+`.env`:
+
+```env
+EXPO_PACKAGER_HOST_IOS_LAN=YOUR_COMPUTER_LAN_IP
+EXPO_PACKAGER_HOST_BLUESTACKS=10.0.2.2
+```
+
+Then run:
+
+```bash
+npm run start:ios-lan
+npm run start:bluestacks
+```
+
 ## Checks
 
 ```bash

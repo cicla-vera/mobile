@@ -139,3 +139,18 @@ The Vera interior layer is kept separate from the menstrual-calendar exterior:
   `services/vera/native-capabilities.service.ts` so web, Expo Go, and
   development builds can fall back safely before a Vera screen requests a
   permission or starts a sensitive workflow.
+
+## Vera Location Monitoring
+
+Location monitoring is consent-aware and depends on the Vera safety profile:
+
+- `monitoringEnabled`, `veraEnabled`, and `consentAccepted` must be true.
+- Only enabled `RISK` safety locations are used for automatic detection.
+- Foreground monitoring uses `expo-location` while the app is open.
+- Background updates are registered through `expo-task-manager` when the
+  platform supports it and foreground/background location permissions are
+  already granted.
+- Expo Go and web can be limited for background tasks; use a development build
+  to validate persistent background location behavior.
+- If a monitored location is matched and no alert session is active, the app
+  starts a normal location-triggered Vera alert session through the backend.

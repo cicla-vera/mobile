@@ -21,6 +21,7 @@
     "smoke:flo-import": "node scripts/smoke-flo-import.mjs",
     "smoke:apple-health-import": "node scripts/smoke-apple-health-import.mjs",
     "smoke:health-connect-import": "node scripts/smoke-health-connect-import.mjs",
+    "smoke:vera-location-monitor": "node scripts/smoke-vera-location-monitor.mjs",
     "smoke:history-charts": "node scripts/smoke-history-charts.mjs",
     "smoke:monthly-summary": "node scripts/smoke-monthly-summary.mjs",
     "smoke:daily-log": "node scripts/smoke-daily-log.mjs"

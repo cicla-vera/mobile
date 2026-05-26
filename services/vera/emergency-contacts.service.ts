@@ -1,4 +1,6 @@
 import { api } from '@/services/api';
+import { isVeraDemoModeEnabled } from '@/constants/demo';
+import { VERA_DEMO_CONTACTS } from '@/services/demo/vera-demo-data';
 import type {
   CreateEmergencyContactRequest,
   EmergencyContact,
@@ -6,6 +8,12 @@ import type {
 } from '@/types/vera.types';
 
 export async function findEmergencyContacts(includeDisabled = false) {
+  if (isVeraDemoModeEnabled) {
+    return includeDisabled
+      ? VERA_DEMO_CONTACTS
+      : VERA_DEMO_CONTACTS.filter((contact) => contact.enabled);
+  }
+
   const response = await api.get<EmergencyContact[]>(
     '/vera/emergency-contacts',
     {
@@ -17,6 +25,13 @@ export async function findEmergencyContacts(includeDisabled = false) {
 }
 
 export async function getEmergencyContact(id: string) {
+  if (isVeraDemoModeEnabled) {
+    return (
+      VERA_DEMO_CONTACTS.find((contact) => contact.id === id) ??
+      VERA_DEMO_CONTACTS[0]
+    );
+  }
+
   const response = await api.get<EmergencyContact>(
     `/vera/emergency-contacts/${id}`,
   );
@@ -27,6 +42,15 @@ export async function getEmergencyContact(id: string) {
 export async function createEmergencyContact(
   payload: CreateEmergencyContactRequest,
 ) {
+  if (isVeraDemoModeEnabled) {
+    return {
+      ...VERA_DEMO_CONTACTS[0],
+      id: `demo-contact-${Date.now()}`,
+      ...payload,
+      enabled: true,
+    };
+  }
+
   const response = await api.post<EmergencyContact>(
     '/vera/emergency-contacts',
     payload,
@@ -39,6 +63,14 @@ export async function updateEmergencyContact(
   id: string,
   payload: UpdateEmergencyContactRequest,
 ) {
+  if (isVeraDemoModeEnabled) {
+    return {
+      ...(VERA_DEMO_CONTACTS.find((contact) => contact.id === id) ??
+        VERA_DEMO_CONTACTS[0]),
+      ...payload,
+    };
+  }
+
   const response = await api.patch<EmergencyContact>(
     `/vera/emergency-contacts/${id}`,
     payload,
@@ -48,6 +80,14 @@ export async function updateEmergencyContact(
 }
 
 export async function disableEmergencyContact(id: string) {
+  if (isVeraDemoModeEnabled) {
+    return {
+      ...(VERA_DEMO_CONTACTS.find((contact) => contact.id === id) ??
+        VERA_DEMO_CONTACTS[0]),
+      enabled: false,
+    };
+  }
+
   const response = await api.delete<EmergencyContact>(
     `/vera/emergency-contacts/${id}`,
   );

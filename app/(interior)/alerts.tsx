@@ -1,5 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import * as Location from "expo-location";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -12,10 +13,7 @@ import {
 import { AppText } from "@/components/ui/app-text";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
-import {
-  VaultHeader,
-  VaultScrollScreen,
-} from "@/components/vera/vault-layout";
+import { VaultHeader, VaultScrollScreen } from "@/components/vera/vault-layout";
 import { vaultFormStyles } from "@/components/vera/vault-form-styles";
 import { veraTheme } from "@/constants/vera-theme";
 import { colors, radius, spacing } from "@/constants/theme";
@@ -227,70 +225,78 @@ export default function VeraAlertsRoute() {
     }
   }
 
+  function openActiveTimeline(session: AlertSession) {
+    router.push({
+      pathname: "/(interior)/alert-timeline",
+      params: { alertSessionId: session.id },
+    });
+  }
+
   return (
     <VaultScrollScreen keyboard>
-        <VaultHeader
-          title="Central de alertas"
-          subtitle="Acionamento manual e acompanhamento de sessoes ativas"
-        />
+      <VaultHeader
+        title="Central de alertas"
+        subtitle="Acionamento manual e acompanhamento de sessoes ativas"
+      />
 
-        {activeAlertQuery.isLoading ? (
-          <View style={styles.loadingPanel}>
-            <ActivityIndicator color={colors.mint} size="large" />
-            <AppText variant="caption" style={styles.mutedText}>
-              Verificando alerta ativo...
-            </AppText>
-          </View>
-        ) : null}
-
-        {queryError ? (
-          <Message
-            text={queryError}
-            actionLabel="Tentar de novo"
-            onAction={() => void activeAlertQuery.refetch()}
-          />
-        ) : null}
-
-        {activeAlert ? (
-          <ActiveAlertPanel
-            disabled={isMutating}
-            onCancel={() => handleCloseAlert("CANCELLED")}
-            onRefresh={() => void activeAlertQuery.refetch()}
-            onResolve={() => handleCloseAlert("RESOLVED")}
-            refreshing={activeAlertQuery.isFetching}
-            session={activeAlert}
-          />
-        ) : (
-          <ManualAlertPanel
-            disabled={isMutating || activeAlertQuery.isLoading}
-            formError={formError}
-            initialLocation={initialLocation}
-            isReadingLocation={isReadingLocation}
-            message={message}
-            onLongPressStart={handleLongPressStart}
-            onMessageChange={handleMessageChange}
-            onUseCurrentLocation={handleUseCurrentLocation}
-          />
-        )}
-
-        {mutationError ? <Message text={mutationError} /> : null}
-
-        {feedback ? (
-          <View style={styles.feedback}>
-            <Feather name="check" size={16} color={colors.ink} />
-            <AppText variant="caption" style={styles.feedbackText}>
-              {feedback}
-            </AppText>
-          </View>
-        ) : null}
-
-        <View style={styles.infoPanel}>
-          <Feather name="shield" size={17} color={colors.mint} />
-          <AppText variant="caption" style={styles.infoText}>
-            Acoes de alerta ficam dentro da camada Vera e exigem confirmacao
-            antes de iniciar ou encerrar uma sessao.
+      {activeAlertQuery.isLoading ? (
+        <View style={styles.loadingPanel}>
+          <ActivityIndicator color={colors.mint} size="large" />
+          <AppText variant="caption" style={styles.mutedText}>
+            Verificando alerta ativo...
           </AppText>
         </View>
+      ) : null}
+
+      {queryError ? (
+        <Message
+          text={queryError}
+          actionLabel="Tentar de novo"
+          onAction={() => void activeAlertQuery.refetch()}
+        />
+      ) : null}
+
+      {activeAlert ? (
+        <ActiveAlertPanel
+          disabled={isMutating}
+          onCancel={() => handleCloseAlert("CANCELLED")}
+          onOpenTimeline={() => openActiveTimeline(activeAlert)}
+          onRefresh={() => void activeAlertQuery.refetch()}
+          onResolve={() => handleCloseAlert("RESOLVED")}
+          refreshing={activeAlertQuery.isFetching}
+          session={activeAlert}
+        />
+      ) : (
+        <ManualAlertPanel
+          disabled={isMutating || activeAlertQuery.isLoading}
+          formError={formError}
+          initialLocation={initialLocation}
+          isReadingLocation={isReadingLocation}
+          message={message}
+          onLongPressStart={handleLongPressStart}
+          onMessageChange={handleMessageChange}
+          onUseCurrentLocation={handleUseCurrentLocation}
+        />
+      )}
+
+      {mutationError ? <Message text={mutationError} /> : null}
+
+      {feedback ? (
+        <View style={styles.feedback}>
+          <Feather name="check" size={16} color={colors.ink} />
+          <AppText variant="caption" style={styles.feedbackText}>
+            {feedback}
+          </AppText>
+        </View>
+      ) : null}
+
+      <View style={styles.infoPanel}>
+        <Feather name="shield" size={17} color={colors.mint} />
+        <AppText variant="caption" style={styles.infoText}>
+          Acoes de alerta ficam dentro da camada Vera e exigem confirmacao antes
+          de iniciar ou encerrar uma sessao.
+        </AppText>
+      </View>
     </VaultScrollScreen>
   );
 }
@@ -427,6 +433,7 @@ function ManualAlertPanel({
 function ActiveAlertPanel({
   disabled,
   onCancel,
+  onOpenTimeline,
   onRefresh,
   onResolve,
   refreshing,
@@ -434,6 +441,7 @@ function ActiveAlertPanel({
 }: {
   disabled: boolean;
   onCancel: () => void;
+  onOpenTimeline: () => void;
   onRefresh: () => void;
   onResolve: () => void;
   refreshing: boolean;
@@ -498,6 +506,15 @@ function ActiveAlertPanel({
           />
         ) : null}
       </View>
+
+      <Button
+        accessibilityRole="button"
+        onPress={onOpenTimeline}
+        style={styles.actionButtonStretch}
+        variant="secondary"
+      >
+        Ver timeline
+      </Button>
 
       <View style={styles.actionRow}>
         <Button

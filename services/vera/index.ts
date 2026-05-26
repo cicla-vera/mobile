@@ -2,6 +2,7 @@ export * from './alert-sessions.service';
 export * from './active-alert-storage.service';
 export * from './emergency-contacts.service';
 export * from './evidence.service';
+export * from './evidence-upload-queue.service';
 export * from './location-monitoring.service';
 export * from './native-capabilities.service';
 export * from './safety-locations.service';

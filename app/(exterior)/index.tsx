@@ -234,5 +234,6 @@ const styles = StyleSheet.create({
   },
   calendarBlock: {
     gap: spacing[1],
+    marginTop: spacing[4],
   },
 });

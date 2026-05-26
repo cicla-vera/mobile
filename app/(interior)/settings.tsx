@@ -110,11 +110,12 @@ export default function VeraSettingsRoute() {
       ...(profile?.pinConfigured ? { currentPin } : {}),
     });
 
+    const wasConfigured = profile?.pinConfigured ?? false;
     setCurrentPin('');
     setNewPin('');
     setConfirmPin('');
     setPinFeedback(
-      profile?.pinConfigured ? 'PIN Vera atualizado.' : 'PIN Vera configurado.',
+      wasConfigured ? 'PIN Vera atualizado.' : 'PIN Vera configurado.',
     );
   }
 

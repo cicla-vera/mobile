@@ -60,9 +60,10 @@ const styles = StyleSheet.create({
   toolbar: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
+    flexShrink: 0,
     flexWrap: "wrap",
     gap: spacing[2],
+    justifyContent: "flex-end",
   },
   button: {
     width: 44,

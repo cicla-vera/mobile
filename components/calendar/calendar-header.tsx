@@ -15,10 +15,10 @@ export function CalendarHeader({ dateLabel, onGoToToday }: CalendarHeaderProps) 
       <AppText variant="caption" tone="muted" style={styles.eyebrow}>
         seu calendario
       </AppText>
-      <View style={styles.header}>
+      <View style={styles.headerRow}>
         <AppText style={styles.date}>{dateLabel}</AppText>
+        <CalendarToolbar onGoToToday={onGoToToday} />
       </View>
-      <CalendarToolbar onGoToToday={onGoToToday} />
     </View>
   );
 }
@@ -30,10 +30,15 @@ const styles = StyleSheet.create({
   eyebrow: {
     textTransform: "uppercase",
   },
-  header: {
-    minHeight: 32,
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing[2],
   },
   date: {
+    flex: 1,
+    flexShrink: 1,
     fontSize: 16,
     lineHeight: 29,
     fontWeight: "400",

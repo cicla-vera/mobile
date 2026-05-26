@@ -96,6 +96,8 @@ export const vaultFormStyles = StyleSheet.create({
   },
   stretchButton: {
     alignSelf: 'stretch',
+    width: '100%',
+    marginTop: spacing[2],
   },
   feedback: {
     minHeight: touchTarget.comfortable,

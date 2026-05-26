@@ -1,12 +1,21 @@
-import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { NotificationSettingsPanel } from '@/components/settings';
-import { AppText, ListActionRow, Screen } from '@/components/ui';
-import { colors, radius, spacing } from '@/constants/theme';
-import { useNotificationSettingsQuery } from '@/hooks/useNotificationSettings';
+import {
+  LocalNotificationsPanel,
+  NotificationSettingsPanel,
+} from "@/components/settings";
+import { AppText, ListActionRow, Screen } from "@/components/ui";
+import { colors, radius, spacing } from "@/constants/theme";
+import { useNotificationSettingsQuery } from "@/hooks/useNotificationSettings";
 
 export default function SettingsRoute() {
   const router = useRouter();
@@ -56,6 +65,7 @@ export default function SettingsRoute() {
         </View>
 
         <NotificationSettingsPanel />
+        <LocalNotificationsPanel />
 
         <View style={styles.linksCard}>
           <AppText variant="label">Conta</AppText>
@@ -63,7 +73,7 @@ export default function SettingsRoute() {
             title="Editar perfil"
             description="Nome, telefone e dados pessoais."
             icon="user"
-            onPress={() => router.push('/(exterior)/profile')}
+            onPress={() => router.push("/(exterior)/profile")}
             style={styles.linkRow}
           />
         </View>
@@ -82,20 +92,20 @@ const styles = StyleSheet.create({
     gap: spacing[5],
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing[3],
   },
   iconButton: {
     width: 42,
     height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 21,
-    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+    backgroundColor: "rgba(255, 255, 255, 0.72)",
   },
   eyebrow: {
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   hero: {
     gap: spacing[3],
@@ -106,7 +116,7 @@ const styles = StyleSheet.create({
   linksCard: {
     padding: spacing[5],
     borderWidth: 1,
-    borderColor: 'rgba(20, 16, 17, 0.08)',
+    borderColor: "rgba(20, 16, 17, 0.08)",
     borderRadius: radius.md,
     backgroundColor: colors.white,
     gap: spacing[4],
@@ -116,6 +126,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     paddingHorizontal: 0,
     paddingVertical: spacing[3],
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
 });

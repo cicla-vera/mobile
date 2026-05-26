@@ -171,6 +171,16 @@ export default function VeraEvidenceRoute() {
     }
   }
 
+  function openEvidenceDetail(record: EvidenceRecord) {
+    router.push({
+      pathname: "/(interior)/evidence-detail",
+      params: {
+        alertSessionId: record.alertSessionId,
+        evidenceRecordId: record.id,
+      },
+    });
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -268,6 +278,7 @@ export default function VeraEvidenceRoute() {
                         key={record.id}
                         disabled={hideEvidenceMutation.isPending}
                         record={record}
+                        onOpen={() => openEvidenceDetail(record)}
                         onHide={() => handleHideEvidence(record)}
                       />
                     ))}
@@ -439,10 +450,12 @@ function EvidenceCard({
   disabled,
   record,
   onHide,
+  onOpen,
 }: {
   disabled: boolean;
   record: EvidenceRecord;
   onHide: () => void;
+  onOpen: () => void;
 }) {
   const verified = isEvidenceVerified(record);
   const metadataEntries = getMetadataEntries(record);
@@ -472,19 +485,33 @@ function EvidenceCard({
           </AppText>
         </View>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Ocultar evidencia"
-          disabled={disabled}
-          onPress={onHide}
-          style={({ pressed }) => [
-            styles.hideButton,
-            pressed && styles.pressed,
-            disabled && styles.disabledAction,
-          ]}
-        >
-          <Feather name="eye-off" size={17} color={colors.danger} />
-        </Pressable>
+        <View style={styles.recordActions}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Abrir detalhe da evidencia"
+            onPress={onOpen}
+            style={({ pressed }) => [
+              styles.detailButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Feather name="chevron-right" size={18} color={colors.blue} />
+          </Pressable>
+
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Ocultar evidencia"
+            disabled={disabled}
+            onPress={onHide}
+            style={({ pressed }) => [
+              styles.hideButton,
+              pressed && styles.pressed,
+              disabled && styles.disabledAction,
+            ]}
+          >
+            <Feather name="eye-off" size={17} color={colors.danger} />
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.recordMetaPanel}>
@@ -927,6 +954,19 @@ const styles = StyleSheet.create({
   },
   recordTitle: {
     color: colors.ink,
+  },
+  recordActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing[2],
+  },
+  detailButton: {
+    width: 38,
+    height: 38,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 19,
+    backgroundColor: "rgba(32, 37, 123, 0.08)",
   },
   hideButton: {
     width: 38,

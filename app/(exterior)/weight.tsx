@@ -76,7 +76,7 @@ export default function WeightRoute() {
       setWeight('');
       setFeedback('Peso salvo para este dia.');
     } catch (error) {
-      setFormError(getApiErrorMessage(error, 'Nao foi possivel salvar o peso.'));
+      setFormError(getApiErrorMessage(error, 'Não foi possível salvar o peso.'));
     }
   }
 
@@ -144,7 +144,7 @@ export default function WeightRoute() {
               {latestEntry ? formatWeight(latestEntry.weight) : 'Sem registro'}
             </AppText>
             <AppText style={styles.heroText}>
-              Acompanhe tendencias ao longo do ciclo sem transformar um numero
+              Acompanhe tendências ao longo do ciclo sem transformar um número
               isolado em conclusao.
             </AppText>
           </View>
@@ -154,7 +154,7 @@ export default function WeightRoute() {
           <View style={styles.notice}>
             <Feather name="alert-circle" size={22} color={colors.danger} />
             <AppText variant="caption" style={styles.noticeText}>
-              {getApiErrorMessage(loadError, 'Nao deu para carregar pesos.')}
+              {getApiErrorMessage(loadError, 'Não deu para carregar pesos.')}
             </AppText>
           </View>
         ) : null}
@@ -220,7 +220,7 @@ export default function WeightRoute() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="Ultimos registros" detail="historico recente" />
+          <SectionHeader title="Últimos registros" detail="histórico recente" />
           {recentEntriesQuery.isLoading ? (
             <ActivityIndicator color={colors.blue} style={styles.loader} />
           ) : (

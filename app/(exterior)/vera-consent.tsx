@@ -49,7 +49,7 @@ const statusLabels: Record<PermissionState, string> = {
   granted: 'Concedida',
   denied: 'Negada',
   pending: 'Pendente',
-  unavailable: 'Indisponivel',
+  unavailable: 'Indisponível',
 };
 
 export default function VeraConsentRoute() {
@@ -93,13 +93,13 @@ export default function VeraConsentRoute() {
   const profileError = profileQuery.isError
     ? getApiErrorMessage(
         profileQuery.error,
-        'Nao deu para carregar seu perfil Vera agora.',
+        'Não deu para carregar seu perfil Vera agora.',
       )
     : null;
   const saveError = updateProfileMutation.error
     ? getApiErrorMessage(
         updateProfileMutation.error,
-        'Nao deu para salvar o consentimento agora.',
+        'Não deu para salvar o consentimento agora.',
       )
     : null;
   const canContinue =
@@ -125,7 +125,7 @@ export default function VeraConsentRoute() {
         await capabilitiesQuery.refetch();
       } catch {
         setPermissionError(
-          'Nao deu para abrir a permissao agora. Voce ainda pode continuar e ajustar depois.',
+          'Não deu para abrir a permissão agora. Você ainda pode continuar e ajustar depois.',
         );
       } finally {
         setPendingPermission(null);
@@ -178,18 +178,18 @@ export default function VeraConsentRoute() {
             Vera
           </AppText>
           <AppText variant="title" style={styles.title}>
-            Consentimento e permissoes
+            Consentimento e permissões
           </AppText>
           <AppText tone="muted" style={styles.copy}>
-            A camada Vera so e ativada por escolha sua. Nenhum monitoramento,
-            alerta ou evidencia comeca antes deste aceite.
+            A camada Vera só é ativada por escolha sua. Nenhum monitoramento,
+            alerta ou evidência começa antes deste aceite.
           </AppText>
         </View>
 
         <View style={styles.section}>
           <InfoStrip
             icon="lock"
-            text="Evidencias ficam ligadas a sessoes de alerta. Contatos recebem resumo seguro e localizacao, nao arquivos brutos."
+            text="Evidências ficam ligadas a sessões de alerta. Contatos recebem resumo seguro e localização, não arquivos brutos."
           />
 
           <View style={styles.permissions}>
@@ -209,7 +209,7 @@ export default function VeraConsentRoute() {
 
           {capabilitiesQuery.isLoading ? (
             <AppText variant="caption" tone="muted" style={styles.helperText}>
-              Verificando permissoes nativas...
+              Verificando permissões nativas...
             </AppText>
           ) : null}
 
@@ -257,7 +257,7 @@ export default function VeraConsentRoute() {
             style={styles.secondaryAction}
             variant="ghost"
           >
-            Agora nao
+            Agora não
           </Button>
         </View>
       </ScrollView>
@@ -369,8 +369,8 @@ function buildPermissionItems(
     {
       key: 'location',
       icon: 'map-pin',
-      title: 'Localizacao',
-      copy: 'Necessaria para locais monitorados e alertas por entrada.',
+      title: 'Localização',
+      copy: 'Necessária para locais monitorados e alertas por entrada.',
       state: getLocationState(capabilities),
       detail: getLocationDetail(capabilities),
       request: requestLocation,
@@ -378,36 +378,36 @@ function buildPermissionItems(
     {
       key: 'notifications',
       icon: 'bell',
-      title: 'Notificacoes discretas',
+      title: 'Notificações discretas',
       copy: 'Permitem avisos curtos sem expor a camada Vera.',
       state: getSnapshotState(capabilities?.notifications),
       detail: getSnapshotDetail(
         capabilities?.notifications,
-        'Notificacoes ainda nao foram solicitadas.',
-        'Notificacoes negadas. Alertas visuais locais podem ficar limitados.',
-        'Notificacoes nao estao disponiveis neste ambiente.',
+        'Notificações ainda não foram solicitadas.',
+        'Notificações negadas. Alertas visuais locais podem ficar limitados.',
+        'Notificações não estão disponíveis neste ambiente.',
       ),
       request: requestNotifications,
     },
     {
       key: 'camera',
       icon: 'camera',
-      title: 'Camera',
-      copy: 'Usada somente em captura consentida de evidencia.',
+      title: 'Câmera',
+      copy: 'Usada somente em captura consentida de evidência.',
       state: getSnapshotState(capabilities?.camera.camera),
       detail: getSnapshotDetail(
         capabilities?.camera.camera,
-        'Camera ainda nao foi solicitada.',
-        'Camera negada. Voce pode seguir sem captura por imagem.',
-        'Camera nao esta disponivel neste ambiente.',
+        'Câmera ainda não foi solicitada.',
+        'Câmera negada. Você pode seguir sem captura por imagem.',
+        'Câmera não está disponível neste ambiente.',
       ),
       request: requestCamera,
     },
     {
       key: 'audio',
       icon: 'mic',
-      title: 'Audio',
-      copy: 'Usado somente em captura consentida de evidencia.',
+      title: 'Áudio',
+      copy: 'Usado somente em captura consentida de evidência.',
       state: getAudioState(capabilities),
       detail: getAudioDetail(capabilities),
       request: requestAudio,
@@ -444,11 +444,11 @@ function getSnapshotDetail(
   unavailableText: string,
 ) {
   if (!snapshot) {
-    return 'Verificando permissao...';
+    return 'Verificando permissão...';
   }
 
   if (snapshot.status === 'granted') {
-    return 'Permissao concedida neste aparelho.';
+    return 'Permissão concedida neste aparelho.';
   }
 
   if (snapshot.status === 'denied') {
@@ -497,26 +497,26 @@ function getLocationDetail(
   capabilities: VeraNativeCapabilityStatus | undefined,
 ) {
   if (!capabilities) {
-    return 'Verificando localizacao...';
+    return 'Verificando localização...';
   }
 
   if (!capabilities.location.servicesEnabled) {
-    return 'Servicos de localizacao do aparelho estao desligados.';
+    return 'Serviços de localização do aparelho estão desligados.';
   }
 
   if (capabilities.location.foreground.granted) {
     if (capabilities.location.background.granted) {
-      return 'Localizacao em uso e em segundo plano concedidas.';
+      return 'Localização em uso e em segundo plano concedidas.';
     }
 
-    return 'Localizacao em uso concedida. Segundo plano ainda limita locais monitorados.';
+    return 'Localização em uso concedida. Segundo plano ainda limita locais monitorados.';
   }
 
   return getSnapshotDetail(
     capabilities.location.foreground,
-    'Localizacao ainda nao foi solicitada.',
-    'Localizacao negada. Locais monitorados ficam desativados ate voce permitir.',
-    'Localizacao nao esta disponivel neste ambiente.',
+    'Localização ainda não foi solicitada.',
+    'Localização negada. Locais monitorados ficam desativados até você permitir.',
+    'Localização não está disponível neste ambiente.',
   );
 }
 
@@ -547,21 +547,21 @@ function getAudioState(
 
 function getAudioDetail(capabilities: VeraNativeCapabilityStatus | undefined) {
   if (!capabilities) {
-    return 'Verificando audio...';
+    return 'Verificando áudio...';
   }
 
   if (
     capabilities.audio.recording.granted &&
     capabilities.camera.microphone.granted
   ) {
-    return 'Microfone e gravacao de audio concedidos.';
+    return 'Microfone e gravação de áudio concedidos.';
   }
 
   return getSnapshotDetail(
     capabilities.audio.recording,
-    'Audio ainda nao foi solicitado.',
-    'Audio negado. Voce pode seguir sem captura sonora.',
-    'Audio nao esta disponivel neste ambiente.',
+    'Áudio ainda não foi solicitado.',
+    'Áudio negado. Você pode seguir sem captura sonora.',
+    'Áudio não está disponível neste ambiente.',
   );
 }
 

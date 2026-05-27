@@ -21,7 +21,7 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
     }
 
     if (message === "Email already in use") {
-      return "Este email ja esta em uso.";
+      return "Este email já está em uso.";
     }
 
     if (message === "Invalid Vera PIN.") {
@@ -29,7 +29,7 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
     }
 
     if (message === "Vera PIN is not configured.") {
-      return "O PIN Vera ainda nao foi configurado.";
+      return "O PIN Vera ainda não foi configurado.";
     }
 
     if (message === "Too many failed Vera PIN attempts. Try again later.") {
@@ -51,40 +51,40 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
     if (
       message === "Alert session can only be closed as resolved or cancelled."
     ) {
-      return "A sessao de alerta so pode ser encerrada como resolvida ou cancelada.";
+      return "A sessão de alerta só pode ser encerrada como resolvida ou cancelada.";
     }
 
     if (message === "Alert session is already closed.") {
-      return "Essa sessao de alerta ja foi encerrada.";
+      return "Essa sessão de alerta já foi encerrada.";
     }
 
     if (message === "Alert session not found") {
-      return "Sessao de alerta nao encontrada.";
+      return "Sessão de alerta não encontrada.";
     }
 
     if (
       message ===
       "Emergency contacts can only be notified for active alert sessions."
     ) {
-      return "Contatos so podem ser acionados em uma sessao ativa.";
+      return "Contatos só podem ser acionados em uma sessão ativa.";
     }
 
     if (
       message ===
       "Emergency contacts can only be notified for critical alerts."
     ) {
-      return "Contatos so podem ser acionados quando a sessao estiver critica.";
+      return "Contatos só podem ser acionados quando a sessão estiver crítica.";
     }
 
     return message;
   }
 
   if (error.response?.status === 401) {
-    return "Sessao expirada. Entre novamente para continuar.";
+    return "Sessão expirada. Entre novamente para continuar.";
   }
 
   if (error.response?.status === 404) {
-    return "Nao encontramos esse recurso agora.";
+    return "Não encontramos esse recurso agora.";
   }
 
   if (error.code === "ECONNABORTED") {

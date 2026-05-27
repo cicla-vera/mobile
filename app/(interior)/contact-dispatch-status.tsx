@@ -65,7 +65,7 @@ const statusCopy: Record<
     tone: colors.sky,
   },
   not_configured: {
-    label: "Nao configurado",
+    label: "Não configurado",
     icon: "slash",
     tone: colors.muted,
   },
@@ -113,27 +113,27 @@ export default function ContactDispatchStatusRoute() {
     contactsQuery.isFetching ||
     timelineQuery.isFetching;
   const queryError = !alertSessionId
-    ? "Nao deu para identificar a sessao de alerta."
+    ? "Não deu para identificar a sessão de alerta."
     : sessionQuery.isError
       ? getApiErrorMessage(
           sessionQuery.error,
-          "Nao deu para carregar a sessao agora.",
+          "Não deu para carregar a sessão agora.",
         )
       : contactsQuery.isError
         ? getApiErrorMessage(
             contactsQuery.error,
-            "Nao deu para carregar os contatos agora.",
+            "Não deu para carregar os contatos agora.",
           )
         : timelineQuery.isError
           ? getApiErrorMessage(
               timelineQuery.error,
-              "Nao deu para carregar o status dos acionamentos.",
+              "Não deu para carregar o status dos acionamentos.",
             )
           : null;
   const dispatchError = dispatchMutation.error
     ? getApiErrorMessage(
         dispatchMutation.error,
-        "Nao deu para acionar os contatos agora.",
+        "Não deu para acionar os contatos agora.",
       )
     : null;
   const canDispatch =
@@ -156,7 +156,7 @@ export default function ContactDispatchStatusRoute() {
 
     Alert.alert(
       "Acionar contatos",
-      "A Vera vai preparar o acionamento dos contatos ativos desta sessao.",
+      "A Vera vai preparar o acionamento dos contatos ativos desta sessão.",
       [
         { text: "Voltar", style: "cancel" },
         {
@@ -191,7 +191,7 @@ export default function ContactDispatchStatusRoute() {
     <VaultScrollScreen>
       <VaultHeader
         title="Status dos contatos"
-        subtitle="Acompanhamento discreto dos acionamentos da sessao"
+        subtitle="Acompanhamento discreto dos acionamentos da sessão"
         rightAction={
           <Pressable
             accessibilityRole="button"
@@ -297,7 +297,7 @@ function SessionSummary({
         </View>
         <View style={styles.summaryCopy}>
           <AppText variant="label" style={styles.panelTitle}>
-            Sessao {formatShortId(session.id)}
+            Sessão {formatShortId(session.id)}
           </AppText>
           <AppText variant="caption" style={styles.mutedText}>
             {activeContactsCount} contato(s) ativo(s) para acionamento.
@@ -334,7 +334,7 @@ function ContactStatusCard({ item }: { item: ContactStatusItem }) {
             {item.contact.name}
           </AppText>
           <AppText variant="caption" numberOfLines={1} style={styles.mutedText}>
-            {item.contact.relationship || "Relacao nao informada"}
+            {item.contact.relationship || "Relação não informada"}
           </AppText>
         </View>
 
@@ -479,7 +479,7 @@ function buildContactStatusItems(
           contact,
           event: null,
           status: "not_configured",
-          detail: "Contato inativo e fora dos acionamentos desta sessao.",
+          detail: "Contato inativo e fora dos acionamentos desta sessão.",
         };
       }
 
@@ -507,8 +507,8 @@ function buildContactStatusItems(
         status: "pending",
         detail:
           session?.level === "CRITICAL"
-            ? "Aguardando acionamento ou atualizacao."
-            : "Disponivel se a sessao subir para nivel critico.",
+            ? "Aguardando acionamento ou atualização."
+            : "Disponível se a sessão subir para nível crítico.",
       };
     });
 }
@@ -552,14 +552,14 @@ function formatFailureReason(event: AlertEvent) {
   const reason = getMetadataString(event, "reason");
 
   if (reason === "sms_provider_not_configured") {
-    return "Envio indisponivel neste ambiente. Tente novamente depois.";
+    return "Envio indisponível neste ambiente. Tente novamente depois.";
   }
 
   if (reason === "no_active_contacts") {
     return "Nenhum contato ativo configurado.";
   }
 
-  return "A tentativa nao foi concluida. Tente atualizar ou acionar de novo.";
+  return "A tentativa não foi concluída. Tente atualizar ou acionar de novo.";
 }
 
 function formatGeneralFailure(event: AlertEvent) {
@@ -568,11 +568,11 @@ function formatGeneralFailure(event: AlertEvent) {
 
 function getDispatchHint(session: AlertSession | null, activeContactsCount: number) {
   if (!session) {
-    return "Carregue uma sessao para acompanhar acionamentos.";
+    return "Carregue uma sessão para acompanhar acionamentos.";
   }
 
   if (session.status !== "ACTIVE") {
-    return "A sessao ja foi encerrada; os status ficam apenas para consulta.";
+    return "A sessão já foi encerrada; os status ficam apenas para consulta.";
   }
 
   if (activeContactsCount === 0) {
@@ -580,15 +580,15 @@ function getDispatchHint(session: AlertSession | null, activeContactsCount: numb
   }
 
   if (session.level !== "CRITICAL") {
-    return "Disponivel quando a sessao estiver em nivel critico.";
+    return "Disponível quando a sessão estiver em nível crítico.";
   }
 
-  return "Aciona somente contatos ativos desta sessao.";
+  return "Aciona somente contatos ativos desta sessão.";
 }
 
 function formatDispatchFeedback(response: EmergencyDispatchResponse) {
   if (response.attempts.length === 0) {
-    return "Nenhum contato ativo configurado para esta sessao.";
+    return "Nenhum contato ativo configurado para esta sessão.";
   }
 
   const sent = response.attempts.filter((attempt) => attempt.status === "sent")
@@ -603,7 +603,7 @@ function formatDispatchFeedback(response: EmergencyDispatchResponse) {
     return "Alguns contatos foram acionados; verifique os itens com falha.";
   }
 
-  return "Nao foi possivel concluir o acionamento; verifique as falhas.";
+  return "Não foi possível concluir o acionamento; verifique as falhas.";
 }
 
 function maskPhone(phone: string) {
@@ -620,7 +620,7 @@ function maskPhone(phone: string) {
 }
 
 function formatLevel(level: AlertSession["level"]) {
-  return level === "CRITICAL" ? "Critico" : "Normal";
+  return level === "CRITICAL" ? "Crítico" : "Normal";
 }
 
 function formatShortId(id: string) {

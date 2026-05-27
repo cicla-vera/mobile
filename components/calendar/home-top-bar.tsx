@@ -25,7 +25,7 @@ export function HomeTopBar({
       <View style={styles.actions}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Notificacoes"
+          accessibilityLabel="Notificações"
           hitSlop={8}
           onPress={onNotificationsPress}
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
@@ -36,7 +36,7 @@ export function HomeTopBar({
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Configuracoes"
+          accessibilityLabel="Configurações"
           hitSlop={8}
           onPress={() => router.push('/(exterior)/settings')}
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}

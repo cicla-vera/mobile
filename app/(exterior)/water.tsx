@@ -75,7 +75,7 @@ export default function WaterRoute() {
       setFeedback(`${formatAmount(value)} salvos para este dia.`);
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel salvar a agua.'),
+        getApiErrorMessage(error, 'Não foi possível salvar a água.'),
       );
     }
   }
@@ -94,7 +94,7 @@ export default function WaterRoute() {
 
   function confirmDelete(entry: WaterEntry) {
     Alert.alert(
-      'Remover agua',
+      'Remover água',
       `Remover ${formatAmount(entry.amount)} de ${formatDate(entry.date)}?`,
       [
         { text: 'Cancelar', style: 'cancel' },
@@ -139,7 +139,7 @@ export default function WaterRoute() {
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="muted" style={styles.eyebrow}>
-              Ingestao de agua
+              Ingestão de água
             </AppText>
             <AppText variant="heading">
               {formatCalendarHeading(selectedDate)}
@@ -157,7 +157,7 @@ export default function WaterRoute() {
             </AppText>
             <AppText style={styles.heroText}>
               Registre copos ou garrafas ao longo do dia para enxergar seus
-              padroes de hidratacao.
+              padrões de hidratação.
             </AppText>
           </View>
         </View>
@@ -171,7 +171,7 @@ export default function WaterRoute() {
           <View style={styles.notice}>
             <Feather name="alert-circle" size={22} color={colors.danger} />
             <AppText variant="caption" style={styles.noticeText}>
-              {getApiErrorMessage(loadError, 'Nao deu para carregar agua.')}
+              {getApiErrorMessage(loadError, 'Não deu para carregar água.')}
             </AppText>
           </View>
         ) : null}
@@ -242,7 +242,7 @@ export default function WaterRoute() {
             <ActivityIndicator color={colors.blue} style={styles.loader} />
           ) : (
             <WaterList
-              emptyText="Nenhuma agua salva para esse dia."
+              emptyText="Nenhuma água salva para esse dia."
               entries={dayEntries}
               onDelete={confirmDelete}
             />
@@ -250,12 +250,12 @@ export default function WaterRoute() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="Ultimos registros" detail="historico recente" />
+          <SectionHeader title="Últimos registros" detail="histórico recente" />
           {recentEntriesQuery.isLoading ? (
             <ActivityIndicator color={colors.blue} style={styles.loader} />
           ) : (
             <WaterList
-              emptyText="Nenhuma agua registrada ainda."
+              emptyText="Nenhuma água registrada ainda."
               entries={(recentEntriesQuery.data ?? []).slice(0, 6)}
               onDelete={confirmDelete}
             />
@@ -312,7 +312,7 @@ function WaterList({
           </View>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Remover agua"
+            accessibilityLabel="Remover água"
             onPress={() => onDelete(entry)}
             style={styles.deleteButton}
           >

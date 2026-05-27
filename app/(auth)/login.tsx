@@ -51,7 +51,7 @@ export default function LoginScreen() {
       router.replace('/(exterior)');
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel entrar agora.'),
+        getApiErrorMessage(error, 'Não foi possível entrar agora.'),
       );
     }
   }
@@ -59,7 +59,7 @@ export default function LoginScreen() {
   function handleForgotPassword() {
     Alert.alert(
       'Recuperar senha',
-      'A recuperacao de senha sera disponibilizada em breve.',
+      'A recuperacao de senha será disponibilizada em breve.',
     );
   }
 
@@ -144,7 +144,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
 
           <View style={styles.registerRow}>
-            <AppText style={styles.registerText}>Ainda nao tem conta?</AppText>
+            <AppText style={styles.registerText}>Ainda não tem conta?</AppText>
             <Link href="/register" asChild>
               <TouchableOpacity activeOpacity={0.7} style={styles.registerLink}>
                 <AppText style={styles.registerLabel}>Criar cadastro</AppText>

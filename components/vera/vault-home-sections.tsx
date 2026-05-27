@@ -72,7 +72,7 @@ export function VaultContactsRow({
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Adicionar contato de emergencia"
+        accessibilityLabel="Adicionar contato de emergência"
         onPress={onAddPress}
         style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
       >
@@ -178,7 +178,7 @@ export function VaultRecordingsRow({ records, loading }: VaultRecordingsRowProps
         >
           <Feather name="archive" size={22} color={colors.muted} />
           <AppText style={styles.emptyRecordingText}>
-            Nenhuma gravacao no cofre
+            Nenhuma gravação no cofre
           </AppText>
         </Pressable>
       ) : (

@@ -90,23 +90,23 @@ export default function VeraLocationsRoute() {
   const locationsError = locationsQuery.isError
     ? getApiErrorMessage(
         locationsQuery.error,
-        "Nao deu para carregar os locais monitorados agora.",
+        "Não deu para carregar os locais monitorados agora.",
       )
     : null;
   const mutationError = createLocationMutation.error
     ? getApiErrorMessage(
         createLocationMutation.error,
-        "Nao deu para salvar o local agora.",
+        "Não deu para salvar o local agora.",
       )
     : updateLocationMutation.error
       ? getApiErrorMessage(
           updateLocationMutation.error,
-          "Nao deu para atualizar o local agora.",
+          "Não deu para atualizar o local agora.",
         )
       : disableLocationMutation.error
         ? getApiErrorMessage(
             disableLocationMutation.error,
-            "Nao deu para desativar o local agora.",
+            "Não deu para desativar o local agora.",
           )
         : null;
 
@@ -165,8 +165,8 @@ export default function VeraLocationsRoute() {
       if (!permission.granted) {
         setFormError(
           permission.canAskAgain
-            ? "Permissao de localizacao negada. Voce ainda pode preencher as coordenadas manualmente."
-            : "Permissao de localizacao bloqueada. Preencha as coordenadas manualmente.",
+            ? "Permissão de localização negada. Você ainda pode preencher as coordenadas manualmente."
+            : "Permissão de localização bloqueada. Preencha as coordenadas manualmente.",
         );
         return;
       }
@@ -183,7 +183,7 @@ export default function VeraLocationsRoute() {
       setFeedback("Coordenadas atuais preenchidas.");
     } catch {
       setFormError(
-        "Nao deu para obter sua localizacao agora. Preencha as coordenadas manualmente.",
+        "Não deu para obter sua localização agora. Preencha as coordenadas manualmente.",
       );
     } finally {
       setIsUsingCurrentLocation(false);
@@ -238,7 +238,7 @@ export default function VeraLocationsRoute() {
   function handleDisable(location: SafetyLocation) {
     Alert.alert(
       "Desativar local",
-      `O local ${location.name} deixa de iniciar alertas por monitoramento. Ele continua no historico e pode ser reativado.`,
+      `O local ${location.name} deixa de iniciar alertas por monitoramento. Ele continua no histórico e pode ser reativado.`,
       [
         { text: "Cancelar", style: "cancel" },
         {
@@ -297,7 +297,7 @@ export default function VeraLocationsRoute() {
     <VaultScrollScreen keyboard>
         <VaultHeader
           title="Localizacoes"
-          subtitle="Locais onde o monitoramento sera ativado automaticamente"
+          subtitle="Locais onde o monitoramento será ativado automaticamente"
         />
 
         <View style={styles.summaryPanel}>
@@ -399,9 +399,9 @@ export default function VeraLocationsRoute() {
               )}
             </View>
             <View style={styles.currentLocationCopy}>
-              <AppText variant="label">Usar localizacao atual</AppText>
+              <AppText variant="label">Usar localização atual</AppText>
               <AppText variant="caption" tone="muted">
-                Se a permissao falhar, o formulario continua manual.
+                Se a permissão falhar, o formulário continua manual.
               </AppText>
             </View>
           </Pressable>
@@ -467,7 +467,7 @@ export default function VeraLocationsRoute() {
             <View style={styles.switchCopy}>
               <AppText variant="label">Local ativo</AppText>
               <AppText variant="caption" tone="muted">
-                Locais inativos nao iniciam monitoramento.
+                Locais inativos não iniciam monitoramento.
               </AppText>
             </View>
             <Switch
@@ -592,11 +592,11 @@ function validateAndBuildPayload(
   }
 
   if (latitude === null || latitude < -90 || latitude > 90) {
-    return "Latitude deve ser um numero entre -90 e 90.";
+    return "Latitude deve ser um número entre -90 e 90.";
   }
 
   if (longitude === null || longitude < -180 || longitude > 180) {
-    return "Longitude deve ser um numero entre -180 e 180.";
+    return "Longitude deve ser um número entre -180 e 180.";
   }
 
   if (

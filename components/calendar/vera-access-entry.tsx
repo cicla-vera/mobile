@@ -10,7 +10,7 @@ export function VeraAccessEntry({ onPress }: VeraAccessEntryProps) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Abrir area privada Vera"
+      accessibilityLabel="Abrir área privada Vera"
       hitSlop={12}
       onPress={onPress}
       style={({ pressed }) => [

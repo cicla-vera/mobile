@@ -107,7 +107,7 @@ export default function VeraUnlockRoute() {
   const profileError = profileQuery.isError
     ? getApiErrorMessage(
         profileQuery.error,
-        "Nao deu para confirmar seu consentimento Vera agora.",
+        "Não deu para confirmar seu consentimento Vera agora.",
       )
     : null;
   const pinError =
@@ -116,7 +116,7 @@ export default function VeraUnlockRoute() {
     (verifyPinMutation.error
       ? getApiErrorMessage(
           verifyPinMutation.error,
-          "Nao deu para desbloquear agora.",
+          "Não deu para desbloquear agora.",
         )
       : undefined);
   const setupError =
@@ -125,12 +125,12 @@ export default function VeraUnlockRoute() {
     (setPinMutation.error
       ? getApiErrorMessage(
           setPinMutation.error,
-          "Nao deu para criar o PIN Vera agora.",
+          "Não deu para criar o PIN Vera agora.",
         )
       : verifyPinMutation.error
         ? getApiErrorMessage(
             verifyPinMutation.error,
-            "PIN criado, mas nao deu para entrar agora.",
+            "PIN criado, mas não deu para entrar agora.",
           )
         : undefined);
   const isSettingPin = setPinMutation.isPending || pinPending;
@@ -178,12 +178,12 @@ export default function VeraUnlockRoute() {
     }
 
     if (setupPin.length < PIN_MIN_LENGTH) {
-      setSetupValidationError("Digite entre 4 e 8 numeros.");
+      setSetupValidationError("Digite entre 4 e 8 números.");
       return;
     }
 
     if (setupPin !== setupConfirmPin) {
-      setSetupValidationError("Os PINs nao conferem.");
+      setSetupValidationError("Os PINs não conferem.");
       return;
     }
 
@@ -220,7 +220,7 @@ export default function VeraUnlockRoute() {
     }
 
     if (nextPin.length < PIN_MIN_LENGTH) {
-      setValidationError("Digite entre 4 e 8 numeros.");
+      setValidationError("Digite entre 4 e 8 números.");
       return;
     }
 
@@ -356,7 +356,7 @@ function VeraPinSetupOverlay({
           <VeraLogo width={150} style={styles.setupLogo} />
           <AppText style={styles.setupTitle}>Criar PIN Vera</AppText>
           <AppText tone="muted" style={styles.setupCopy}>
-            Use de 4 a 8 numeros. Este PIN protege a area privada neste
+            Use de 4 a 8 números. Este PIN protege a área privada neste
             aparelho.
           </AppText>
         </View>
@@ -481,11 +481,11 @@ function getBiometricMessage(reason: VeraBiometricUnlockReason | null) {
   }
 
   if (reason === "session_expired") {
-    return "Sessao expirada. Use o PIN para continuar.";
+    return "Sessão expirada. Use o PIN para continuar.";
   }
 
   if (reason === "authentication_failed") {
-    return "Biometria cancelada ou nao reconhecida.";
+    return "Biometria cancelada ou não reconhecida.";
   }
 
   if (
@@ -496,8 +496,8 @@ function getBiometricMessage(reason: VeraBiometricUnlockReason | null) {
     reason === "biometric_not_enrolled" ||
     reason === "biometric_storage_unavailable"
   ) {
-    return "Biometria indisponivel neste ambiente. Use o PIN.";
+    return "Biometria indisponível neste ambiente. Use o PIN.";
   }
 
-  return "Nao deu para usar biometria agora. Use o PIN.";
+  return "Não deu para usar biometria agora. Use o PIN.";
 }

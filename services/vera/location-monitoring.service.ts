@@ -47,6 +47,17 @@ type VeraLocationTaskHandler = (sample: VeraLocationSample) => void;
 const backgroundLocationHandlers = new Set<VeraLocationTaskHandler>();
 const backgroundLocationAttemptAt = new Map<string, number>();
 const BACKGROUND_LOCATION_ALERT_COOLDOWN_MS = 60 * 1000;
+let locationUpdatesOperation: Promise<unknown> = Promise.resolve();
+
+async function runLocationUpdatesOperation<T>(operation: () => Promise<T>) {
+  const nextOperation = locationUpdatesOperation.then(operation, operation);
+  locationUpdatesOperation = nextOperation.then(
+    () => undefined,
+    () => undefined,
+  );
+
+  return nextOperation;
+}
 
 defineVeraLocationTask();
 
@@ -105,44 +116,50 @@ export async function startVeraBackgroundLocationUpdates() {
     return false;
   }
 
-  const [taskManagerAvailable, foregroundPermission, backgroundPermission] =
-    await Promise.all([
-      TaskManager.isAvailableAsync(),
-      Location.getForegroundPermissionsAsync(),
-      Location.getBackgroundPermissionsAsync(),
-    ]);
+  return runLocationUpdatesOperation(async () => {
+    const [taskManagerAvailable, foregroundPermission, backgroundPermission] =
+      await Promise.all([
+        TaskManager.isAvailableAsync(),
+        Location.getForegroundPermissionsAsync(),
+        Location.getBackgroundPermissionsAsync(),
+      ]);
 
-  if (
-    !taskManagerAvailable ||
-    !foregroundPermission.granted ||
-    !backgroundPermission.granted
-  ) {
-    return false;
-  }
+    if (
+      !taskManagerAvailable ||
+      !foregroundPermission.granted ||
+      !backgroundPermission.granted
+    ) {
+      return false;
+    }
 
-  const isRegistered = await TaskManager.isTaskRegisteredAsync(
-    VERA_LOCATION_TASK_NAME,
-  );
+    try {
+      const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+        VERA_LOCATION_TASK_NAME,
+      );
 
-  if (isRegistered) {
-    return true;
-  }
+      if (hasStarted) {
+        return true;
+      }
 
-  await Location.startLocationUpdatesAsync(VERA_LOCATION_TASK_NAME, {
-    accuracy: Location.Accuracy.Balanced,
-    activityType: Location.ActivityType.Other,
-    deferredUpdatesInterval: 60000,
-    distanceInterval: 25,
-    foregroundService: {
-      notificationBody: 'Sincronizando lembretes do calendario.',
-      notificationTitle: 'Cicla Vera',
-    },
-    pausesUpdatesAutomatically: false,
-    showsBackgroundLocationIndicator: false,
-    timeInterval: 30000,
+      await Location.startLocationUpdatesAsync(VERA_LOCATION_TASK_NAME, {
+        accuracy: Location.Accuracy.Balanced,
+        activityType: Location.ActivityType.Other,
+        deferredUpdatesInterval: 60000,
+        distanceInterval: 25,
+        foregroundService: {
+          notificationBody: 'Sincronizando lembretes do calendario.',
+          notificationTitle: 'Cicla Vera',
+        },
+        pausesUpdatesAutomatically: false,
+        showsBackgroundLocationIndicator: false,
+        timeInterval: 30000,
+      });
+
+      return true;
+    } catch {
+      return false;
+    }
   });
-
-  return true;
 }
 
 export async function stopVeraBackgroundLocationUpdates() {
@@ -150,13 +167,21 @@ export async function stopVeraBackgroundLocationUpdates() {
     return;
   }
 
-  const isRegistered = await TaskManager.isTaskRegisteredAsync(
-    VERA_LOCATION_TASK_NAME,
-  );
+  await runLocationUpdatesOperation(async () => {
+    try {
+      const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+        VERA_LOCATION_TASK_NAME,
+      );
 
-  if (isRegistered) {
-    await Location.stopLocationUpdatesAsync(VERA_LOCATION_TASK_NAME);
-  }
+      if (!hasStarted) {
+        return;
+      }
+
+      await Location.stopLocationUpdatesAsync(VERA_LOCATION_TASK_NAME);
+    } catch {
+      // Stop is best-effort; concurrent cleanup or stale task state is harmless.
+    }
+  });
 }
 
 export function getVeraLocationMonitoringLimitation(

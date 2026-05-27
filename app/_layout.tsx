@@ -1,5 +1,7 @@
 import '../global.css';
 
+import '@/services/vera/security-audio-simulation.service';
+
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -13,6 +15,7 @@ import { QueryProvider } from '@/providers/query-provider';
 import { VeraActiveAlertProvider } from '@/providers/vera-active-alert-provider';
 import { VeraEvidenceUploadQueueProvider } from '@/providers/vera-evidence-upload-queue-provider';
 import { VeraLocationMonitorProvider } from '@/providers/vera-location-monitor-provider';
+import { VeraSecurityModeProvider } from '@/providers/vera-security-mode-provider';
 
 export default function RootLayout() {
   return (
@@ -23,8 +26,10 @@ export default function RootLayout() {
             <VeraActiveAlertProvider>
               <VeraEvidenceUploadQueueProvider>
                 <VeraLocationMonitorProvider>
-                  <StatusBar style="dark" />
-                  <Stack screenOptions={{ headerShown: false }} />
+                  <VeraSecurityModeProvider>
+                    <StatusBar style="dark" />
+                    <Stack screenOptions={{ headerShown: false }} />
+                  </VeraSecurityModeProvider>
                 </VeraLocationMonitorProvider>
               </VeraEvidenceUploadQueueProvider>
             </VeraActiveAlertProvider>

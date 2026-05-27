@@ -266,6 +266,7 @@ export default function VeraAlertsRoute() {
       {activeAlert ? (
         <ActiveAlertPanel
           disabled={isMutating}
+          isClosing={closeAlertMutation.isPending}
           onCancel={() => handleCloseAlert("CANCELLED")}
           onOpenContactStatus={() => openContactStatus(activeAlert)}
           onOpenTimeline={() => openActiveTimeline(activeAlert)}
@@ -440,6 +441,7 @@ function ManualAlertPanel({
 
 function ActiveAlertPanel({
   disabled,
+  isClosing,
   onCancel,
   onOpenContactStatus,
   onOpenTimeline,
@@ -449,6 +451,7 @@ function ActiveAlertPanel({
   session,
 }: {
   disabled: boolean;
+  isClosing: boolean;
   onCancel: () => void;
   onOpenContactStatus: () => void;
   onOpenTimeline: () => void;
@@ -539,9 +542,9 @@ function ActiveAlertPanel({
         <Button
           accessibilityRole="button"
           disabled={disabled}
-          loading={disabled}
+          loading={isClosing}
           onPress={onResolve}
-          style={styles.actionButtonStretch}
+          style={styles.actionButtonHalf}
         >
           Encerrar
         </Button>
@@ -549,7 +552,7 @@ function ActiveAlertPanel({
           accessibilityRole="button"
           disabled={disabled}
           onPress={onCancel}
-          style={styles.actionButtonStretch}
+          style={styles.actionButtonHalf}
           variant="secondary"
         >
           Cancelar alerta
@@ -565,7 +568,7 @@ function StatusTile({ label, value }: { label: string; value: string }) {
       <AppText variant="caption" style={styles.statusTileLabel}>
         {label}
       </AppText>
-      <AppText variant="label" tone="ink">
+      <AppText variant="label" tone="ink" numberOfLines={1}>
         {value}
       </AppText>
     </View>
@@ -588,7 +591,7 @@ function MetaRow({
         <AppText variant="caption" style={styles.metaLabel}>
           {label}
         </AppText>
-        <AppText variant="caption" style={styles.metaValue}>
+        <AppText variant="caption" style={styles.metaValue} numberOfLines={3}>
           {value}
         </AppText>
       </View>
@@ -790,6 +793,7 @@ const styles = StyleSheet.create({
   activeIcon: {
     width: 44,
     height: 44,
+    flexShrink: 0,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 22,
@@ -797,11 +801,13 @@ const styles = StyleSheet.create({
   },
   activeCopy: {
     flex: 1,
+    minWidth: 0,
     gap: 2,
   },
   refreshButton: {
     width: 48,
     height: 48,
+    flexShrink: 0,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
@@ -813,11 +819,14 @@ const styles = StyleSheet.create({
     gap: spacing[2],
   },
   statusTile: {
-    minWidth: 112,
+    flexGrow: 1,
+    flexBasis: "47%",
+    maxWidth: "48%",
     minHeight: 56,
     justifyContent: "center",
     gap: 2,
     paddingHorizontal: spacing[3],
+    paddingVertical: spacing[2],
     borderRadius: radius.sm,
     backgroundColor: veraTheme.summaryBackground,
   },
@@ -841,6 +850,7 @@ const styles = StyleSheet.create({
   },
   metaCopy: {
     flex: 1,
+    minWidth: 0,
     gap: 2,
   },
   metaLabel: {
@@ -849,12 +859,18 @@ const styles = StyleSheet.create({
   metaValue: {
     color: colors.ink,
     fontWeight: "800",
+    flexShrink: 1,
   },
   actionRow: {
+    flexDirection: "row",
     gap: spacing[3],
   },
   actionButtonStretch: {
     alignSelf: "stretch",
+  },
+  actionButtonHalf: {
+    flex: 1,
+    minWidth: 0,
   },
   feedback: {
     minHeight: 48,

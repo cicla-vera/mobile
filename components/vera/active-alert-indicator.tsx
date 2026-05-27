@@ -33,7 +33,7 @@ export function ActiveAlertIndicator({
   const isInterior = variant === 'interior';
   const title = isInterior ? 'Alerta ativo' : 'Modo reservado ativo';
   const detail = isInterior
-    ? `Sessao ${formatShortId(activeAlertSessionId)} em andamento`
+    ? 'Toque para abrir a timeline'
     : 'Toque para continuar.';
 
   function handlePress() {
@@ -62,48 +62,51 @@ export function ActiveAlertIndicator({
         style,
       ]}
     >
-      <View style={[styles.statusDot, isInterior && styles.interiorDot]} />
+      <View style={styles.row}>
+        <View style={[styles.statusDot, isInterior && styles.interiorDot]} />
 
-      <View style={styles.copy}>
-        <AppText
-          variant="label"
-          numberOfLines={1}
-          style={[styles.title, isInterior && styles.interiorTitle]}
-        >
-          {title}
-        </AppText>
-        <AppText
-          variant="caption"
-          numberOfLines={1}
-          style={[styles.detail, isInterior && styles.interiorDetail]}
-        >
-          {detail}
-        </AppText>
+        <View style={styles.copy}>
+          <AppText
+            variant="label"
+            numberOfLines={1}
+            style={[styles.title, isInterior && styles.interiorTitle]}
+          >
+            {title}
+          </AppText>
+          <AppText
+            variant="caption"
+            numberOfLines={1}
+            style={[styles.detail, isInterior && styles.interiorDetail]}
+          >
+            {detail}
+          </AppText>
+        </View>
+
+        <View style={styles.trailing}>
+          <Feather
+            name="chevron-right"
+            size={17}
+            color={isInterior ? veraTheme.icon : colors.blue}
+          />
+        </View>
       </View>
-
-      <Feather
-        name="chevron-right"
-        size={17}
-        color={isInterior ? veraTheme.icon : colors.blue}
-      />
     </Pressable>
   );
-}
-
-function formatShortId(id: string) {
-  return `#${id.slice(0, 6)}`;
 }
 
 const styles = StyleSheet.create({
   container: {
     minHeight: 54,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[3],
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
     borderWidth: 1,
     borderRadius: radius.sm,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    gap: spacing[3],
   },
   exterior: {
     borderColor: 'rgba(32, 37, 123, 0.14)',
@@ -129,7 +132,13 @@ const styles = StyleSheet.create({
   copy: {
     flex: 1,
     minWidth: 0,
+    flexShrink: 1,
     gap: 1,
+  },
+  trailing: {
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     color: colors.blue,

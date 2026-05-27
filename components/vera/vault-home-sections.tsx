@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,10 +10,18 @@ import {
 } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
+import { ActiveAlertIndicator } from '@/components/vera/active-alert-indicator';
 import { VERA_HELP_RESOURCES } from '@/constants/vera-help-resources';
 import { veraTheme } from '@/constants/vera-theme';
 import { colors, radius, spacing } from '@/constants/theme';
 import type { EmergencyContact, EvidenceRecord, SafetyLocation } from '@/types/vera.types';
+import { useVeraStore } from '@/stores/vera.store';
+
+const sectionBodyPadding = {
+  paddingHorizontal: spacing[6],
+  paddingTop: spacing[3],
+  paddingBottom: spacing[2],
+} as const;
 
 type VaultSectionHeaderProps = {
   title: string;
@@ -26,6 +35,32 @@ export function VaultSectionHeader({ title, subtitle }: VaultSectionHeaderProps)
       <AppText style={styles.sectionSubtitle}>{subtitle}</AppText>
     </View>
   );
+}
+
+export function VaultActiveAlertSection() {
+  const activeAlertSessionId = useVeraStore(
+    (state) => state.activeAlertSessionId,
+  );
+
+  if (!activeAlertSessionId) {
+    return null;
+  }
+
+  return (
+    <View style={styles.sectionBlock}>
+      <VaultSectionHeader
+        title="Alerta ativo"
+        subtitle={`Sessao ${formatShortSessionId(activeAlertSessionId)} em andamento`}
+      />
+      <View style={styles.sectionBody}>
+        <ActiveAlertIndicator variant="interior" />
+      </View>
+    </View>
+  );
+}
+
+function formatShortSessionId(id: string) {
+  return `#${id.slice(0, 6)}`;
 }
 
 type VaultContactsRowProps = {
@@ -159,50 +194,92 @@ function getRecordingIcon(type: EvidenceRecord['type']) {
   return 'music' as const;
 }
 
+function formatRecordingLabel(record: EvidenceRecord) {
+  const raw =
+    record.originalName ?? `Gravacao ${record.type.toLowerCase()}`;
+
+  return raw
+    .replace(/^vera-evidence-/i, '')
+    .replace(/\.m4a$/i, '')
+    .slice(0, 28);
+}
+
 export function VaultRecordingsRow({ records, loading }: VaultRecordingsRowProps) {
   return (
     <ScrollView
       horizontal
+      nestedScrollEnabled={Platform.OS === 'android'}
+      directionalLockEnabled
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.rowContent}
     >
-      {loading ? (
-        <View style={styles.loadingChip}>
-          <ActivityIndicator color={colors.muted} size="small" />
-        </View>
-      ) : records.length === 0 ? (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push('/(interior)/evidence')}
-          style={({ pressed }) => [styles.emptyRecording, pressed && styles.pressed]}
-        >
-          <Feather name="archive" size={22} color={colors.muted} />
-          <AppText style={styles.emptyRecordingText}>
-            Nenhuma gravacao no cofre
-          </AppText>
-        </Pressable>
-      ) : (
-        records.map((record) => (
+        {loading ? (
+          <View style={styles.loadingChip}>
+            <ActivityIndicator color={colors.muted} size="small" />
+          </View>
+        ) : records.length === 0 ? (
           <Pressable
-            key={record.id}
             accessibilityRole="button"
-            accessibilityLabel={`Gravacao ${record.originalName ?? record.id}`}
             onPress={() => router.push('/(interior)/evidence')}
-            style={({ pressed }) => [styles.recordingChip, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.emptyRecording, pressed && styles.pressed]}
           >
-            <View style={styles.recordingIcon}>
-              <Feather
-                name={getRecordingIcon(record.type)}
-                size={22}
-                color={colors.ink}
-              />
-            </View>
-            <AppText style={styles.recordingLabel} numberOfLines={2}>
-              {record.originalName ?? `Gravacao ${record.type.toLowerCase()}`}
+            <Feather name="archive" size={22} color={colors.muted} />
+            <AppText style={styles.emptyRecordingText}>
+              Nenhuma gravacao no cofre
             </AppText>
           </Pressable>
-        ))
-      )}
+        ) : (
+          <>
+            {records.map((record) => (
+              <Pressable
+                key={record.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Gravacao ${record.originalName ?? record.id}`}
+                onPress={() =>
+                  router.push({
+                    pathname: '/(interior)/evidence-detail',
+                    params: {
+                      alertSessionId: record.alertSessionId,
+                      evidenceRecordId: record.id,
+                    },
+                  })
+                }
+                style={({ pressed }) => [
+                  styles.recordingChip,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <View style={styles.recordingIcon}>
+                  <Feather
+                    name={getRecordingIcon(record.type)}
+                    size={22}
+                    color={colors.ink}
+                  />
+                </View>
+                <AppText style={styles.recordingLabel} numberOfLines={2}>
+                  {formatRecordingLabel(record)}
+                </AppText>
+              </Pressable>
+            ))}
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Abrir cofre de evidencias"
+              onPress={() => router.push('/(interior)/evidence')}
+              style={({ pressed }) => [
+                styles.recordingMoreChip,
+                pressed && styles.pressed,
+              ]}
+            >
+              <View style={styles.recordingMoreIcon}>
+                <Feather name="chevron-right" size={20} color={colors.blue} />
+              </View>
+              <AppText style={styles.recordingMoreLabel} numberOfLines={2}>
+                Ver cofre
+              </AppText>
+            </Pressable>
+          </>
+        )}
     </ScrollView>
   );
 }
@@ -229,6 +306,9 @@ export function VaultHelpResourcesRow() {
 }
 
 const styles = StyleSheet.create({
+  sectionBlock: {
+    gap: spacing[1],
+  },
   sectionHeader: {
     gap: spacing[1],
     paddingHorizontal: spacing[6],
@@ -247,16 +327,17 @@ const styles = StyleSheet.create({
     color: veraTheme.sectionSubtitle,
   },
   rowContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     gap: spacing[3],
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[3],
-    paddingBottom: spacing[2],
+    ...sectionBodyPadding,
   },
+  sectionBody: sectionBodyPadding,
   helpRowContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     gap: spacing[3],
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[3],
-    paddingBottom: spacing[2],
+    ...sectionBodyPadding,
   },
   chip: {
     width: 68,
@@ -292,8 +373,32 @@ const styles = StyleSheet.create({
   },
   recordingChip: {
     width: 72,
+    flexShrink: 0,
     alignItems: 'center',
     gap: spacing[2],
+  },
+  recordingMoreChip: {
+    width: 72,
+    flexShrink: 0,
+    alignItems: 'center',
+    gap: spacing[2],
+  },
+  recordingMoreIcon: {
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(32, 37, 123, 0.16)',
+    backgroundColor: colors.white,
+  },
+  recordingMoreLabel: {
+    fontSize: 10,
+    lineHeight: 13,
+    fontWeight: '600',
+    color: colors.blue,
+    textAlign: 'center',
   },
   recordingIcon: {
     width: 48,

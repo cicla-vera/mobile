@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { router, useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -14,13 +15,19 @@ import { AppText } from "@/components/ui/app-text";
 import { Button } from "@/components/ui/button";
 import { Screen } from "@/components/ui/screen";
 import { colors, radius, spacing } from "@/constants/theme";
+import { LOCAL_SECURITY_EVIDENCE_SESSION_ID } from "@/constants/vera-security-audio";
 import {
   useAnalyzeEvidenceMutation,
   useCachedEvidenceAnalysisQuery,
-  useEvidenceRecordsQuery,
+  useVaultEvidenceRecordsQuery,
   useVerifyEvidenceMutation,
 } from "@/hooks/vera";
 import { getApiErrorMessage } from "@/services/api-error";
+import { hashLocalFile } from "@/services/vera/security-audio-evidence.service";
+import {
+  findLocalSecurityEvidenceRecord,
+  isLocalSecurityEvidenceRecord,
+} from "@/services/vera/security-audio-evidence-records.service";
 import type {
   AlertLevel,
   EvidenceAnalysis,
@@ -58,7 +65,11 @@ export default function VeraEvidenceDetailRoute() {
   }>();
   const alertSessionId = normalizeParam(params.alertSessionId);
   const evidenceRecordId = normalizeParam(params.evidenceRecordId);
-  const evidenceQuery = useEvidenceRecordsQuery(alertSessionId);
+  const vaultSessionKey =
+    alertSessionId === LOCAL_SECURITY_EVIDENCE_SESSION_ID
+      ? null
+      : alertSessionId || null;
+  const evidenceQuery = useVaultEvidenceRecordsQuery(vaultSessionKey);
   const cachedAnalysisQuery = useCachedEvidenceAnalysisQuery(evidenceRecordId);
   const verifyEvidenceMutation = useVerifyEvidenceMutation();
   const analyzeEvidenceMutation = useAnalyzeEvidenceMutation();
@@ -66,12 +77,43 @@ export default function VeraEvidenceDetailRoute() {
     null,
   );
   const [analysis, setAnalysis] = useState<EvidenceAnalysis | null>(null);
+  const [localRecordFallback, setLocalRecordFallback] =
+    useState<EvidenceRecord | null>(null);
+  const [isVerifyingLocal, setIsVerifyingLocal] = useState(false);
 
-  const record = useMemo(
-    () =>
-      evidenceQuery.data?.find((item) => item.id === evidenceRecordId) ?? null,
-    [evidenceQuery.data, evidenceRecordId],
-  );
+  const record = useMemo(() => {
+    const fromQuery =
+      evidenceQuery.data?.find((item) => item.id === evidenceRecordId) ?? null;
+
+    return fromQuery ?? localRecordFallback;
+  }, [evidenceQuery.data, evidenceRecordId, localRecordFallback]);
+  const isLocalSecurity = record
+    ? isLocalSecurityEvidenceRecord(record.id)
+    : isLocalSecurityEvidenceRecord(evidenceRecordId);
+
+  useEffect(() => {
+    if (!evidenceRecordId || !isLocalSecurityEvidenceRecord(evidenceRecordId)) {
+      setLocalRecordFallback(null);
+      return;
+    }
+
+    if (evidenceQuery.data?.some((item) => item.id === evidenceRecordId)) {
+      setLocalRecordFallback(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    void findLocalSecurityEvidenceRecord(evidenceRecordId).then((item) => {
+      if (!cancelled) {
+        setLocalRecordFallback(item);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [evidenceQuery.data, evidenceRecordId]);
   const queryError =
     !alertSessionId || !evidenceRecordId
       ? "Nao deu para identificar a evidencia selecionada."
@@ -107,6 +149,33 @@ export default function VeraEvidenceDetailRoute() {
     }
 
     verifyEvidenceMutation.reset();
+    setVerification(null);
+
+    if (isLocalSecurityEvidenceRecord(record.id)) {
+      const localUri = record.metadata?.localUri;
+
+      if (typeof localUri !== "string" || !localUri) {
+        return;
+      }
+
+      setIsVerifyingLocal(true);
+
+      try {
+        const calculatedHash = await hashLocalFile(localUri);
+        setVerification({
+          evidenceRecordId: record.id,
+          hashAlgorithm: record.hashAlgorithm,
+          storedHash: record.contentHash,
+          calculatedHash,
+          matches: calculatedHash === record.contentHash,
+          checkedAt: new Date().toISOString(),
+        });
+      } finally {
+        setIsVerifyingLocal(false);
+      }
+
+      return;
+    }
 
     try {
       const result = await verifyEvidenceMutation.mutateAsync({
@@ -174,27 +243,34 @@ export default function VeraEvidenceDetailRoute() {
 
         {record ? (
           <>
-            <EvidenceSummary record={record} />
+            <EvidenceSummary record={record} isLocalSecurity={isLocalSecurity} />
+
+            {isLocalSecurity && typeof record.metadata?.localUri === "string" ? (
+              <LocalAudioPanel localUri={record.metadata.localUri} />
+            ) : null}
 
             <IntegrityPanel
               record={record}
               verification={verification}
               onVerify={() => void handleVerify()}
-              loading={verifyEvidenceMutation.isPending}
+              loading={verifyEvidenceMutation.isPending || isVerifyingLocal}
+              isLocalSecurity={isLocalSecurity}
             />
 
             {verifyError ? <Message text={verifyError} /> : null}
 
-            <RetentionPanel record={record} />
+            <RetentionPanel record={record} isLocalSecurity={isLocalSecurity} />
 
-            <MetadataPanel record={record} />
+            <MetadataPanel record={record} isLocalSecurity={isLocalSecurity} />
 
-            <AnalysisPanel
-              analysis={displayedAnalysis}
-              loading={analyzeEvidenceMutation.isPending}
-              onAnalyze={() => void handleAnalyze()}
-              record={record}
-            />
+            {!isLocalSecurity ? (
+              <AnalysisPanel
+                analysis={displayedAnalysis}
+                loading={analyzeEvidenceMutation.isPending}
+                onAnalyze={() => void handleAnalyze()}
+                record={record}
+              />
+            ) : null}
 
             {analysisError ? <Message text={analysisError} /> : null}
           </>
@@ -246,7 +322,13 @@ function ButtonIcon({
   );
 }
 
-function EvidenceSummary({ record }: { record: EvidenceRecord }) {
+function EvidenceSummary({
+  isLocalSecurity,
+  record,
+}: {
+  isLocalSecurity: boolean;
+  record: EvidenceRecord;
+}) {
   return (
     <View style={styles.heroPanel}>
       <View style={styles.heroHeader}>
@@ -267,27 +349,78 @@ function EvidenceSummary({ record }: { record: EvidenceRecord }) {
             {record.originalName ?? evidenceLabel[record.type]}
           </AppText>
           <AppText variant="caption" style={styles.darkMuted}>
+            {isLocalSecurity ? "Modo Seguranca · " : ""}
             {evidenceLabel[record.type]} - {formatBytes(record.size)}
           </AppText>
         </View>
       </View>
 
       <View style={styles.summaryGrid}>
-        <DarkTile label="Upload" value="Enviado" />
+        <DarkTile
+          label="Origem"
+          value={isLocalSecurity ? "Modo Seguranca" : "Enviado"}
+        />
         <DarkTile label="Data" value={formatDateTime(record.createdAt)} />
-        <DarkTile label="Sessao" value={formatShortId(record.alertSessionId)} />
+        <DarkTile
+          label="Sessao"
+          value={
+            isLocalSecurity
+              ? "Local"
+              : formatShortId(record.alertSessionId)
+          }
+        />
         <DarkTile label="MIME" value={record.mimeType} />
       </View>
     </View>
   );
 }
 
+function LocalAudioPanel({ localUri }: { localUri: string }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const player = useAudioPlayer(isPlaying ? localUri : null);
+  const playerStatus = useAudioPlayerStatus(player);
+
+  useEffect(() => {
+    if (isPlaying) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }, [isPlaying, player]);
+
+  return (
+    <View style={styles.panel}>
+      <View style={styles.panelHeader}>
+        <View style={styles.panelIcon}>
+          <Feather name="headphones" size={22} color={colors.ink} />
+        </View>
+        <View style={styles.panelCopy}>
+          <AppText variant="label">Reproducao local</AppText>
+          <AppText variant="caption" tone="muted">
+            Audio selado no dispositivo durante o Modo Seguranca.
+          </AppText>
+        </View>
+      </View>
+
+      <Button
+        onPress={() => setIsPlaying((current) => !current)}
+        style={styles.stretchButton}
+        variant="secondary"
+      >
+        {isPlaying && playerStatus.playing ? "Pausar audio" : "Ouvir evidencia"}
+      </Button>
+    </View>
+  );
+}
+
 function IntegrityPanel({
+  isLocalSecurity,
   loading,
   onVerify,
   record,
   verification,
 }: {
+  isLocalSecurity: boolean;
   loading: boolean;
   onVerify: () => void;
   record: EvidenceRecord;
@@ -299,7 +432,9 @@ function IntegrityPanel({
       ? "Integridade confirmada"
       : "Hash divergente"
     : verified
-      ? "Hash registrado pelo backend"
+      ? isLocalSecurity
+        ? "Hash registrado localmente"
+        : "Hash registrado pelo backend"
       : "Hash pendente";
 
   return (
@@ -369,7 +504,13 @@ function IntegrityPanel({
   );
 }
 
-function RetentionPanel({ record }: { record: EvidenceRecord }) {
+function RetentionPanel({
+  isLocalSecurity,
+  record,
+}: {
+  isLocalSecurity: boolean;
+  record: EvidenceRecord;
+}) {
   const hidden = Boolean(record.hiddenFromUserAt);
   const deleted = Boolean(record.deletedAt);
 
@@ -382,35 +523,47 @@ function RetentionPanel({ record }: { record: EvidenceRecord }) {
         <View style={styles.panelCopy}>
           <AppText variant="label">Retencao e visibilidade</AppText>
           <AppText variant="caption" tone="muted">
-            {deleted
-              ? "Marcada para exclusao"
-              : hidden
-                ? "Ocultada da visao principal"
-                : "Visivel no cofre"}
+            {isLocalSecurity
+              ? "Armazenada localmente no cofre Vera"
+              : deleted
+                ? "Marcada para exclusao"
+                : hidden
+                  ? "Ocultada da visao principal"
+                  : "Visivel no cofre"}
           </AppText>
         </View>
       </View>
 
-      <InfoRow
-        icon="eye-off"
-        label="Ocultada em"
-        value={formatNullableDateTime(record.hiddenFromUserAt)}
-      />
-      <InfoRow
-        icon="calendar"
-        label="Retencao ate"
-        value={formatNullableDateTime(record.retentionUntil)}
-      />
-      <InfoRow
-        icon="trash-2"
-        label="Excluida em"
-        value={formatNullableDateTime(record.deletedAt)}
-      />
+      {!isLocalSecurity ? (
+        <>
+          <InfoRow
+            icon="eye-off"
+            label="Ocultada em"
+            value={formatNullableDateTime(record.hiddenFromUserAt)}
+          />
+          <InfoRow
+            icon="calendar"
+            label="Retencao ate"
+            value={formatNullableDateTime(record.retentionUntil)}
+          />
+          <InfoRow
+            icon="trash-2"
+            label="Excluida em"
+            value={formatNullableDateTime(record.deletedAt)}
+          />
+        </>
+      ) : null}
     </View>
   );
 }
 
-function MetadataPanel({ record }: { record: EvidenceRecord }) {
+function MetadataPanel({
+  isLocalSecurity,
+  record,
+}: {
+  isLocalSecurity: boolean;
+  record: EvidenceRecord;
+}) {
   const entries = getMetadataEntries(record);
 
   return (
@@ -422,7 +575,9 @@ function MetadataPanel({ record }: { record: EvidenceRecord }) {
         <View style={styles.panelCopy}>
           <AppText variant="label">Metadados</AppText>
           <AppText variant="caption" tone="muted">
-            Informacoes tecnicas recebidas do backend.
+            {isLocalSecurity
+              ? "Informacoes tecnicas da evidencia selada localmente."
+              : "Informacoes tecnicas recebidas do backend."}
           </AppText>
         </View>
       </View>
@@ -671,7 +826,9 @@ function getMetadataEntries(record: EvidenceRecord) {
     return [];
   }
 
-  return Object.entries(record.metadata).slice(0, 12);
+  return Object.entries(record.metadata)
+    .filter(([key]) => key !== "localUri")
+    .slice(0, 12);
 }
 
 function formatMetadataValue(value: VeraMetadataValue) {

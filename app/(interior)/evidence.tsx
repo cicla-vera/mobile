@@ -20,10 +20,11 @@ import {
 import { colors, radius, spacing } from "@/constants/theme";
 import {
   useActiveAlertSessionQuery,
-  useEvidenceRecordsQuery,
   useHideEvidenceMutation,
+  useVaultEvidenceRecordsQuery,
 } from "@/hooks/vera";
 import { getApiErrorMessage } from "@/services/api-error";
+import { isLocalSecurityEvidenceRecord } from "@/services/vera/security-audio-evidence-records.service";
 import type {
   AlertSession,
   EvidenceRecord,
@@ -89,7 +90,7 @@ const evidenceLabel: Record<EvidenceType, string> = {
 export default function VeraEvidenceRoute() {
   const activeAlertQuery = useActiveAlertSessionQuery();
   const activeAlert = activeAlertQuery.data ?? null;
-  const evidenceQuery = useEvidenceRecordsQuery(activeAlert?.id ?? "");
+  const evidenceQuery = useVaultEvidenceRecordsQuery(activeAlert?.id ?? null);
   const hideEvidenceMutation = useHideEvidenceMutation();
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("ALL");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
@@ -130,17 +131,14 @@ export default function VeraEvidenceRoute() {
       )
     : null;
   const isLoading =
-    activeAlertQuery.isLoading ||
-    (Boolean(activeAlert) && evidenceQuery.isLoading);
+    activeAlertQuery.isLoading || evidenceQuery.isLoading;
   const isRefreshing =
     activeAlertQuery.isRefetching || evidenceQuery.isRefetching;
+  const hasEvidenceContent = Boolean(activeAlert) || visibleRecords.length > 0;
 
   function refresh() {
     void activeAlertQuery.refetch();
-
-    if (activeAlert) {
-      void evidenceQuery.refetch();
-    }
+    void evidenceQuery.refetch();
   }
 
   function handleHideEvidence(record: EvidenceRecord) {
@@ -161,6 +159,10 @@ export default function VeraEvidenceRoute() {
   }
 
   async function hideEvidence(record: EvidenceRecord) {
+    if (isLocalSecurityEvidenceRecord(record.id)) {
+      return;
+    }
+
     setFeedback(null);
     hideEvidenceMutation.reset();
 
@@ -218,25 +220,36 @@ export default function VeraEvidenceRoute() {
           />
         ) : null}
 
-        {!isLoading && !queryError && !activeAlert ? (
+        {!isLoading && !queryError && !hasEvidenceContent ? (
           <EmptyState
             icon="archive"
             title="Sem sessao ativa"
-            detail="Quando um alerta estiver em andamento, as evidencias consentidas ficam reunidas aqui."
+            detail="Quando um alerta estiver em andamento, as evidencias consentidas ficam reunidas aqui. Audios do Modo Seguranca Vera tambem aparecem nesta tela."
           />
         ) : null}
 
-        {activeAlert ? (
+        {hasEvidenceContent ? (
           <>
-            <SessionSummary
-              session={activeAlert}
-              totalRecords={visibleRecords.length}
-              totalSize={totalSize}
-            />
+            {activeAlert ? (
+              <SessionSummary
+                session={activeAlert}
+                totalRecords={visibleRecords.length}
+                totalSize={totalSize}
+              />
+            ) : (
+              <LocalSecuritySummary
+                totalRecords={visibleRecords.length}
+                totalSize={totalSize}
+              />
+            )}
 
-            <EvidenceCapturePanel alertSessionId={activeAlert.id} />
+            {activeAlert ? (
+              <>
+                <EvidenceCapturePanel alertSessionId={activeAlert.id} />
 
-            <EvidenceUploadQueuePanel alertSessionId={activeAlert.id} />
+                <EvidenceUploadQueuePanel alertSessionId={activeAlert.id} />
+              </>
+            ) : null}
 
             <FilterPanel
               statusFilter={statusFilter}
@@ -360,6 +373,39 @@ function SessionSummary({
   );
 }
 
+function LocalSecuritySummary({
+  totalRecords,
+  totalSize,
+}: {
+  totalRecords: number;
+  totalSize: number;
+}) {
+  return (
+    <View style={styles.summaryPanel}>
+      <View style={styles.summaryHeader}>
+        <View style={styles.summaryIcon}>
+          <Feather name="shield" size={20} color={colors.ink} />
+        </View>
+        <View style={styles.summaryCopy}>
+          <AppText variant="label" tone="cream">
+            Evidencias do Modo Seguranca
+          </AppText>
+          <AppText variant="caption" style={styles.darkMuted}>
+            Audios selados localmente com hash SHA-256
+          </AppText>
+        </View>
+      </View>
+
+      <View style={styles.summaryGrid}>
+        <StatusTile label="Itens" value={String(totalRecords)} />
+        <StatusTile label="Volume" value={formatBytes(totalSize)} />
+        <StatusTile label="Origem" value="Local" />
+        <StatusTile label="Tipo" value="Audio" />
+      </View>
+    </View>
+  );
+}
+
 function FilterPanel({
   statusFilter,
   typeFilter,
@@ -467,6 +513,7 @@ function EvidenceCard({
 }) {
   const verified = isEvidenceVerified(record);
   const metadataEntries = getMetadataEntries(record);
+  const isLocalSecurity = isLocalSecurityEvidenceRecord(record.id);
 
   return (
     <View style={styles.recordCard}>
@@ -489,6 +536,7 @@ function EvidenceCard({
             {record.originalName ?? evidenceLabel[record.type]}
           </AppText>
           <AppText variant="caption" tone="muted">
+            {isLocalSecurity ? "Modo Seguranca · " : ""}
             {evidenceLabel[record.type]} - {formatBytes(record.size)}
           </AppText>
         </View>
@@ -506,19 +554,21 @@ function EvidenceCard({
             <Feather name="chevron-right" size={22} color={colors.blue} />
           </Pressable>
 
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Ocultar evidencia"
-            disabled={disabled}
-            onPress={onHide}
-            style={({ pressed }) => [
-              styles.hideButton,
-              pressed && styles.pressed,
-              disabled && styles.disabledAction,
-            ]}
-          >
-            <Feather name="eye-off" size={20} color={colors.danger} />
-          </Pressable>
+          {!isLocalSecurity ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Ocultar evidencia"
+              disabled={disabled}
+              onPress={onHide}
+              style={({ pressed }) => [
+                styles.hideButton,
+                pressed && styles.pressed,
+                disabled && styles.disabledAction,
+              ]}
+            >
+              <Feather name="eye-off" size={20} color={colors.danger} />
+            </Pressable>
+          ) : null}
         </View>
       </View>
 
@@ -701,7 +751,9 @@ function getMetadataEntries(record: EvidenceRecord) {
     return [];
   }
 
-  return Object.entries(record.metadata).slice(0, 3);
+  return Object.entries(record.metadata)
+    .filter(([key]) => key !== "localUri")
+    .slice(0, 3);
 }
 
 function formatAlertLevel(level: AlertSession["level"]) {

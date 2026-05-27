@@ -1,11 +1,11 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Screen } from '@/components/ui/screen';
 import { VeraDemoBanner } from '@/components/demo/vera-demo-banner';
-import { ActiveAlertIndicator } from '@/components/vera/active-alert-indicator';
 import { VaultActionRow, VaultHomeHeader } from '@/components/vera/vault-layout';
 import {
+  VaultActiveAlertSection,
   VaultContactsRow,
   VaultHelpResourcesRow,
   VaultLocationsRow,
@@ -17,8 +17,8 @@ import { spacing } from '@/constants/theme';
 import {
   useActiveAlertSessionQuery,
   useEmergencyContactsQuery,
-  useEvidenceRecordsQuery,
   useSafetyLocationsQuery,
+  useVaultEvidenceRecordsQuery,
 } from '@/hooks/vera';
 import { clearStoredVeraBiometricSession } from '@/services/vera';
 import { useVeraStore } from '@/stores/vera.store';
@@ -28,8 +28,11 @@ export default function InteriorIndexRoute() {
   const contactsQuery = useEmergencyContactsQuery();
   const locationsQuery = useSafetyLocationsQuery();
   const activeAlertQuery = useActiveAlertSessionQuery();
-  const activeAlertId = activeAlertQuery.data?.id ?? '';
-  const evidenceQuery = useEvidenceRecordsQuery(activeAlertId);
+  const activeAlertId = activeAlertQuery.data?.id ?? null;
+  const evidenceQuery = useVaultEvidenceRecordsQuery(activeAlertId);
+  const audioRecords = (evidenceQuery.data ?? []).filter(
+    (record) => record.type === 'AUDIO',
+  );
 
   async function handleLock() {
     lockVeraSession();
@@ -42,6 +45,7 @@ export default function InteriorIndexRoute() {
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
+        nestedScrollEnabled={Platform.OS === 'android'}
         showsVerticalScrollIndicator={false}
       >
         <VaultHomeHeader
@@ -51,10 +55,7 @@ export default function InteriorIndexRoute() {
 
         <VeraDemoBanner />
 
-        <ActiveAlertIndicator
-          variant="interior"
-          style={styles.headerStatus}
-        />
+        <VaultActiveAlertSection />
 
         <View style={styles.section}>
           <VaultSectionHeader
@@ -86,11 +87,8 @@ export default function InteriorIndexRoute() {
             subtitle="Provas criptografadas, autenticadas e validas."
           />
           <VaultRecordingsRow
-            records={evidenceQuery.data ?? []}
-            loading={
-              activeAlertQuery.isLoading ||
-              (Boolean(activeAlertId) && evidenceQuery.isLoading)
-            }
+            records={audioRecords}
+            loading={evidenceQuery.isLoading}
           />
         </View>
 
@@ -134,8 +132,5 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: spacing[1],
-  },
-  headerStatus: {
-    marginHorizontal: spacing[6],
   },
 });

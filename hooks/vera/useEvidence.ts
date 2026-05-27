@@ -5,6 +5,7 @@ import {
   setCachedEvidenceAnalysis,
   veraEvidenceService,
 } from '@/services/vera';
+import { findVaultEvidenceRecords } from '@/services/vera/security-audio-evidence-records.service';
 import { queryClient } from '@/services/query-client';
 import { useAuthStore } from '@/stores/auth.store';
 import type { UploadEvidenceRequest } from '@/types/vera.types';
@@ -17,6 +18,16 @@ export function useEvidenceRecordsQuery(alertSessionId: string) {
     queryKey: veraQueryKeys.evidence(alertSessionId),
     queryFn: () => veraEvidenceService.findEvidenceRecords(alertSessionId),
     enabled: isAuthenticated && Boolean(alertSessionId),
+  });
+}
+
+export function useVaultEvidenceRecordsQuery(alertSessionId: string | null) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery({
+    queryKey: veraQueryKeys.vaultEvidence(alertSessionId),
+    queryFn: () => findVaultEvidenceRecords(alertSessionId),
+    enabled: isAuthenticated,
   });
 }
 

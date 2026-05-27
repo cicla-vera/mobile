@@ -31,6 +31,12 @@ export const veraQueryKeys = {
     [...veraQueryKeys.alertSessions(), alertSessionId, 'timeline'] as const,
   evidence: (alertSessionId: string) =>
     [...veraQueryKeys.alertSessions(), alertSessionId, 'evidence'] as const,
+  vaultEvidence: (alertSessionId: string | null) =>
+    [
+      ...veraQueryKeys.all,
+      'vault-evidence',
+      alertSessionId ?? 'none',
+    ] as const,
   evidenceAnalysis: (evidenceRecordId: string) =>
     [
       ...veraQueryKeys.alertSessions(),

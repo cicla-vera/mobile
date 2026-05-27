@@ -17,7 +17,12 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +31,23 @@
       },
       "edgeToEdgeEnabled": true,
       "usesCleartextTraffic": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MICROPHONE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "package": "com.m4rksan.ciclavera"
     },
     "web": {
       "bundler": "metro",
@@ -68,9 +89,9 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "Permitir que o Cicla Vera use o microfone quando voce iniciar uma gravacao.",
+          "microphonePermission": "Permitir que o Cicla Vera grave audio em segundo plano durante o Modo Seguranca Vera, somente quando voce ativar essa protecao.",
           "recordAudioAndroid": true,
-          "enableBackgroundRecording": false
+          "enableBackgroundRecording": true
         }
       ],
       [
@@ -79,10 +100,18 @@
           "color": "#F2617E",
           "defaultChannel": "cycle-care"
         }
-      ]
+      ],
+      "expo-floating-bubble"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "723586b0-c35c-49a1-995f-a2985df8b7cd"
+      }
+    },
+    "owner": "m4rksan"
   }
 }

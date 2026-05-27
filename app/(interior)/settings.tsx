@@ -14,6 +14,7 @@ import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/text-field';
 import { vaultFormStyles } from '@/components/vera/vault-form-styles';
+import { SecurityModePanel } from '@/components/vera/security-mode-panel';
 import {
   VaultHeader,
   VaultScrollScreen,
@@ -241,6 +242,8 @@ export default function VeraSettingsRoute() {
 
               {updateError ? <Message text={updateError} compact /> : null}
             </View>
+
+            <SecurityModePanel />
 
             <View style={styles.panel}>
               <View style={styles.pinHeader}>

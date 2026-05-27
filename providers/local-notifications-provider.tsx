@@ -11,6 +11,7 @@ import {
   isLocalNotificationsSupported,
   syncLocalNotificationsFromPrediction,
 } from "@/services/local-notifications.service";
+import { configureSecurityModeOverlayChannel } from "@/services/vera/security-mode-overlay.service";
 import { useAuthStore } from "@/stores/auth.store";
 import { getHasValidVeraSession } from "@/stores/vera.store";
 
@@ -28,6 +29,7 @@ export function LocalNotificationsProvider({
 
   useEffect(() => {
     void configureLocalNotifications();
+    void configureSecurityModeOverlayChannel();
 
     if (!isLocalNotificationsSupported()) {
       return;

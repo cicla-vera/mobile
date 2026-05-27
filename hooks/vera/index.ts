@@ -7,3 +7,4 @@ export * from './useNativeCapabilities';
 export * from './useSafetyLocations';
 export * from './useVeraPin';
 export * from './useVeraProfile';
+export * from './useSecurityMode';

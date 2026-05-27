@@ -18,6 +18,7 @@ import {
   isLocalNotificationsSupported,
   syncLocalNotificationsFromPrediction,
 } from "@/services/local-notifications.service";
+import { getExpoNotificationsUnsupportedReason } from "@/services/expo-notifications-runtime";
 
 export function LocalNotificationsPanel() {
   const predictionQuery = useCyclePredictionQuery();
@@ -28,6 +29,7 @@ export function LocalNotificationsPanel() {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const notificationsSupported = isLocalNotificationsSupported();
+  const unsupportedReason = getExpoNotificationsUnsupportedReason();
   const isBusy = !isReady || isUpdating;
 
   async function handleToggle(nextValue: boolean) {
@@ -107,7 +109,9 @@ export function LocalNotificationsPanel() {
         <View style={styles.notice}>
           <Feather name="smartphone" size={22} color={colors.muted} />
           <AppText variant="caption" tone="muted" style={styles.noticeText}>
-            Disponivel apenas no app iOS ou Android.
+            {unsupportedReason === "expo_go_android"
+              ? "Notificacoes exigem um development build no Android. O Expo Go nao oferece esse recurso."
+              : "Disponivel apenas no app iOS ou Android."}
           </AppText>
         </View>
       ) : null}

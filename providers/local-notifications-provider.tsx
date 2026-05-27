@@ -1,10 +1,10 @@
-import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import { useEffect, type ReactNode } from "react";
 
 import { useCyclePredictionQuery } from "@/hooks/useCycles";
 import { useNotificationSettingsQuery } from "@/hooks/useNotificationSettings";
 import {
+  addLocalNotificationResponseListener,
   cancelManagedLocalNotifications,
   cancelVeraActiveAlertNotification,
   configureLocalNotifications,
@@ -27,44 +27,51 @@ export function LocalNotificationsProvider({
   const settingsQuery = useNotificationSettingsQuery();
 
   useEffect(() => {
+    let disposed = false;
+    let responseSubscription: { remove: () => void } | null = null;
+
     void configureLocalNotifications();
 
     if (!isLocalNotificationsSupported()) {
       return;
     }
 
-    const responseSubscription =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        const screen = response.notification.request.content.data?.screen as
-          | string
-          | undefined;
-        const alertSessionId = response.notification.request.content.data
-          ?.alertSessionId as string | undefined;
+    void addLocalNotificationResponseListener((data) => {
+      const screen = data.screen as string | undefined;
+      const alertSessionId = data.alertSessionId as string | undefined;
 
-        if (screen === "home") {
-          router.push("/(exterior)");
+      if (screen === "home") {
+        router.push("/(exterior)");
+      }
+
+      if (screen === "vera-active-alert") {
+        if (!getHasValidVeraSession()) {
+          router.push("/(exterior)/vera-unlock");
+          return;
         }
 
-        if (screen === "vera-active-alert") {
-          if (!getHasValidVeraSession()) {
-            router.push("/(exterior)/vera-unlock");
-            return;
-          }
-
-          if (alertSessionId) {
-            router.push({
-              pathname: "/(interior)/alert-timeline",
-              params: { alertSessionId },
-            });
-            return;
-          }
-
-          router.push("/(interior)/alerts");
+        if (alertSessionId) {
+          router.push({
+            pathname: "/(interior)/alert-timeline",
+            params: { alertSessionId },
+          });
+          return;
         }
-      });
+
+        router.push("/(interior)/alerts");
+      }
+    }).then((subscription) => {
+      if (disposed) {
+        subscription?.remove();
+        return;
+      }
+
+      responseSubscription = subscription;
+    });
 
     return () => {
-      responseSubscription.remove();
+      disposed = true;
+      responseSubscription?.remove();
     };
   }, []);
 

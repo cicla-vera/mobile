@@ -64,9 +64,10 @@ export default function HomePreviewRoute() {
   );
 
   const { fertileDays, predictedDays } = useMemo(
-    () => buildPredictionDaySets(cyclePredictionQuery.data),
-    [cyclePredictionQuery.data],
+    () => buildPredictionDaySets(cyclePredictionQuery.data), [cyclePredictionQuery.data],
   );
+
+
   const periodDays = useMemo(
     () => buildPeriodDaySet(cyclesQuery.data ?? [], today),
     [cyclesQuery.data, today],
@@ -181,6 +182,7 @@ export default function HomePreviewRoute() {
               onPreviousMonth={() => shiftVisibleMonth(-1)}
               onNextMonth={() => shiftVisibleMonth(1)}
               onGoToToday={goToToday}
+              fertileDays={fertileDays}
             />
           </View>
         </View>

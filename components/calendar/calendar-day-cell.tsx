@@ -8,6 +8,7 @@ type CalendarDayCellProps = {
   variant?: CalendarDayVariant;
   selected?: boolean;
   onPress?: () => void;
+  isFertile?: boolean;
 };
 
 type VariantStyle = {
@@ -41,10 +42,10 @@ const variantStyles: Record<CalendarDayVariant, VariantStyle> = {
   },
   fertile: {
     marker: {
-      backgroundColor: colors.coral,
+      backgroundColor: 'transparent', 
     },
     label: {
-      color: colors.white,
+      color: colors.ink,
       fontWeight: "400",
     },
   },
@@ -72,9 +73,12 @@ export function CalendarDayCell({
   variant = "default",
   selected = false,
   onPress,
+  isFertile = false,
 }: CalendarDayCellProps) {
   const stylesForVariant = variantStyles[variant];
   const hasMarker = Boolean(stylesForVariant.marker);
+  
+  const showFlower = variant === 'fertile' || isFertile;
 
   return (
     <Pressable
@@ -88,6 +92,11 @@ export function CalendarDayCell({
         {hasMarker ? (
           <View style={[styles.marker, stylesForVariant.marker]} />
         ) : null}
+
+        {showFlower && (
+          <Text style={styles.fertileIcon}>🌸</Text>
+        )}
+
         {selected ? <View style={styles.selectedRing} /> : null}
         <Text
           style={[
@@ -156,5 +165,12 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.85,
+  },
+
+  fertileIcon: {
+    fontSize: 12,
+    position: 'absolute',
+    top: -4,
+    right: -4,
   },
 });

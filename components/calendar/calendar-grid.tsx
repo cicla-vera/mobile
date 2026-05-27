@@ -14,6 +14,7 @@ type CalendarGridProps = {
   onPreviousMonth: () => void;
   onNextMonth: () => void;
   onGoToToday: () => void;
+  fertileDays: Set<string>;
 };
 
 export function CalendarGrid({
@@ -24,6 +25,7 @@ export function CalendarGrid({
   onPreviousMonth,
   onNextMonth,
   onGoToToday,
+  fertileDays,
 }: CalendarGridProps) {
   const weekDays = getWeekDayLabels();
 
@@ -60,6 +62,7 @@ export function CalendarGrid({
               variant={day.variant}
               selected={day.key === selectedDateKey}
               onPress={() => onSelectDate(day.key)}
+              isFertile={fertileDays.has(day.key)}
             />
           ))}
         </View>

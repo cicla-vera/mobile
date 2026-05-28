@@ -36,49 +36,49 @@ const eventCopy: Record<
   }
 > = {
   SESSION_STARTED: {
-    title: "Sessao iniciada",
+    title: "Sessão iniciada",
     detail: "Registro inicial criado pela Vera.",
     icon: "play-circle",
     tone: colors.mint,
   },
   LOCATION_ENTERED: {
     title: "Entrada em local",
-    detail: "A localizacao monitorada registrou entrada.",
+    detail: "A localização monitorada registrou entrada.",
     icon: "map-pin",
     tone: colors.sky,
   },
   EVIDENCE_UPLOADED: {
-    title: "Evidencia enviada",
-    detail: "Um item foi anexado ao cofre da sessao.",
+    title: "Evidência enviada",
+    detail: "Um item foi anexado ao cofre da sessão.",
     icon: "archive",
     tone: colors.plum,
   },
   AI_ANALYSIS_COMPLETED: {
-    title: "Analise IA concluida",
+    title: "Análise IA concluída",
     detail: "O resultado assistido foi registrado.",
     icon: "cpu",
     tone: colors.blue,
   },
   ALERT_ESCALATED: {
     title: "Nivel atualizado",
-    detail: "A sessao recebeu uma mudanca de nivel.",
+    detail: "A sessão recebeu uma mudança de nível.",
     icon: "trending-up",
     tone: colors.coral,
   },
   CONTACT_NOTIFIED: {
     title: "Contato acionado",
-    detail: "Um contato de emergencia recebeu o acionamento.",
+    detail: "Um contato de emergência recebeu o acionamento.",
     icon: "phone-call",
     tone: colors.mint,
   },
   CONTACT_NOTIFICATION_FAILED: {
     title: "Falha no contato",
-    detail: "Uma tentativa de acionamento nao foi concluida.",
+    detail: "Uma tentativa de acionamento não foi concluída.",
     icon: "phone-off",
     tone: colors.danger,
   },
   SESSION_CLOSED: {
-    title: "Sessao encerrada",
+    title: "Sessão encerrada",
     detail: "O alerta foi fechado no app.",
     icon: "check-circle",
     tone: colors.muted,
@@ -106,11 +106,11 @@ export default function AlertTimelineRoute() {
     [orderedEvents],
   );
   const errorMessage = !alertSessionId
-    ? "Nao deu para identificar a sessao de alerta."
+    ? "Não deu para identificar a sessão de alerta."
     : timelineQuery.isError
       ? getApiErrorMessage(
           timelineQuery.error,
-          "Nao deu para carregar a timeline agora.",
+          "Não deu para carregar a timeline agora.",
         )
       : null;
 
@@ -118,7 +118,7 @@ export default function AlertTimelineRoute() {
     <VaultScrollScreen>
       <VaultHeader
         title="Timeline"
-        subtitle="Eventos registrados durante a sessao de alerta"
+        subtitle="Eventos registrados durante a sessão de alerta"
         rightAction={
           <Pressable
             accessibilityRole="button"
@@ -209,7 +209,7 @@ function TimelineSummary({
         </View>
         <View style={styles.summaryCopy}>
           <AppText variant="label" style={styles.panelTitle}>
-            Sessao {formatShortId(alertSessionId)}
+            Sessão {formatShortId(alertSessionId)}
           </AppText>
           <AppText variant="caption" style={styles.mutedText}>
             {eventCount} evento(s) em ordem cronologica.
@@ -356,7 +356,7 @@ function EmptyState() {
         Sem eventos ainda
       </AppText>
       <AppText variant="caption" style={styles.emptyText}>
-        Os registros da sessao aparecem aqui conforme forem criados.
+        Os registros da sessão aparecem aqui conforme forem criados.
       </AppText>
     </View>
   );
@@ -423,7 +423,7 @@ function formatStatus(status: AlertStatus) {
 }
 
 function formatLevel(level: AlertLevel) {
-  return level === "CRITICAL" ? "Critico" : "Normal";
+  return level === "CRITICAL" ? "Crítico" : "Normal";
 }
 
 function formatShortId(id: string) {

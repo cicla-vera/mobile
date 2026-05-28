@@ -276,8 +276,8 @@ async function scheduleDailyLogNotification(
   await Notifications.scheduleNotificationAsync({
     identifier: LOCAL_NOTIFICATION_IDENTIFIERS.DAILY_LOG,
     content: {
-      title: "Registro diario",
-      body: "Como voce esta se sentindo hoje? Registre seu humor.",
+      title: "Registro diário",
+      body: "Como você está se sentindo hoje? Registre seu humor.",
       data: { screen: "home" },
     },
     trigger: {
@@ -313,8 +313,8 @@ async function scheduleFertileWindowNotification(
   await Notifications.scheduleNotificationAsync({
     identifier: LOCAL_NOTIFICATION_IDENTIFIERS.FERTILE_WINDOW,
     content: {
-      title: "Dias ferteis",
-      body: "Seus dias ferteis podem estar comecando hoje.",
+      title: "Dias férteis",
+      body: "Seus dias férteis podem estar começando hoje.",
       data: { screen: "home" },
     },
     trigger: {
@@ -349,7 +349,7 @@ async function scheduleNextPeriodNotification(
   await Notifications.scheduleNotificationAsync({
     identifier: LOCAL_NOTIFICATION_IDENTIFIERS.NEXT_PERIOD,
     content: {
-      title: "Proxima menstruacao",
+      title: "Próxima menstruação",
       body: getNextPeriodMessage(prediction),
       data: { screen: "home" },
     },

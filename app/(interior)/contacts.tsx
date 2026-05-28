@@ -77,23 +77,23 @@ export default function VeraContactsRoute() {
   const contactsError = contactsQuery.isError
     ? getApiErrorMessage(
         contactsQuery.error,
-        "Nao deu para carregar os contatos de emergencia agora.",
+        "Não deu para carregar os contatos de emergência agora.",
       )
     : null;
   const mutationError = createContactMutation.error
     ? getApiErrorMessage(
         createContactMutation.error,
-        "Nao deu para salvar o contato agora.",
+        "Não deu para salvar o contato agora.",
       )
     : updateContactMutation.error
       ? getApiErrorMessage(
           updateContactMutation.error,
-          "Nao deu para atualizar o contato agora.",
+          "Não deu para atualizar o contato agora.",
         )
       : disableContactMutation.error
         ? getApiErrorMessage(
             disableContactMutation.error,
-            "Nao deu para desativar o contato agora.",
+            "Não deu para desativar o contato agora.",
           )
         : null;
 
@@ -187,7 +187,7 @@ export default function VeraContactsRoute() {
   function handleDisable(contact: EmergencyContact) {
     Alert.alert(
       "Desativar contato",
-      `O contato ${contact.name} deixa de ser acionado em alertas criticos. Ele continua no historico e pode ser reativado.`,
+      `O contato ${contact.name} deixa de ser acionado em alertas criticos. Ele continua no histórico e pode ser reativado.`,
       [
         { text: "Cancelar", style: "cancel" },
         {
@@ -245,8 +245,8 @@ export default function VeraContactsRoute() {
   return (
     <VaultScrollScreen keyboard>
         <VaultHeader
-          title="Contatos de emergencia"
-          subtitle="Quem pode receber alertas caso algo ocorra com voce"
+          title="Contatos de emergência"
+          subtitle="Quem pode receber alertas caso algo ocorra com você"
         />
 
         <View style={styles.summaryPanel}>
@@ -289,7 +289,7 @@ export default function VeraContactsRoute() {
                 {editingContact ? "Editar contato" : "Novo contato"}
               </AppText>
               <AppText variant="caption" tone="muted">
-                Dados usados apenas em fluxos Vera de emergencia.
+                Dados usados apenas em fluxos Vera de emergência.
               </AppText>
             </View>
 
@@ -311,7 +311,7 @@ export default function VeraContactsRoute() {
           </View>
 
           <TextField
-            accessibilityLabel="Nome do contato de emergencia"
+            accessibilityLabel="Nome do contato de emergência"
             autoCapitalize="words"
             error={formError?.startsWith("Nome") ? formError : undefined}
             label="Nome"
@@ -323,7 +323,7 @@ export default function VeraContactsRoute() {
           />
 
           <TextField
-            accessibilityLabel="Telefone do contato de emergencia"
+            accessibilityLabel="Telefone do contato de emergência"
             autoComplete="tel"
             error={formError?.startsWith("Telefone") ? formError : undefined}
             inputMode="tel"
@@ -339,10 +339,10 @@ export default function VeraContactsRoute() {
           <View style={styles.inlineFields}>
             <View style={styles.inlineField}>
               <TextField
-                accessibilityLabel="Relacao com o contato"
+                accessibilityLabel="Relação com o contato"
                 autoCapitalize="words"
-                error={formError?.startsWith("Relacao") ? formError : undefined}
-                label="Relacao"
+                error={formError?.startsWith("Relação") ? formError : undefined}
+                label="Relação"
                 maxLength={60}
                 onChangeText={(value) => updateFormField("relationship", value)}
                 placeholder="Irma, amiga..."
@@ -380,7 +380,7 @@ export default function VeraContactsRoute() {
             <View style={styles.switchCopy}>
               <AppText variant="label">Contato ativo</AppText>
               <AppText variant="caption" tone="muted">
-                Contatos inativos nao sao acionados em alertas.
+                Contatos inativos não são acionados em alertas.
               </AppText>
             </View>
             <Switch
@@ -399,7 +399,7 @@ export default function VeraContactsRoute() {
           {formError &&
           !formError.startsWith("Nome") &&
           !formError.startsWith("Telefone") &&
-          !formError.startsWith("Relacao") &&
+          !formError.startsWith("Relação") &&
           !formError.startsWith("Prioridade") ? (
             <Message text={formError} compact />
           ) : null}
@@ -510,15 +510,15 @@ function validateAndBuildPayload(
   }
 
   if (phone.length > 32 || !PHONE_PATTERN.test(phone)) {
-    return "Telefone deve conter apenas numeros, espacos e sinais comuns.";
+    return "Telefone deve conter apenas números, espaços e sinais comuns.";
   }
 
   if (relationship.length > 60) {
-    return "Relacao deve ter no maximo 60 caracteres.";
+    return "Relação deve ter no maximo 60 caracteres.";
   }
 
   if (!Number.isInteger(priority) || priority < 0) {
-    return "Prioridade deve ser um numero inteiro maior ou igual a zero.";
+    return "Prioridade deve ser um número inteiro maior ou igual a zero.";
   }
 
   const payload: CreateEmergencyContactRequest = {
@@ -576,7 +576,7 @@ function ContactCard({
             {contact.name}
           </AppText>
           <AppText variant="caption" tone="muted">
-            {contact.relationship || "Relacao nao informada"}
+            {contact.relationship || "Relação não informada"}
           </AppText>
           <AppText variant="body" style={styles.contactPhone}>
             {contact.phone}

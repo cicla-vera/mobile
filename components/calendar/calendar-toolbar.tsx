@@ -20,13 +20,13 @@ export function CalendarToolbar({ onGoToToday }: CalendarToolbarProps) {
 
   const actions: ToolbarAction[] = [
     { icon: "plus", label: "Registrar", href: "/(exterior)/log" },
-    { icon: "bar-chart-2", label: "Historico", href: "/(exterior)/history" },
+    { icon: "bar-chart-2", label: "Histórico", href: "/(exterior)/history" },
     {
       icon: "pie-chart",
       label: "Resumo mensal",
       href: "/(exterior)/insights",
     },
-    { icon: "trending-up", label: "Graficos", href: "/(exterior)/charts" },
+    { icon: "trending-up", label: "Gráficos", href: "/(exterior)/charts" },
     { icon: "calendar", label: "Ir para hoje", onPress: onGoToToday },
   ];
 

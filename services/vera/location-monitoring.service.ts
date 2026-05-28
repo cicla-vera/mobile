@@ -134,7 +134,7 @@ export async function startVeraBackgroundLocationUpdates() {
     deferredUpdatesInterval: 60000,
     distanceInterval: 25,
     foregroundService: {
-      notificationBody: 'Sincronizando lembretes do calendario.',
+      notificationBody: 'Sincronizando lembretes do calendário.',
       notificationTitle: 'Cicla Vera',
     },
     pausesUpdatesAutomatically: false,
@@ -163,7 +163,7 @@ export function getVeraLocationMonitoringLimitation(
   status: VeraLocationMonitorStatus,
 ) {
   if (status === 'missing_permission') {
-    return 'Ative permissao de localizacao em primeiro e segundo plano.';
+    return 'Ative permissão de localização em primeiro e segundo plano.';
   }
 
   if (status === 'no_locations') {

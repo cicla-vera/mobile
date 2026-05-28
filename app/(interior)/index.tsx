@@ -58,8 +58,8 @@ export default function InteriorIndexRoute() {
 
         <View style={styles.section}>
           <VaultSectionHeader
-            title="Contatos de emergencia"
-            subtitle="Quem pode receber alertas caso algo ocorra com voce"
+            title="Contatos de emergência"
+            subtitle="Quem pode receber alertas caso algo ocorra com você"
           />
           <VaultContactsRow
             contacts={contactsQuery.data ?? []}
@@ -71,7 +71,7 @@ export default function InteriorIndexRoute() {
         <View style={styles.section}>
           <VaultSectionHeader
             title="Localizacoes"
-            subtitle="Locais onde o monitoramento sera ativado automaticamente"
+            subtitle="Locais onde o monitoramento será ativado automaticamente"
           />
           <VaultLocationsRow
             locations={locationsQuery.data ?? []}
@@ -97,7 +97,7 @@ export default function InteriorIndexRoute() {
         <View style={styles.section}>
           <VaultSectionHeader
             title="Precisa de mais ajuda?"
-            subtitle="Sugestoes de ONGs para entrar em contato"
+            subtitle="Sugestões de ONGs para entrar em contato"
           />
           <VaultHelpResourcesRow />
         </View>
@@ -105,7 +105,7 @@ export default function InteriorIndexRoute() {
         <View style={styles.section}>
           <VaultSectionHeader
             title="Central de alertas"
-            subtitle="Acionamento manual e acompanhamento de sessoes ativas"
+            subtitle="Acionamento manual e acompanhamento de sessões ativas"
           />
           <VaultActionRow
             icon="shield"

@@ -34,14 +34,14 @@ export default function SettingsRoute() {
         <View style={styles.header}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Voltar para o calendario"
+            accessibilityLabel="Voltar para o calendário"
             onPress={() => router.back()}
             style={styles.iconButton}
           >
             <Feather name="arrow-left" size={24} color={colors.ink} />
           </Pressable>
           <AppText variant="caption" tone="muted" style={styles.eyebrow}>
-            Configuracoes
+            Configurações
           </AppText>
         </View>
 
@@ -49,7 +49,7 @@ export default function SettingsRoute() {
           <AppText variant="heading">Ajuste o Cicla ao seu ritmo</AppText>
           <AppText tone="muted" style={styles.heroText}>
             Defina lembretes e escolha quando quer ser avisada sobre ciclo,
-            ovulacao e habitos do dia.
+            ovulação e hábitos do dia.
           </AppText>
         </View>
 

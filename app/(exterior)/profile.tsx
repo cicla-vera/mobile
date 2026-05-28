@@ -80,20 +80,20 @@ export default function ProfileRoute() {
       setFormFeedback('Perfil atualizado.');
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel atualizar o perfil.'),
+        getApiErrorMessage(error, 'Não foi possível atualizar o perfil.'),
       );
     }
   }
 
   function handleLogout() {
-    Alert.alert('Sair da conta', 'Voce quer encerrar esta sessao?', [
+    Alert.alert('Sair da conta', 'Você quer encerrar esta sessão?', [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Sair',
         style: 'destructive',
         onPress: () => {
           void logout().then(() => {
-            router.replace('/login');
+            router.replace('/welcome');
           });
         },
       },
@@ -125,7 +125,7 @@ export default function ProfileRoute() {
         <View style={styles.header}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Voltar para o calendario"
+            accessibilityLabel="Voltar para o calendário"
             onPress={() => router.back()}
             style={styles.iconButton}
           >
@@ -188,7 +188,7 @@ export default function ProfileRoute() {
           />
           <InfoPill
             icon="shield"
-            label="Sessao"
+            label="Sessão"
             value={cachedUser ? 'ativa' : 'protegida'}
           />
         </View>
@@ -208,7 +208,7 @@ export default function ProfileRoute() {
               <AppText variant="caption" style={styles.noticeText}>
                 {getApiErrorMessage(
                   profileQuery.error,
-                  'Nao deu para carregar o perfil.',
+                  'Não deu para carregar o perfil.',
                 )}
               </AppText>
             </View>

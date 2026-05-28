@@ -89,7 +89,7 @@ export function EvidenceCapturePanel({
     enqueueMutation.error || flushMutation.error
       ? getApiErrorMessage(
           enqueueMutation.error ?? flushMutation.error,
-          'Nao deu para enviar agora. A evidencia ficou na fila local.',
+          'Não deu para enviar agora. A evidência ficou na fila local.',
         )
       : null;
   const isBusy = Boolean(busyAction) || enqueueMutation.isPending;
@@ -113,8 +113,8 @@ export function EvidenceCapturePanel({
 
     setFeedback(
       result.failed.some((item) => item.id === queued.id)
-        ? 'Evidencia guardada na fila local.'
-        : 'Evidencia enviada ao cofre.',
+        ? 'Evidência guardada na fila local.'
+        : 'Evidência enviada ao cofre.',
     );
   }
 
@@ -150,7 +150,7 @@ export function EvidenceCapturePanel({
       setLocalError(
         error instanceof Error
           ? error.message
-          : 'Nao deu para selecionar o arquivo.',
+          : 'Não deu para selecionar o arquivo.',
       );
     } finally {
       setBusyAction(null);
@@ -165,13 +165,13 @@ export function EvidenceCapturePanel({
       const permission = await requestVeraCameraPermission();
 
       if (!permission.granted) {
-        setLocalError('Permissao de camera negada.');
+        setLocalError('Permissão de câmera negada.');
         return;
       }
 
       setActiveCamera(true);
     } catch {
-      setLocalError('Camera indisponivel neste ambiente.');
+      setLocalError('Câmera indisponível neste ambiente.');
     } finally {
       setBusyAction(null);
     }
@@ -206,7 +206,7 @@ export function EvidenceCapturePanel({
       setLocalError(
         error instanceof Error
           ? error.message
-          : 'Nao deu para capturar a imagem.',
+          : 'Não deu para capturar a imagem.',
       );
     } finally {
       setBusyAction(null);
@@ -221,7 +221,7 @@ export function EvidenceCapturePanel({
       const permission = await requestVeraAudioRecordingPermission();
 
       if (!permission.granted) {
-        setLocalError('Permissao de microfone negada.');
+        setLocalError('Permissão de microfone negada.');
         return;
       }
 
@@ -232,7 +232,7 @@ export function EvidenceCapturePanel({
       await audioRecorder.prepareToRecordAsync();
       audioRecorder.record();
     } catch {
-      setLocalError('Nao deu para iniciar a gravacao.');
+      setLocalError('Não deu para iniciar a gravação.');
     } finally {
       setBusyAction(null);
     }
@@ -248,7 +248,7 @@ export function EvidenceCapturePanel({
       const uri = audioRecorder.uri ?? audioState.url;
 
       if (!uri) {
-        setLocalError('Audio finalizado sem arquivo local.');
+        setLocalError('Áudio finalizado sem arquivo local.');
         return;
       }
 
@@ -264,7 +264,7 @@ export function EvidenceCapturePanel({
         type: 'AUDIO',
       });
     } catch {
-      setLocalError('Nao deu para finalizar a gravacao.');
+      setLocalError('Não deu para finalizar a gravação.');
     } finally {
       setBusyAction(null);
     }
@@ -281,7 +281,7 @@ export function EvidenceCapturePanel({
             Captura consentida
           </AppText>
           <AppText variant="caption" style={styles.mutedOnDark}>
-            Adicione arquivos, fotos ou audio a esta sessao.
+            Adicione arquivos, fotos ou áudio a esta sessão.
           </AppText>
         </View>
       </View>
@@ -307,7 +307,7 @@ export function EvidenceCapturePanel({
           label={
             audioState.isRecording
               ? formatRecordingTime(audioState.durationMillis)
-              : 'Audio'
+              : 'Áudio'
           }
           loading={busyAction === 'audio'}
           onPress={() =>

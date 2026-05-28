@@ -120,7 +120,7 @@ export default function SleepRoute() {
       setHours('');
       setFeedback('Sono salvo para este dia.');
     } catch (error) {
-      setFormError(getApiErrorMessage(error, 'Nao foi possivel salvar o sono.'));
+      setFormError(getApiErrorMessage(error, 'Não foi possível salvar o sono.'));
     }
   }
 
@@ -199,7 +199,7 @@ export default function SleepRoute() {
           <View style={styles.notice}>
             <Feather name="alert-circle" size={22} color={colors.danger} />
             <AppText variant="caption" style={styles.noticeText}>
-              {getApiErrorMessage(loadError, 'Nao deu para carregar sono.')}
+              {getApiErrorMessage(loadError, 'Não deu para carregar sono.')}
             </AppText>
           </View>
         ) : null}
@@ -312,7 +312,7 @@ export default function SleepRoute() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="Ultimos registros" detail="historico recente" />
+          <SectionHeader title="Últimos registros" detail="histórico recente" />
           {recentEntriesQuery.isLoading ? (
             <ActivityIndicator color={colors.blue} style={styles.loader} />
           ) : (

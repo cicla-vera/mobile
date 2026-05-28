@@ -61,44 +61,44 @@ const importConfigs: Record<ImportSource, ImportConfig> = {
     heroIcon: 'upload-cloud',
     heroTitle: 'JSON exportado',
     heroText:
-      'Traga historico de ciclo, sintomas e bem-estar sem preencher tudo novamente.',
+      'Traga histórico de ciclo, sintomas e bem-estar sem preencher tudo novamente.',
     fileTypeLabel: '.json',
     pickerTypes: ['application/json', 'text/json', 'text/plain'],
     emptyText: 'Selecione o arquivo JSON exportado pelo Flo.',
     invalidFileMessage:
-      'Nao foi possivel ler esse arquivo. Selecione um JSON valido do Flo.',
+      'Não foi possível ler esse arquivo. Selecione um JSON válido do Flo.',
     selectButtonLabel: 'Selecionar JSON',
     importButtonLabel: 'Importar dados',
   },
   'apple-health': {
     source: 'apple-health',
-    eyebrow: 'Integracao',
+    eyebrow: 'Integração',
     title: 'Apple Health',
     heroIcon: 'heart',
     heroTitle: 'export.xml',
     heroText:
-      'Importe ciclo, temperatura, peso, agua, sono e outros registros do app Saude.',
+      'Importe ciclo, temperatura, peso, água, sono e outros registros do app Saúde.',
     fileTypeLabel: '.xml',
     pickerTypes: ['application/xml', 'text/xml', 'text/plain'],
     emptyText: 'Selecione o export.xml gerado pelo Apple Health.',
     invalidFileMessage:
-      'Nao foi possivel ler esse arquivo. Selecione um export.xml valido do Apple Health.',
+      'Não foi possível ler esse arquivo. Selecione um export.xml válido do Apple Health.',
     selectButtonLabel: 'Selecionar XML',
     importButtonLabel: 'Importar Apple Health',
   },
   'health-connect': {
     source: 'health-connect',
-    eyebrow: 'Integracao',
+    eyebrow: 'Integração',
     title: 'Health Connect',
     heroIcon: 'activity',
     heroTitle: 'JSON do Android',
     heroText:
-      'Traga registros do Saude Connect, como ciclo, sono, agua, peso e atividade.',
+      'Traga registros do Saúde Connect, como ciclo, sono, água, peso e atividade.',
     fileTypeLabel: '.json',
     pickerTypes: ['application/json', 'text/json', 'text/plain'],
     emptyText: 'Selecione um JSON exportado ou preparado do Health Connect.',
     invalidFileMessage:
-      'Nao foi possivel ler esse arquivo. Selecione um JSON valido do Health Connect.',
+      'Não foi possível ler esse arquivo. Selecione um JSON válido do Health Connect.',
     selectButtonLabel: 'Selecionar JSON',
     importButtonLabel: 'Importar Health Connect',
   },
@@ -115,10 +115,10 @@ const counterLabels: Array<{
   { key: 'notes', label: 'notas' },
   { key: 'temperatureEntries', label: 'temperatura' },
   { key: 'weightEntries', label: 'peso' },
-  { key: 'waterEntries', label: 'agua' },
+  { key: 'waterEntries', label: 'água' },
   { key: 'activityEntries', label: 'atividade' },
   { key: 'sleepEntries', label: 'sono' },
-  { key: 'intercourseEntries', label: 'relacoes' },
+  { key: 'intercourseEntries', label: 'relações' },
   { key: 'medicationEntries', label: 'medicamentos' },
   { key: 'skipped', label: 'ignorados' },
 ];
@@ -209,7 +209,7 @@ export default function DataImportRoute() {
       );
     } catch (error) {
       setErrorMessage(
-        getApiErrorMessage(error, 'Nao foi possivel importar esse arquivo.'),
+        getApiErrorMessage(error, 'Não foi possível importar esse arquivo.'),
       );
     }
   }
@@ -490,7 +490,7 @@ function formatDate(value: string) {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return 'concluido';
+    return 'concluído';
   }
 
   return date.toLocaleDateString('pt-BR', {

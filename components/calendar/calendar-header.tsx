@@ -13,7 +13,7 @@ export function CalendarHeader({ dateLabel, onGoToToday }: CalendarHeaderProps) 
   return (
     <View style={styles.container}>
       <AppText variant="caption" tone="muted" style={styles.eyebrow}>
-        seu calendario
+        seu calendário
       </AppText>
       <View style={styles.headerRow}>
         <AppText style={styles.date}>{dateLabel}</AppText>

@@ -48,19 +48,19 @@ export default function VeraSettingsRoute() {
   const profileError = profileQuery.isError
     ? getApiErrorMessage(
         profileQuery.error,
-        'Nao deu para carregar seu perfil Vera agora.',
+        'Não deu para carregar seu perfil Vera agora.',
       )
     : null;
   const updateError = updateProfileMutation.error
     ? getApiErrorMessage(
         updateProfileMutation.error,
-        'Nao deu para atualizar seu perfil Vera agora.',
+        'Não deu para atualizar seu perfil Vera agora.',
       )
     : null;
   const pinMutationError = setPinMutation.error
     ? getApiErrorMessage(
         setPinMutation.error,
-        'Nao deu para salvar o PIN Vera agora.',
+        'Não deu para salvar o PIN Vera agora.',
       )
     : null;
   const isUpdatingProfile = updateProfileMutation.isPending;
@@ -91,12 +91,12 @@ export default function VeraSettingsRoute() {
     resetPinState();
 
     if (newPin.length < PIN_MIN_LENGTH) {
-      setPinError('Digite entre 4 e 8 numeros.');
+      setPinError('Digite entre 4 e 8 números.');
       return;
     }
 
     if (newPin !== confirmPin) {
-      setPinError('Os PINs nao conferem.');
+      setPinError('Os PINs não conferem.');
       return;
     }
 
@@ -122,7 +122,7 @@ export default function VeraSettingsRoute() {
   function handleRevokeConsent() {
     Alert.alert(
       'Revogar consentimento Vera',
-      'Isso pausa o modo Vera, encerra a sessao privada neste aparelho e exige novo aceite para entrar novamente.',
+      'Isso pausa o modo Vera, encerra a sessão privada neste aparelho e exige novo aceite para entrar novamente.',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -147,8 +147,8 @@ export default function VeraSettingsRoute() {
   return (
     <VaultScrollScreen keyboard>
         <VaultHeader
-          title="Seguranca Vera"
-          subtitle="PIN, permissoes e estado do perfil privado"
+          title="Segurança Vera"
+          subtitle="PIN, permissões e estado do perfil privado"
         />
 
         {profileQuery.isLoading ? (
@@ -181,7 +181,7 @@ export default function VeraSettingsRoute() {
                 <AppText variant="caption" style={styles.mutedText}>
                   {profile.consentAcceptedAt
                     ? `Consentimento registrado em ${formatDate(profile.consentAcceptedAt)}`
-                    : 'Consentimento ainda nao registrado'}
+                    : 'Consentimento ainda não registrado'}
                 </AppText>
               </View>
             </View>
@@ -203,7 +203,7 @@ export default function VeraSettingsRoute() {
               />
               <SettingRow
                 title="Monitoramento"
-                detail="Mantem sessoes normais disponiveis para locais e acionamentos."
+                detail="Mantem sessões normais disponíveis para locais e acionamentos."
                 icon="activity"
                 value={profile.monitoringEnabled}
                 disabled={
@@ -216,8 +216,8 @@ export default function VeraSettingsRoute() {
                 }
               />
               <SettingRow
-                title="Notificacoes discretas"
-                detail="Usa textos neutros e curtos quando uma notificacao for necessaria."
+                title="Notificações discretas"
+                detail="Usa textos neutros e curtos quando uma notificação for necessária."
                 icon="bell"
                 value={profile.discreetNotificationsEnabled}
                 disabled={isUpdatingProfile}
@@ -230,7 +230,7 @@ export default function VeraSettingsRoute() {
               />
               <SettingRow
                 title="Biometria"
-                detail="Permite reabrir a sessao Vera neste aparelho com biometria."
+                detail="Permite reabrir a sessão Vera neste aparelho com biometria."
                 icon="lock"
                 value={profile.biometricUnlockEnabled}
                 disabled={isUpdatingProfile}
@@ -251,7 +251,7 @@ export default function VeraSettingsRoute() {
                   <AppText variant="caption" tone="muted">
                     {profile.pinConfigured
                       ? `Atualizado em ${formatDate(profile.pinUpdatedAt)}`
-                      : 'Crie um PIN de 4 a 8 numeros.'}
+                      : 'Crie um PIN de 4 a 8 números.'}
                   </AppText>
                 </View>
                 <StatusBadge ok={profile.pinConfigured} />
@@ -335,7 +335,7 @@ export default function VeraSettingsRoute() {
                 Consentimento
               </AppText>
               <AppText tone="muted">
-                Revogar desativa a camada Vera e encerra a sessao privada neste
+                Revogar desativa a camada Vera e encerra a sessão privada neste
                 aparelho.
               </AppText>
               <Button
@@ -444,7 +444,7 @@ function Message({
 
 function formatDate(value: string | null) {
   if (!value) {
-    return 'data indisponivel';
+    return 'data indisponível';
   }
 
   return new Intl.DateTimeFormat('pt-BR', {

@@ -43,7 +43,7 @@ export function DayDetailsSection({ dateKey }: DayDetailsSectionProps) {
             {formatDayLabel(dateKey)}
           </AppText>
           <AppText tone="muted" style={styles.subtitle}>
-            Registre humor, peso, agua e outros sinais sem sair do calendario.
+            Registre humor, peso, água e outros sinais sem sair do calendário.
           </AppText>
         </View>
         <Pressable

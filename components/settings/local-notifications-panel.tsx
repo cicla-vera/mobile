@@ -18,6 +18,7 @@ import {
   isLocalNotificationsSupported,
   syncLocalNotificationsFromPrediction,
 } from "@/services/local-notifications.service";
+import { getExpoNotificationsUnsupportedReason } from "@/services/expo-notifications-runtime";
 
 export function LocalNotificationsPanel() {
   const predictionQuery = useCyclePredictionQuery();
@@ -28,6 +29,7 @@ export function LocalNotificationsPanel() {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const notificationsSupported = isLocalNotificationsSupported();
+  const unsupportedReason = getExpoNotificationsUnsupportedReason();
   const isBusy = !isReady || isUpdating;
 
   async function handleToggle(nextValue: boolean) {
@@ -43,8 +45,8 @@ export function LocalNotificationsPanel() {
 
       if (!result.ok) {
         Alert.alert(
-          "Permissao necessaria",
-          "Ative as notificacoes nas configuracoes do celular para receber lembretes do Cicla.",
+          "Permissão necessária",
+          "Ative as notificações nas configurações do celular para receber lembretes do Cicla.",
         );
         return;
       }
@@ -74,8 +76,8 @@ export function LocalNotificationsPanel() {
 
       if (!result.scheduled && result.reason === "permission_denied") {
         Alert.alert(
-          "Permissao necessaria",
-          "Ative as notificacoes nas configuracoes do celular para receber lembretes do Cicla.",
+          "Permissão necessária",
+          "Ative as notificações nas configurações do celular para receber lembretes do Cicla.",
         );
         return;
       }
@@ -107,7 +109,9 @@ export function LocalNotificationsPanel() {
         <View style={styles.notice}>
           <Feather name="smartphone" size={22} color={colors.muted} />
           <AppText variant="caption" tone="muted" style={styles.noticeText}>
-            Disponivel apenas no app iOS ou Android.
+            {unsupportedReason === "expo_go_android"
+              ? "Notificações exigem um development build no Android. O Expo Go não oferece esse recurso."
+              : "Disponível apenas no app iOS ou Android."}
           </AppText>
         </View>
       ) : null}
@@ -116,7 +120,7 @@ export function LocalNotificationsPanel() {
         <View style={styles.warning}>
           <Feather name="alert-circle" size={22} color={colors.danger} />
           <AppText variant="caption" style={styles.warningText}>
-            Permissao negada. Ative nas configuracoes do sistema.
+            Permissão negada. Ative nas configurações do sistema.
           </AppText>
         </View>
       ) : null}
@@ -133,7 +137,7 @@ export function LocalNotificationsPanel() {
       <SettingToggleRow
         icon="bell"
         title="Lembretes locais"
-        description="Agenda avisos de menstruacao, janela fertil e rotina diaria no celular."
+        description="Agenda avisos de menstruação, janela fértil e rotina diária no celular."
         value={enabled}
         disabled={isBusy || !notificationsSupported}
         onValueChange={(nextValue) => void handleToggle(nextValue)}
@@ -155,7 +159,7 @@ export function LocalNotificationsPanel() {
       >
         <Feather name="refresh-cw" size={22} color={colors.blue} />
         <AppText variant="caption" tone="blue" style={styles.rescheduleLabel}>
-          Reagendar com a previsao atual
+          Reagendar com a previsão atual
         </AppText>
       </Pressable>
     </View>

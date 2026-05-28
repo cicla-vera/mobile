@@ -189,7 +189,7 @@ async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
       status: 'failed',
       updatedAt,
       errorMessage:
-        error instanceof Error ? error.message : 'Upload nao concluido.',
+        error instanceof Error ? error.message : 'Upload não concluído.',
     }));
 
     throw error;
@@ -283,7 +283,7 @@ function getQueueFilesDirUri() {
 
 function getDocumentDirectory() {
   if (!FileSystem.documentDirectory) {
-    throw new Error('Armazenamento local de evidencias indisponivel.');
+    throw new Error('Armazenamento local de evidências indisponível.');
   }
 
   return FileSystem.documentDirectory;

@@ -1,4 +1,3 @@
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
 import {
@@ -16,6 +15,11 @@ import {
   areLocalNotificationsEnabled,
   setLocalNotificationsEnabled,
 } from "@/services/notification-preferences-storage";
+import {
+  getExpoNotificationsModule,
+  isExpoNotificationsRuntimeSupported,
+  type ExpoNotificationsModule,
+} from "@/services/expo-notifications-runtime";
 import type { CyclePrediction, NotificationSettings } from "@/types/api.types";
 import {
   getFertileWindowMessage,
@@ -32,12 +36,18 @@ type VeraActiveAlertNotificationOptions = {
   enabled: boolean;
 };
 
+type NotificationSubscription = {
+  remove: () => void;
+};
+
 export function isLocalNotificationsSupported() {
-  return Platform.OS === "ios" || Platform.OS === "android";
+  return isExpoNotificationsRuntimeSupported();
 }
 
 export async function configureLocalNotifications() {
-  if (!isLocalNotificationsSupported()) {
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
     return;
   }
 
@@ -80,7 +90,9 @@ export async function configureLocalNotifications() {
 }
 
 export async function ensureLocalNotificationPermission(): Promise<LocalNotificationPermissionResult> {
-  if (!isLocalNotificationsSupported()) {
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
     return { granted: false, canAskAgain: false };
   }
 
@@ -109,7 +121,9 @@ export async function ensureLocalNotificationPermission(): Promise<LocalNotifica
 }
 
 export async function cancelManagedLocalNotifications() {
-  if (!isLocalNotificationsSupported()) {
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
     return;
   }
 
@@ -121,7 +135,9 @@ export async function cancelManagedLocalNotifications() {
 }
 
 export async function cancelVeraActiveAlertNotification() {
-  if (!isLocalNotificationsSupported()) {
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
     return;
   }
 
@@ -139,7 +155,9 @@ export async function syncVeraActiveAlertNotification({
   alertSessionId,
   enabled,
 }: VeraActiveAlertNotificationOptions) {
-  if (!isLocalNotificationsSupported()) {
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
     return { scheduled: false, reason: "unsupported_platform" as const };
   }
 
@@ -176,6 +194,20 @@ export async function syncVeraActiveAlertNotification({
   });
 
   return { scheduled: true as const };
+}
+
+export async function addLocalNotificationResponseListener(
+  onResponse: (data: Record<string, unknown>) => void,
+): Promise<NotificationSubscription | null> {
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
+    return null;
+  }
+
+  return Notifications.addNotificationResponseReceivedListener((response) => {
+    onResponse(response.notification.request.content.data ?? {});
+  });
 }
 
 export async function disableLocalNotifications() {
@@ -237,12 +269,15 @@ function isVeraActiveAlertNotification(data?: Record<string, unknown>) {
   return data?.screen === "vera-active-alert";
 }
 
-async function scheduleDailyLogNotification(settings?: NotificationSettings) {
+async function scheduleDailyLogNotification(
+  Notifications: ExpoNotificationsModule,
+  settings?: NotificationSettings,
+) {
   await Notifications.scheduleNotificationAsync({
     identifier: LOCAL_NOTIFICATION_IDENTIFIERS.DAILY_LOG,
     content: {
-      title: "Registro diario",
-      body: "Como voce esta se sentindo hoje? Registre seu humor.",
+      title: "Registro diário",
+      body: "Como você está se sentindo hoje? Registre seu humor.",
       data: { screen: "home" },
     },
     trigger: {
@@ -255,6 +290,7 @@ async function scheduleDailyLogNotification(settings?: NotificationSettings) {
 }
 
 async function scheduleFertileWindowNotification(
+  Notifications: ExpoNotificationsModule,
   prediction: CyclePrediction,
   settings?: NotificationSettings,
 ) {
@@ -277,8 +313,8 @@ async function scheduleFertileWindowNotification(
   await Notifications.scheduleNotificationAsync({
     identifier: LOCAL_NOTIFICATION_IDENTIFIERS.FERTILE_WINDOW,
     content: {
-      title: "Dias ferteis",
-      body: "Seus dias ferteis podem estar comecando hoje.",
+      title: "Dias férteis",
+      body: "Seus dias férteis podem estar começando hoje.",
       data: { screen: "home" },
     },
     trigger: {
@@ -290,6 +326,7 @@ async function scheduleFertileWindowNotification(
 }
 
 async function scheduleNextPeriodNotification(
+  Notifications: ExpoNotificationsModule,
   prediction: CyclePrediction,
   settings?: NotificationSettings,
 ) {
@@ -312,7 +349,7 @@ async function scheduleNextPeriodNotification(
   await Notifications.scheduleNotificationAsync({
     identifier: LOCAL_NOTIFICATION_IDENTIFIERS.NEXT_PERIOD,
     content: {
-      title: "Proxima menstruacao",
+      title: "Próxima menstruação",
       body: getNextPeriodMessage(prediction),
       data: { screen: "home" },
     },
@@ -328,7 +365,9 @@ export async function syncLocalNotificationsFromPrediction(
   prediction?: CyclePrediction,
   settings?: NotificationSettings,
 ) {
-  if (!isLocalNotificationsSupported()) {
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
     return { scheduled: false, reason: "unsupported_platform" as const };
   }
 
@@ -347,14 +386,14 @@ export async function syncLocalNotificationsFromPrediction(
   }
 
   await cancelManagedLocalNotifications();
-  await scheduleDailyLogNotification(settings);
+  await scheduleDailyLogNotification(Notifications, settings);
 
   if (prediction?.fertileWindow) {
-    await scheduleFertileWindowNotification(prediction, settings);
+    await scheduleFertileWindowNotification(Notifications, prediction, settings);
   }
 
   if (prediction?.nextPeriod) {
-    await scheduleNextPeriodNotification(prediction, settings);
+    await scheduleNextPeriodNotification(Notifications, prediction, settings);
   }
 
   return {

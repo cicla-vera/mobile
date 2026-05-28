@@ -87,7 +87,7 @@ export default function ChartsRoute() {
   const errorMessage = chartsQuery.error
     ? getApiErrorMessage(
         chartsQuery.error,
-        'Nao deu para carregar seus graficos agora.',
+        'Não deu para carregar seus gráficos agora.',
       )
     : null;
 
@@ -109,10 +109,10 @@ export default function ChartsRoute() {
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="blue" style={styles.eyebrow}>
-              Graficos
+              Gráficos
             </AppText>
             <AppText variant="heading" style={styles.title}>
-              Historico em movimento.
+              Histórico em movimento.
             </AppText>
           </View>
         </View>
@@ -169,7 +169,7 @@ function ChartsContent({ data }: { data: HistoryCharts }) {
         unit="C"
         color={colors.coral}
         points={temperaturePoints}
-        emptyText="Registre temperatura para ver a curva do mes."
+        emptyText="Registre temperatura para ver a curva do mês."
       />
 
       <TrendChart
@@ -227,7 +227,7 @@ function TrendChart({
           <View>
             <AppText variant="label">{title}</AppText>
             <AppText variant="caption" tone="muted">
-              ultimos {Math.min(points.length, CHART_LIMIT)} registros
+              últimos {Math.min(points.length, CHART_LIMIT)} registros
             </AppText>
           </View>
         </View>
@@ -264,7 +264,7 @@ function TrendChart({
               label="intervalo"
               value={`${formatNumber(stats.min)}-${formatNumber(stats.max)}`}
             />
-            <MiniMetric label="mudanca" value={formatDelta(delta, unit)} />
+            <MiniMetric label="mudança" value={formatDelta(delta, unit)} />
           </View>
         </>
       )}
@@ -523,7 +523,7 @@ function shouldShowDateLabel(index: number, total: number) {
 
 function getHeroTitle(totalSignals: number) {
   if (totalSignals === 0) {
-    return 'Seus graficos vao nascer dos registros';
+    return 'Seus gráficos vao nascer dos registros';
   }
 
   return `${formatCount(totalSignals, 'sinal', 'sinais')} conectados`;
@@ -536,18 +536,18 @@ function getHeroText(data: HistoryCharts) {
     const moodLabel = moodMeta[latestMood.mood].label.toLowerCase();
 
     return (
-      `Ultimo humor registrado: ${moodLabel}. ` +
-      'Compare com peso e temperatura para notar padroes.'
+      `Último humor registrado: ${moodLabel}. ` +
+      'Compare com peso e temperatura para notar padrões.'
     );
   }
 
   if (data.temperature.length > 0 || data.weight.length > 0) {
-    return 'Acompanhe pequenas variacoes ao longo do tempo sem perder o contexto do calendario.';
+    return 'Acompanhe pequenas variações ao longo do tempo sem perder o contexto do calendário.';
   }
 
   return (
-    'Peso, temperatura e humor aparecem aqui em uma visao simples, ' +
-    'feita para acompanhar tendencias.'
+    'Peso, temperatura e humor aparecem aqui em uma visão simples, ' +
+    'feita para acompanhar tendências.'
   );
 }
 

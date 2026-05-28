@@ -102,13 +102,13 @@ export default function DailyLogRoute() {
   const saveError = saveDailyLogMutation.error
     ? getApiErrorMessage(
         saveDailyLogMutation.error,
-        'Nao deu para salvar o registro.',
+        'Não deu para salvar o registro.',
       )
     : null;
   const loadError = dailyLogQuery.error
     ? getApiErrorMessage(
         dailyLogQuery.error,
-        'Nao deu para carregar os registros deste dia.',
+        'Não deu para carregar os registros deste dia.',
       )
     : null;
 
@@ -185,7 +185,7 @@ export default function DailyLogRoute() {
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="pink" style={styles.eyebrow}>
-              Registro diario
+              Registro diário
             </AppText>
             <AppText variant="heading" style={styles.title}>
               {formatCalendarHeading(selectedDate)}
@@ -204,12 +204,12 @@ export default function DailyLogRoute() {
         </View>
 
         <AppText tone="muted" style={styles.lead}>
-          Salve sinais do dia em poucos toques. Tudo fica ligado ao calendario e
+          Salve sinais do dia em poucos toques. Tudo fica ligado ao calendário e
           sincronizado com sua conta.
         </AppText>
 
         <View style={styles.section}>
-          <SectionTitle title="Humor" detail="como o dia esta batendo" />
+          <SectionTitle title="Humor" detail="como o dia está batendo" />
           <View style={styles.moodGrid}>
             {MOOD_CHOICES.map((mood) => (
               <Pressable
@@ -387,7 +387,7 @@ export default function DailyLogRoute() {
 
         <View style={styles.summary}>
           <View style={styles.summaryHeader}>
-            <AppText variant="label">Ja registrado</AppText>
+            <AppText variant="label">Já registrado</AppText>
             {dailyLogQuery.isFetching ? (
               <ActivityIndicator color={colors.blue} size="small" />
             ) : null}

@@ -55,18 +55,18 @@ export default function VeraAlertsRoute() {
   const queryError = activeAlertQuery.isError
     ? getApiErrorMessage(
         activeAlertQuery.error,
-        "Nao deu para carregar o estado de alerta agora.",
+        "Não deu para carregar o estado de alerta agora.",
       )
     : null;
   const mutationError = startManualAlertMutation.error
     ? getApiErrorMessage(
         startManualAlertMutation.error,
-        "Nao deu para iniciar o alerta agora.",
+        "Não deu para iniciar o alerta agora.",
       )
     : closeAlertMutation.error
       ? getApiErrorMessage(
           closeAlertMutation.error,
-          "Nao deu para encerrar o alerta agora.",
+          "Não deu para encerrar o alerta agora.",
         )
       : null;
 
@@ -95,8 +95,8 @@ export default function VeraAlertsRoute() {
         setInitialLocation(null);
         setFormError(
           permission.canAskAgain
-            ? "Permissao de localizacao negada. O alerta ainda pode ser iniciado sem coordenadas."
-            : "Permissao de localizacao bloqueada. O alerta ainda pode ser iniciado sem coordenadas.",
+            ? "Permissão de localização negada. O alerta ainda pode ser iniciado sem coordenadas."
+            : "Permissão de localização bloqueada. O alerta ainda pode ser iniciado sem coordenadas.",
         );
         return;
       }
@@ -109,11 +109,11 @@ export default function VeraAlertsRoute() {
         latitude: currentLocation.coords.latitude,
         longitude: currentLocation.coords.longitude,
       });
-      setFeedback("Localizacao anexada ao alerta.");
+      setFeedback("Localização anexada ao alerta.");
     } catch {
       setInitialLocation(null);
       setFormError(
-        "Nao deu para obter sua localizacao agora. O alerta ainda pode ser iniciado sem coordenadas.",
+        "Não deu para obter sua localização agora. O alerta ainda pode ser iniciado sem coordenadas.",
       );
     } finally {
       setIsReadingLocation(false);
@@ -135,8 +135,8 @@ export default function VeraAlertsRoute() {
     Alert.alert(
       "Iniciar alerta manual",
       initialLocation
-        ? "Um alerta Vera sera iniciado com sua localizacao aproximada."
-        : "Um alerta Vera sera iniciado sem coordenadas iniciais.",
+        ? "Um alerta Vera será iniciado com sua localização aproximada."
+        : "Um alerta Vera será iniciado sem coordenadas iniciais.",
       [
         { text: "Cancelar", style: "cancel" },
         {
@@ -164,7 +164,7 @@ export default function VeraAlertsRoute() {
       setInitialLocation(null);
       setFeedback(
         session.alreadyActive
-          ? "Ja havia um alerta ativo. Exibindo a sessao em andamento."
+          ? "Já havia um alerta ativo. Exibindo a sessão em andamento."
           : "Alerta manual iniciado.",
       );
     } catch {
@@ -182,8 +182,8 @@ export default function VeraAlertsRoute() {
     Alert.alert(
       isCancelled ? "Cancelar alerta" : "Encerrar alerta",
       isCancelled
-        ? "Isso registra a sessao como cancelada e remove o estado ativo."
-        : "Isso registra a sessao como resolvida e remove o estado ativo.",
+        ? "Isso registra a sessão como cancelada e remove o estado ativo."
+        : "Isso registra a sessão como resolvida e remove o estado ativo.",
       [
         { text: "Voltar", style: "cancel" },
         {
@@ -243,7 +243,7 @@ export default function VeraAlertsRoute() {
     <VaultScrollScreen keyboard>
       <VaultHeader
         title="Central de alertas"
-        subtitle="Acionamento manual e acompanhamento de sessoes ativas"
+        subtitle="Acionamento manual e acompanhamento de sessões ativas"
       />
 
       {activeAlertQuery.isLoading ? (
@@ -301,8 +301,8 @@ export default function VeraAlertsRoute() {
       <View style={styles.infoPanel}>
         <Feather name="shield" size={20} color={colors.mint} />
         <AppText variant="caption" style={styles.infoText}>
-          Acoes de alerta ficam dentro da camada Vera e exigem confirmacao antes
-          de iniciar ou encerrar uma sessao.
+          Ações de alerta ficam dentro da camada Vera e exigem confirmacao antes
+          de iniciar ou encerrar uma sessão.
         </AppText>
       </View>
     </VaultScrollScreen>
@@ -368,7 +368,7 @@ function ManualAlertPanel({
         maxLength={MESSAGE_MAX_LENGTH}
         multiline
         onChangeText={onMessageChange}
-        placeholder="Contexto curto para a sessao"
+        placeholder="Contexto curto para a sessão"
         returnKeyType="done"
         style={styles.messageInput}
         textAlignVertical="top"
@@ -394,14 +394,14 @@ function ManualAlertPanel({
         </View>
         <View style={styles.locationCopy}>
           <AppText variant="label">
-            {initialLocation ? "Localizacao anexada" : "Anexar localizacao"}
+            {initialLocation ? "Localização anexada" : "Anexar localização"}
           </AppText>
           <AppText variant="caption" tone="muted">
             {initialLocation
               ? `${formatCoordinate(initialLocation.latitude)}, ${formatCoordinate(
                   initialLocation.longitude,
                 )}`
-              : "O alerta funciona mesmo sem permissao."}
+              : "O alerta funciona mesmo sem permissão."}
           </AppText>
         </View>
       </Pressable>
@@ -430,7 +430,7 @@ function ManualAlertPanel({
             Pressione e segure
           </AppText>
           <AppText variant="caption" style={styles.holdText}>
-            Solte depois da confirmacao para abrir a sessao.
+            Solte depois da confirmacao para abrir a sessão.
           </AppText>
         </View>
       </Pressable>
@@ -641,7 +641,7 @@ function formatCoordinate(value: number) {
 
 function formatSessionLocation(session: AlertSession) {
   if (session.initialLatitude === null || session.initialLongitude === null) {
-    return "Nao anexadas";
+    return "Não anexadas";
   }
 
   return `${formatCoordinate(session.initialLatitude)}, ${formatCoordinate(
@@ -662,7 +662,7 @@ function formatStatus(status: AlertStatus) {
 }
 
 function formatLevel(level: AlertSession["level"]) {
-  return level === "CRITICAL" ? "Critico" : "Normal";
+  return level === "CRITICAL" ? "Crítico" : "Normal";
 }
 
 function formatTrigger(trigger: AlertSession["trigger"]) {

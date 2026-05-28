@@ -53,7 +53,7 @@ type EvidenceGroup = {
 
 const TYPE_FILTER_OPTIONS: TypeFilterOption[] = [
   { value: "ALL", label: "Todos", icon: "grid" },
-  { value: "AUDIO", label: "Audio", icon: "mic" },
+  { value: "AUDIO", label: "Áudio", icon: "mic" },
   { value: "VIDEO", label: "Video", icon: "video" },
   { value: "IMAGE", label: "Imagem", icon: "image" },
   { value: "FILE", label: "Arquivo", icon: "file-text" },
@@ -80,7 +80,7 @@ const evidenceIcon: Record<EvidenceType, keyof typeof Feather.glyphMap> = {
 };
 
 const evidenceLabel: Record<EvidenceType, string> = {
-  AUDIO: "Audio",
+  AUDIO: "Áudio",
   VIDEO: "Video",
   IMAGE: "Imagem",
   FILE: "Arquivo",
@@ -115,18 +115,18 @@ export default function VeraEvidenceRoute() {
   const queryError = activeAlertQuery.isError
     ? getApiErrorMessage(
         activeAlertQuery.error,
-        "Nao deu para carregar a sessao Vera agora.",
+        "Não deu para carregar a sessão Vera agora.",
       )
     : evidenceQuery.isError
       ? getApiErrorMessage(
           evidenceQuery.error,
-          "Nao deu para carregar o cofre de evidencias agora.",
+          "Não deu para carregar o cofre de evidências agora.",
         )
       : null;
   const mutationError = hideEvidenceMutation.error
     ? getApiErrorMessage(
         hideEvidenceMutation.error,
-        "Nao deu para ocultar a evidencia agora.",
+        "Não deu para ocultar a evidência agora.",
       )
     : null;
   const isLoading =
@@ -145,7 +145,7 @@ export default function VeraEvidenceRoute() {
 
   function handleHideEvidence(record: EvidenceRecord) {
     Alert.alert(
-      "Ocultar evidencia",
+      "Ocultar evidência",
       "Ela deixa de aparecer no cofre, mas o registro de integridade continua preservado.",
       [
         { text: "Cancelar", style: "cancel" },
@@ -169,7 +169,7 @@ export default function VeraEvidenceRoute() {
         alertSessionId: record.alertSessionId,
         evidenceRecordId: record.id,
       });
-      setFeedback("Evidencia removida da visao principal.");
+      setFeedback("Evidência removida da visão principal.");
     } catch {
       // Mutation errors are rendered from React Query state.
     }
@@ -221,8 +221,8 @@ export default function VeraEvidenceRoute() {
         {!isLoading && !queryError && !activeAlert ? (
           <EmptyState
             icon="archive"
-            title="Sem sessao ativa"
-            detail="Quando um alerta estiver em andamento, as evidencias consentidas ficam reunidas aqui."
+            title="Sem sessão ativa"
+            detail="Quando um alerta estiver em andamento, as evidências consentidas ficam reunidas aqui."
           />
         ) : null}
 
@@ -260,7 +260,7 @@ export default function VeraEvidenceRoute() {
               <EmptyState
                 icon="folder"
                 title="Cofre vazio"
-                detail="Nenhuma evidencia foi adicionada a esta sessao ainda."
+                detail="Nenhuma evidência foi adicionada a esta sessão ainda."
               />
             ) : null}
 
@@ -318,7 +318,7 @@ function Header() {
           Vera
         </AppText>
         <AppText variant="title" tone="cream">
-          Evidencias
+          Evidências
         </AppText>
       </View>
     </View>
@@ -342,7 +342,7 @@ function SessionSummary({
         </View>
         <View style={styles.summaryCopy}>
           <AppText variant="label" tone="cream">
-            Cofre da sessao ativa
+            Cofre da sessão ativa
           </AppText>
           <AppText variant="caption" style={styles.darkMuted}>
             Iniciada em {formatDateTime(session.startedAt)}
@@ -354,7 +354,7 @@ function SessionSummary({
         <StatusTile label="Itens" value={String(totalRecords)} />
         <StatusTile label="Volume" value={formatBytes(totalSize)} />
         <StatusTile label="Nivel" value={formatAlertLevel(session.level)} />
-        <StatusTile label="Sessao" value={formatShortId(session.id)} />
+        <StatusTile label="Sessão" value={formatShortId(session.id)} />
       </View>
     </View>
   );
@@ -496,7 +496,7 @@ function EvidenceCard({
         <View style={styles.recordActions}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Abrir detalhe da evidencia"
+            accessibilityLabel="Abrir detalhe da evidência"
             onPress={onOpen}
             style={({ pressed }) => [
               styles.detailButton,
@@ -508,7 +508,7 @@ function EvidenceCard({
 
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Ocultar evidencia"
+            accessibilityLabel="Ocultar evidência"
             disabled={disabled}
             onPress={onHide}
             style={({ pressed }) => [
@@ -705,7 +705,7 @@ function getMetadataEntries(record: EvidenceRecord) {
 }
 
 function formatAlertLevel(level: AlertSession["level"]) {
-  return level === "CRITICAL" ? "Critico" : "Normal";
+  return level === "CRITICAL" ? "Crítico" : "Normal";
 }
 
 function formatShortId(id: string) {

@@ -77,7 +77,7 @@ export default function InsightsRoute() {
   const errorMessage = summaryQuery.error
     ? getApiErrorMessage(
         summaryQuery.error,
-        'Nao deu para carregar o resumo deste mes agora.',
+        'Não deu para carregar o resumo deste mês agora.',
       )
     : null;
 
@@ -106,7 +106,7 @@ export default function InsightsRoute() {
               Resumo mensal
             </AppText>
             <AppText variant="heading" style={styles.title}>
-              O mes em sinais.
+              O mês em sinais.
             </AppText>
           </View>
         </View>
@@ -114,7 +114,7 @@ export default function InsightsRoute() {
         <View style={styles.monthPicker}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Mes anterior"
+            accessibilityLabel="Mês anterior"
             onPress={() => handleShiftMonth(-1)}
             style={styles.monthButton}
           >
@@ -130,7 +130,7 @@ export default function InsightsRoute() {
           </View>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Proximo mes"
+            accessibilityLabel="Próximo mês"
             onPress={() => handleShiftMonth(1)}
             style={styles.monthButton}
           >
@@ -184,9 +184,9 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
       <View style={styles.metricsGrid}>
         <MetricCard
           icon="droplet"
-          label="periodo"
+          label="período"
           value={formatDays(summary.cycles.periodDays)}
-          detail={`${summary.cycles.total} ciclos no mes`}
+          detail={`${summary.cycles.total} ciclos no mês`}
         />
         <MetricCard
           icon="activity"
@@ -212,7 +212,7 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
             <View>
               <AppText variant="label">Dias menstruais</AppText>
               <AppText variant="caption" tone="muted" style={styles.cardHint}>
-                Considerando os ciclos que tocaram este mes.
+                Considerando os ciclos que tocaram este mês.
               </AppText>
             </View>
             <View style={styles.largePill}>
@@ -231,7 +231,7 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
                     <AppText variant="label">{formatDate(cycle.startDate)}</AppText>
                     <AppText variant="caption" tone="muted">
                       {cycle.endDate
-                        ? `ate ${formatDate(cycle.endDate)}`
+                        ? `até ${formatDate(cycle.endDate)}`
                         : 'em andamento'}
                     </AppText>
                   </View>
@@ -242,7 +242,7 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
               ))}
             </View>
           ) : (
-            <EmptyState text="Nenhum ciclo registrado neste mes." />
+            <EmptyState text="Nenhum ciclo registrado neste mês." />
           )}
         </View>
       </Section>
@@ -295,7 +295,7 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
           />
           <HealthTile
             icon="coffee"
-            label="agua"
+            label="água"
             value={`${formatNumber(summary.health.water.totalAmount)} ml`}
             detail={`${summary.health.water.daysTracked} dias registrados`}
           />
@@ -313,7 +313,7 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
           />
           <HealthTile
             icon="heart"
-            label="relacoes"
+            label="relações"
             value={formatNumber(summary.health.intercourse.totalEntries)}
             detail={`${summary.health.intercourse.protected} protegidas`}
           />
@@ -343,7 +343,7 @@ function MonthlySummaryContent({ summary }: { summary: MonthlySummary }) {
             icon="edit-3"
             label="notas"
             value={formatNumber(summary.notes.totalEntries)}
-            detail="anotacoes do mes"
+            detail="anotações do mês"
           />
           <CareCard
             icon="plus-circle"
@@ -604,14 +604,14 @@ function EmptyState({
 
 function getSummaryHeadline(summary: MonthlySummary) {
   if (summary.cycles.periodDays > 0) {
-    return `${formatDays(summary.cycles.periodDays)} de periodo neste mes`;
+    return `${formatDays(summary.cycles.periodDays)} de período neste mês`;
   }
 
   if (summary.moods.totalEntries > 0 || summary.symptoms.totalEntries > 0) {
-    return 'Seu mes ja tem sinais suficientes para acompanhar';
+    return 'Seu mês já tem sinais suficientes para acompanhar';
   }
 
-  return 'Um mes pronto para ser preenchido';
+  return 'Um mês pronto para ser preenchido';
 }
 
 function getSummaryNarrative(summary: MonthlySummary) {
@@ -628,12 +628,12 @@ function getSummaryNarrative(summary: MonthlySummary) {
   if (summary.flow.daysWithFlow > 0) {
     const flowDays = formatDays(summary.flow.daysWithFlow);
 
-    return `Voce registrou fluxo em ${flowDays} e pode comparar esse padrao com os proximos meses.`;
+    return `Você registrou fluxo em ${flowDays} e pode comparar esse padrao com os próximos meses.`;
   }
 
   return (
-    'Registre ciclo, humor, fluxo e sintomas para transformar o calendario ' +
-    'em um retrato mais claro do seu mes.'
+    'Registre ciclo, humor, fluxo e sintomas para transformar o calendário ' +
+    'em um retrato mais claro do seu mês.'
   );
 }
 

@@ -38,7 +38,7 @@ export default function HistoryRoute() {
   const errorMessage = historyQuery.error
     ? getApiErrorMessage(
         historyQuery.error,
-        'Nao deu para carregar seu historico agora.',
+        'Não deu para carregar seu histórico agora.',
       )
     : null;
 
@@ -60,7 +60,7 @@ export default function HistoryRoute() {
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="blue" style={styles.eyebrow}>
-              Historico
+              Histórico
             </AppText>
             <AppText variant="heading" style={styles.title}>
               Seus ciclos em perspectiva.
@@ -130,8 +130,8 @@ export default function HistoryRoute() {
                     tone="muted"
                     style={styles.emptyText}
                   >
-                    Marque inicio e fim da menstruacao no calendario para ver seu
-                    historico aqui.
+                    Marque início e fim da menstruação no calendário para ver seu
+                    histórico aqui.
                   </AppText>
                 </View>
               ) : (
@@ -203,7 +203,7 @@ function CycleHistoryRow({ cycle }: { cycle: CycleHistoryItem }) {
       <View style={styles.cycleDate}>
         <AppText variant="label">{formatDate(cycle.startDate)}</AppText>
         <AppText variant="caption" tone="muted">
-          {open ? 'em andamento' : `ate ${formatDate(cycle.endDate)}`}
+          {open ? 'em andamento' : `até ${formatDate(cycle.endDate)}`}
         </AppText>
       </View>
       <View style={styles.cycleStats}>
@@ -285,7 +285,7 @@ function getRegularityCopy(regularity: CycleHistoryRegularity) {
       title: 'Ritmo consistente',
       description:
         regularity.variationDays === null
-          ? 'Seus ciclos estao dentro de uma variacao esperada.'
+          ? 'Seus ciclos estão dentro de uma variacao esperada.'
           : `Variacao de ${formatDays(regularity.variationDays)} entre ciclos.`,
       icon: 'check-circle' as const,
       color: colors.mint,

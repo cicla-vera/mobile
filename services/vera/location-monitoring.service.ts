@@ -141,19 +141,19 @@ export async function startVeraBackgroundLocationUpdates() {
         return true;
       }
 
-      await Location.startLocationUpdatesAsync(VERA_LOCATION_TASK_NAME, {
-        accuracy: Location.Accuracy.Balanced,
-        activityType: Location.ActivityType.Other,
-        deferredUpdatesInterval: 60000,
-        distanceInterval: 25,
-        foregroundService: {
-          notificationBody: 'Sincronizando lembretes do calendario.',
-          notificationTitle: 'Cicla Vera',
-        },
-        pausesUpdatesAutomatically: false,
-        showsBackgroundLocationIndicator: false,
-        timeInterval: 30000,
-      });
+  await Location.startLocationUpdatesAsync(VERA_LOCATION_TASK_NAME, {
+    accuracy: Location.Accuracy.Balanced,
+    activityType: Location.ActivityType.Other,
+    deferredUpdatesInterval: 60000,
+    distanceInterval: 25,
+    foregroundService: {
+      notificationBody: 'Sincronizando lembretes do calendário.',
+      notificationTitle: 'Cicla Vera',
+    },
+    pausesUpdatesAutomatically: false,
+    showsBackgroundLocationIndicator: false,
+    timeInterval: 30000,
+  });
 
       return true;
     } catch {
@@ -188,7 +188,7 @@ export function getVeraLocationMonitoringLimitation(
   status: VeraLocationMonitorStatus,
 ) {
   if (status === 'missing_permission') {
-    return 'Ative permissao de localizacao em primeiro e segundo plano.';
+    return 'Ative permissão de localização em primeiro e segundo plano.';
   }
 
   if (status === 'no_locations') {

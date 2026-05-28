@@ -2,13 +2,17 @@ import Constants from 'expo-constants';
 import { Camera } from 'expo-camera';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as Location from 'expo-location';
-import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
 import {
   getRecordingPermissionsAsync,
   requestRecordingPermissionsAsync,
 } from 'expo-audio';
 import { Platform } from 'react-native';
+
+import {
+  getExpoNotificationsModule,
+  getExpoNotificationsUnsupportedReason,
+} from '@/services/expo-notifications-runtime';
 
 type NativePermissionStatus =
   | 'granted'
@@ -94,7 +98,7 @@ export async function getVeraNativeCapabilityStatus(): Promise<VeraNativeCapabil
     readPermission(() => Camera.getCameraPermissionsAsync()),
     readPermission(() => Camera.getMicrophonePermissionsAsync()),
     readPermission(() => getRecordingPermissionsAsync()),
-    readPermission(() => Notifications.getPermissionsAsync()),
+    getNotificationPermission(),
   ]);
 
   return {
@@ -138,6 +142,18 @@ export async function requestVeraAudioRecordingPermission() {
 }
 
 export async function requestVeraNotificationPermission() {
+  const unsupportedReason = getExpoNotificationsUnsupportedReason();
+
+  if (unsupportedReason) {
+    return unavailablePermission(unsupportedReason);
+  }
+
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
+    return unavailablePermission('notifications_unavailable');
+  }
+
   return readPermission(() => Notifications.requestPermissionsAsync());
 }
 
@@ -190,6 +206,22 @@ async function getTaskManagerCapability() {
   }
 }
 
+async function getNotificationPermission() {
+  const unsupportedReason = getExpoNotificationsUnsupportedReason();
+
+  if (unsupportedReason) {
+    return unavailablePermission(unsupportedReason);
+  }
+
+  const Notifications = await getExpoNotificationsModule();
+
+  if (!Notifications) {
+    return unavailablePermission('notifications_unavailable');
+  }
+
+  return readPermission(() => Notifications.getPermissionsAsync());
+}
+
 async function readBooleanCapability(check: () => Promise<boolean>) {
   try {
     return await check();
@@ -211,6 +243,15 @@ async function readPermission(
       reason: 'permission_check_failed',
     };
   }
+}
+
+function unavailablePermission(reason: string): VeraNativePermissionSnapshot {
+  return {
+    status: 'unavailable',
+    granted: false,
+    canAskAgain: false,
+    reason,
+  };
 }
 
 function normalizePermission(

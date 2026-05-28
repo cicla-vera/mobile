@@ -130,7 +130,7 @@ export default function ActivityRoute() {
       setFeedback('Atividade salva para este dia.');
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel salvar a atividade.'),
+        getApiErrorMessage(error, 'Não foi possível salvar a atividade.'),
       );
     }
   }
@@ -211,7 +211,7 @@ export default function ActivityRoute() {
             <AppText variant="caption" style={styles.noticeText}>
               {getApiErrorMessage(
                 loadError,
-                'Nao deu para carregar atividades.',
+                'Não deu para carregar atividades.',
               )}
             </AppText>
           </View>
@@ -338,7 +338,7 @@ export default function ActivityRoute() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="Ultimos registros" detail="historico recente" />
+          <SectionHeader title="Últimos registros" detail="histórico recente" />
           {recentEntriesQuery.isLoading ? (
             <ActivityIndicator color={colors.blue} style={styles.loader} />
           ) : (

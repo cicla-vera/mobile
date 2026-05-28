@@ -88,7 +88,7 @@ export default function DayDetailsRoute() {
         <View style={styles.header}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Voltar para o calendario"
+            accessibilityLabel="Voltar para o calendário"
             onPress={() => router.back()}
             style={styles.iconButton}
           >
@@ -142,7 +142,7 @@ export default function DayDetailsRoute() {
           <View style={styles.notice}>
             <Feather name="alert-circle" size={22} color={colors.danger} />
             <AppText variant="caption" style={styles.noticeText}>
-              {getApiErrorMessage(loadError, 'Nao deu para carregar esse dia.')}
+              {getApiErrorMessage(loadError, 'Não deu para carregar esse dia.')}
             </AppText>
           </View>
         ) : null}
@@ -252,7 +252,7 @@ function CyclePanel({
     return (
       <EmptyBlock
         icon="moon"
-        text="Esse dia ainda nao esta marcado como periodo menstrual."
+        text="Esse dia ainda não está marcado como período menstrual."
       />
     );
   }
@@ -270,15 +270,15 @@ function CyclePanel({
       <View style={styles.cycleCopy}>
         <AppText variant="label">
           {isStart
-            ? 'Inicio da menstruacao'
+            ? 'Início da menstruação'
             : isEnd
-              ? 'Fim da menstruacao'
-              : 'Periodo menstrual'}
+              ? 'Fim da menstruação'
+              : 'Período menstrual'}
         </AppText>
         <AppText variant="caption" tone="muted" style={styles.cycleText}>
           {end
-            ? `${formatShortDate(start)} ate ${formatShortDate(end)}`
-            : `Comecou em ${formatShortDate(start)} e segue em aberto`}
+            ? `${formatShortDate(start)} até ${formatShortDate(end)}`
+            : `Começou em ${formatShortDate(start)} e segue em aberto`}
         </AppText>
       </View>
     </View>
@@ -300,7 +300,7 @@ function DailyLogDetails({ data }: { data?: DailyLog }) {
     return (
       <EmptyBlock
         icon="calendar"
-        text="Nada salvo para esse dia ainda. Adicione um registro para completar o diario."
+        text="Nada salvo para esse dia ainda. Adicione um registro para completar o diário."
       />
     );
   }
@@ -416,7 +416,7 @@ function getDayFlags(
   const flags: Array<{ icon: keyof typeof Feather.glyphMap; label: string }> = [];
 
   if (isPeriod) {
-    flags.push({ icon: 'droplet', label: 'periodo' });
+    flags.push({ icon: 'droplet', label: 'período' });
   }
 
   if (nextPeriodDate === dateKey) {
@@ -428,7 +428,7 @@ function getDayFlags(
     dateKey >= fertileWindow.start &&
     dateKey <= fertileWindow.end
   ) {
-    flags.push({ icon: 'sun', label: 'janela fertil' });
+    flags.push({ icon: 'sun', label: 'janela fértil' });
   }
 
   if (flags.length === 0) {
@@ -475,18 +475,18 @@ function getCycleDetail(
   dateKey: string,
 ) {
   if (!cycle) {
-    return 'sem periodo salvo';
+    return 'sem período salvo';
   }
 
   if (getCycleStartKey(cycle) === dateKey) {
-    return 'inicio marcado';
+    return 'início marcado';
   }
 
   if (getCycleEndKey(cycle) === dateKey) {
     return 'fim marcado';
   }
 
-  return 'dentro do periodo';
+  return 'dentro do período';
 }
 
 function getMoodLabel(value: MoodType) {

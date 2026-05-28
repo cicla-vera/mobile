@@ -34,13 +34,13 @@ type ProtectionChoice = {
 const protectionChoices: ProtectionChoice[] = [
   {
     value: true,
-    label: 'Com protecao',
-    detail: 'barreira ou metodo de protecao usado',
+    label: 'Com proteção',
+    detail: 'barreira ou método de proteção usado',
     icon: 'shield',
   },
   {
     value: false,
-    label: 'Sem protecao',
+    label: 'Sem proteção',
     detail: 'registro importante para acompanhar riscos',
     icon: 'alert-circle',
   },
@@ -98,7 +98,7 @@ export default function IntercourseRoute() {
       setFeedback('Registro salvo para este dia.');
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel salvar o registro.'),
+        getApiErrorMessage(error, 'Não foi possível salvar o registro.'),
       );
     }
   }
@@ -151,7 +151,7 @@ export default function IntercourseRoute() {
           </Pressable>
           <View style={styles.headerCopy}>
             <AppText variant="caption" tone="muted" style={styles.eyebrow}>
-              Relacoes
+              Relações
             </AppText>
             <AppText variant="heading">
               {formatCalendarHeading(selectedDate)}
@@ -171,7 +171,7 @@ export default function IntercourseRoute() {
             </AppText>
             <AppText style={styles.heroText}>
               {dayEntries.length > 0
-                ? `${protectedCount} com protecao, ${unprotectedCount} sem protecao`
+                ? `${protectedCount} com proteção, ${unprotectedCount} sem proteção`
                 : 'Guarde esse dado junto aos sinais do ciclo, com privacidade.'}
             </AppText>
           </View>
@@ -183,7 +183,7 @@ export default function IntercourseRoute() {
             <AppText variant="caption" style={styles.noticeText}>
               {getApiErrorMessage(
                 loadError,
-                'Nao deu para carregar relacoes.',
+                'Não deu para carregar relações.',
               )}
             </AppText>
           </View>
@@ -193,7 +193,7 @@ export default function IntercourseRoute() {
           <View style={styles.sectionHeader}>
             <AppText variant="label">Novo registro</AppText>
             <AppText variant="caption" tone="muted">
-              protecao
+              proteção
             </AppText>
           </View>
 
@@ -282,7 +282,7 @@ export default function IntercourseRoute() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="Ultimos registros" detail="historico recente" />
+          <SectionHeader title="Últimos registros" detail="histórico recente" />
           {recentEntriesQuery.isLoading ? (
             <ActivityIndicator color={colors.blue} style={styles.loader} />
           ) : (
@@ -363,7 +363,7 @@ function IntercourseList({
 }
 
 function getProtectionLabel(value: boolean) {
-  return value ? 'Com protecao' : 'Sem protecao';
+  return value ? 'Com proteção' : 'Sem proteção';
 }
 
 function formatDate(value: string) {

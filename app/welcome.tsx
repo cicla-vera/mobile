@@ -1,29 +1,17 @@
-import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import { AppText, Button, Screen } from '@/components/ui';
+import { AppText, Screen } from '@/components/ui';
 import { colors, radius, shadow, spacing } from '@/constants/theme';
-import { markOnboardingSeen } from '@/services/onboarding-storage';
 
-const highlights = [
-  {
-    icon: 'calendar' as const,
-    title: 'Calendario vivo',
-    description: 'Marque menstruacao, previsao, sintomas e dias importantes.',
-  },
-  {
-    icon: 'bar-chart-2' as const,
-    title: 'Leitura do mes',
-    description: 'Veja historico, graficos e padroes sem complicar a rotina.',
-  },
-  {
-    icon: 'lock' as const,
-    title: 'Privacidade primeiro',
-    description: 'Sua conta guarda os registros com acesso individual.',
-  },
-] as const;
+const rhythmNotes = ['menstruação', 'sintomas', 'humor', 'ciclo'];
 
 export default function WelcomeRoute() {
   const router = useRouter();
@@ -31,203 +19,316 @@ export default function WelcomeRoute() {
     'login' | 'register' | null
   >(null);
 
-  async function continueTo(route: '/login' | '/register') {
+  function continueTo(route: '/login' | '/register') {
     setLoadingAction(route === '/login' ? 'login' : 'register');
-
-    try {
-      await markOnboardingSeen();
-    } finally {
-      router.replace(route);
-    }
+    router.replace(route);
   }
 
   return (
     <Screen padded={false}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[
-          styles.content,
-          {
-            paddingTop: spacing[7],
-            paddingBottom: spacing[8] + spacing[6],
-          },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={styles.root}>
         <View style={styles.hero}>
-          <View style={styles.mark} accessibilityElementsHidden>
-            <View style={styles.moon} />
-            <View style={styles.moonCutout} />
-            <View style={styles.orbit} />
+          <CiclaMoonMark />
+
+          <View style={styles.brandBlock}>
+            <Text style={styles.brandName}>Cicla</Text>
+            <Text style={styles.eyebrow}>calendário menstrual</Text>
           </View>
 
-          <AppText variant="hero" tone="blue" style={styles.logo}>
-            vera
-          </AppText>
-          <AppText variant="heading" style={styles.title}>
-            Um calendario menstrual com memoria e personalidade.
-          </AppText>
-          <AppText tone="muted" style={styles.copy}>
-            Acompanhe seu ciclo, registre sinais do corpo e volte para seus
-            padroes quando precisar entender o que mudou.
-          </AppText>
-        </View>
+          <Text style={styles.title}>
+            Seu ciclo em um calendário que respeita seu ritmo.
+          </Text>
+          <Text style={styles.copy}>
+            Registre menstruação, sintomas e humor com calma. O Cicla organiza
+            seus sinais para você enxergar padrões sem transformar cuidado em
+            tarefa.
+          </Text>
 
-        <View style={styles.featureList}>
-          {highlights.map((item) => (
-            <View key={item.title} style={styles.featureRow}>
-              <View style={styles.featureIcon}>
-                <Feather name={item.icon} size={20} color={colors.cream} />
-              </View>
-              <View style={styles.featureCopy}>
-                <AppText variant="label">{item.title}</AppText>
-                <AppText
-                  variant="caption"
-                  tone="muted"
-                  style={styles.featureText}
-                >
-                  {item.description}
+          <View style={styles.rhythmRow} accessibilityElementsHidden>
+            {rhythmNotes.map((note, index) => (
+              <View key={note} style={styles.rhythmItem}>
+                {index > 0 ? <View style={styles.rhythmDot} /> : null}
+                <AppText variant="caption" style={styles.rhythmText}>
+                  {note}
                 </AppText>
               </View>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
 
         <View style={styles.actions}>
-          <Button
-            loading={loadingAction === 'register'}
-            disabled={loadingAction !== null}
-            onPress={() => void continueTo('/register')}
-            style={styles.primaryAction}
-          >
-            Criar minha conta
-          </Button>
-          <Pressable
+          <TouchableOpacity
+            activeOpacity={0.84}
             accessibilityRole="button"
             disabled={loadingAction !== null}
-            onPress={() => void continueTo('/login')}
-            style={({ pressed }) => [
-              styles.loginLink,
-              pressed && loadingAction === null && styles.loginLinkPressed,
+            onPress={() => continueTo('/register')}
+            style={[
+              styles.primaryButton,
+              loadingAction !== null && styles.disabled,
             ]}
           >
-            <AppText variant="label" tone="blue">
-              Ja tenho conta
-            </AppText>
-          </Pressable>
+            {loadingAction === 'register' ? (
+              <ActivityIndicator color={colors.cream} />
+            ) : (
+              <AppText style={styles.primaryButtonLabel}>
+                Criar minha conta
+              </AppText>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.74}
+            accessibilityRole="button"
+            disabled={loadingAction !== null}
+            onPress={() => continueTo('/login')}
+            style={[
+              styles.secondaryButton,
+              loadingAction !== null && styles.disabled,
+            ]}
+          >
+            {loadingAction === 'login' ? (
+              <ActivityIndicator color={colors.blue} />
+            ) : (
+              <AppText style={styles.secondaryButtonLabel}>
+                Entrar
+              </AppText>
+            )}
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     </Screen>
   );
 }
 
+function CiclaMoonMark() {
+  return (
+    <View style={styles.mark} accessibilityLabel="Logo Cicla">
+      <View style={styles.markGlow} />
+      <View style={styles.moon} />
+      <View style={styles.moonCutout} />
+      <View style={styles.smallStar} />
+      <View style={styles.calendarBadge}>
+        <View style={styles.badgeBindingRow}>
+          <View style={styles.badgeBinding} />
+          <View style={styles.badgeBinding} />
+        </View>
+        <View style={styles.badgeLineLong} />
+        <View style={styles.badgeLineShort} />
+      </View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  scroll: {
+  root: {
     flex: 1,
-  },
-  content: {
-    flexGrow: 1,
+    backgroundColor: colors.cream,
     paddingHorizontal: spacing[6],
   },
   hero: {
+    flex: 1,
     alignItems: 'center',
-    paddingTop: spacing[8],
+    justifyContent: 'flex-start',
+    paddingTop: spacing[10],
+    paddingBottom: spacing[4],
   },
   mark: {
-    width: 190,
-    height: 172,
-    marginBottom: spacing[4],
+    width: 244,
+    height: 228,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing[3],
+  },
+  markGlow: {
+    position: 'absolute',
+    left: 28,
+    top: 18,
+    width: 188,
+    height: 188,
+    borderRadius: 94,
+    backgroundColor: 'rgba(242, 97, 126, 0.11)',
   },
   moon: {
     position: 'absolute',
-    left: 22,
-    top: 6,
-    width: 138,
-    height: 158,
-    borderRadius: 80,
+    left: 45,
+    top: 18,
+    width: 150,
+    height: 174,
+    borderRadius: 92,
     backgroundColor: colors.pink,
-    transform: [{ rotate: '-10deg' }],
+    transform: [{ rotate: '-8deg' }],
+    shadowColor: colors.pink,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.18,
+    shadowRadius: 20,
+    elevation: 4,
   },
   moonCutout: {
     position: 'absolute',
-    left: 78,
-    top: -4,
-    width: 138,
-    height: 150,
-    borderRadius: 80,
+    left: 112,
+    top: 12,
+    width: 150,
+    height: 178,
+    borderRadius: 96,
     backgroundColor: colors.cream,
-    transform: [{ rotate: '8deg' }],
+    transform: [{ rotate: '-5deg' }],
   },
-  orbit: {
+  smallStar: {
     position: 'absolute',
-    left: 8,
-    top: 108,
-    width: 168,
-    height: 44,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(32, 37, 123, 0.28)',
-    transform: [{ rotate: '-9deg' }],
+    right: 26,
+    bottom: 80,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.coral,
+    borderWidth: 2,
+    borderColor: colors.cream,
   },
-  logo: {
-    textTransform: 'lowercase',
+  calendarBadge: {
+    position: 'absolute',
+    right: 29,
+    bottom: 20,
+    width: 68,
+    height: 60,
+    borderRadius: radius.sm,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: 'rgba(32, 37, 123, 0.1)',
+    paddingHorizontal: spacing[2],
+    paddingTop: spacing[2],
+    shadowColor: shadow.color,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  badgeBindingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 7,
+    marginBottom: spacing[2],
+  },
+  badgeBinding: {
+    width: 6,
+    height: 12,
+    borderRadius: 3,
+    backgroundColor: colors.blue,
+  },
+  badgeLineLong: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.shell,
+    marginBottom: spacing[1],
+  },
+  badgeLineShort: {
+    width: 29,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(201, 73, 168, 0.2)',
+  },
+  brandBlock: {
+    alignItems: 'center',
+    gap: spacing[1],
+    marginTop: spacing[2],
+  },
+  brandName: {
+    color: colors.blue,
+    fontSize: 58,
+    lineHeight: 62,
+    fontWeight: '900',
+  },
+  eyebrow: {
+    color: colors.pink,
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '800',
+    textTransform: 'uppercase',
   },
   title: {
-    maxWidth: 330,
-    marginTop: spacing[4],
+    maxWidth: 430,
+    marginTop: spacing[6],
+    color: colors.ink,
+    fontSize: 33,
+    lineHeight: 40,
+    fontWeight: '900',
     textAlign: 'center',
+    letterSpacing: 0,
   },
   copy: {
-    maxWidth: 340,
-    marginTop: spacing[3],
+    maxWidth: 420,
+    marginTop: spacing[5],
+    color: colors.muted,
+    fontSize: 18,
+    lineHeight: 27,
     textAlign: 'center',
+    letterSpacing: 0,
   },
-  featureList: {
+  rhythmRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: spacing[3],
-    marginTop: spacing[8],
+    marginTop: spacing[4],
+    paddingHorizontal: spacing[2],
   },
-  featureRow: {
+  rhythmItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[3],
-    padding: spacing[4],
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(20, 16, 17, 0.08)',
-    backgroundColor: 'rgba(255, 255, 255, 0.74)',
-    shadowColor: shadow.color,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 2,
   },
-  featureIcon: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 18,
-    backgroundColor: colors.blue,
+  rhythmDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.coral,
   },
-  featureCopy: {
-    flex: 1,
-  },
-  featureText: {
-    marginTop: 2,
+  rhythmText: {
+    color: colors.coffee,
+    fontSize: 17,
+    lineHeight: 23,
+    fontWeight: '900',
   },
   actions: {
     gap: spacing[3],
-    marginTop: spacing[8],
+    paddingTop: spacing[3],
+    paddingBottom: spacing[6],
+    backgroundColor: colors.cream,
   },
-  primaryAction: {
-    alignSelf: 'stretch',
-  },
-  loginLink: {
-    minHeight: 44,
+  primaryButton: {
+    minHeight: 64,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: colors.blue,
+    shadowColor: colors.blue,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.24,
+    shadowRadius: 16,
+    elevation: 4,
   },
-  loginLinkPressed: {
-    opacity: 0.68,
+  primaryButtonLabel: {
+    color: colors.cream,
+    fontSize: 17,
+    lineHeight: 23,
+    fontWeight: '900',
+  },
+  secondaryButton: {
+    minHeight: 58,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: 'rgba(32, 37, 123, 0.16)',
+    backgroundColor: 'rgba(255, 255, 255, 0.58)',
+  },
+  secondaryButtonLabel: {
+    color: colors.blue,
+    fontSize: 17,
+    lineHeight: 23,
+    fontWeight: '900',
+  },
+  disabled: {
+    opacity: 0.58,
   },
 });

@@ -77,7 +77,7 @@ export default function TemperatureRoute() {
       setFeedback('Temperatura salva para este dia.');
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel salvar a temperatura.'),
+        getApiErrorMessage(error, 'Não foi possível salvar a temperatura.'),
       );
     }
   }
@@ -150,7 +150,7 @@ export default function TemperatureRoute() {
                 : 'Sem medicao'}
             </AppText>
             <AppText style={styles.heroText}>
-              Registre ao acordar para acompanhar pequenas variacoes do ciclo.
+              Registre ao acordar para acompanhar pequenas variações do ciclo.
             </AppText>
           </View>
         </View>
@@ -161,7 +161,7 @@ export default function TemperatureRoute() {
             <AppText variant="caption" style={styles.noticeText}>
               {getApiErrorMessage(
                 loadError,
-                'Nao deu para carregar temperaturas.',
+                'Não deu para carregar temperaturas.',
               )}
             </AppText>
           </View>
@@ -228,7 +228,7 @@ export default function TemperatureRoute() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="Ultimas medicoes" detail="historico recente" />
+          <SectionHeader title="Últimas medições" detail="histórico recente" />
           {recentEntriesQuery.isLoading ? (
             <ActivityIndicator color={colors.blue} style={styles.loader} />
           ) : (

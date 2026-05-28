@@ -175,7 +175,7 @@ export function VaultHomeHeader({ onLock, onSettings }: VaultHomeHeaderProps) {
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Configuracoes Vera"
+        accessibilityLabel="Configurações Vera"
         hitSlop={12}
         onPress={onSettings}
         style={({ pressed }) => [layoutStyles.iconButton, pressed && layoutStyles.pressed]}

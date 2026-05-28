@@ -33,7 +33,7 @@ export function ActiveAlertIndicator({
   const isInterior = variant === 'interior';
   const title = isInterior ? 'Alerta ativo' : 'Modo reservado ativo';
   const detail = isInterior
-    ? 'Toque para abrir a timeline'
+    ? `Sessão ${formatShortId(activeAlertSessionId)} em andamento`
     : 'Toque para continuar.';
 
   function handlePress() {

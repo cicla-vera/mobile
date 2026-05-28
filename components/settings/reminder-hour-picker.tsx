@@ -30,7 +30,7 @@ export function ReminderHourPicker({
         <View style={styles.headerCopy}>
           <AppText variant="label">Horario dos lembretes</AppText>
           <AppText variant="caption" tone="muted">
-            Toque para escolher quando receber os avisos diarios.
+            Toque para escolher quando receber os avisos diários.
           </AppText>
         </View>
         {selectedHour !== undefined ? (

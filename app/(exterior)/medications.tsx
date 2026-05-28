@@ -88,7 +88,7 @@ export default function MedicationsRoute() {
       setFeedback('Medicamento salvo para este dia.');
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel salvar o medicamento.'),
+        getApiErrorMessage(error, 'Não foi possível salvar o medicamento.'),
       );
     }
   }
@@ -161,7 +161,7 @@ export default function MedicationsRoute() {
             <AppText style={styles.heroText}>
               {latestEntry
                 ? formatMedication(latestEntry)
-                : 'Acompanhe remedios, suplementos e doses junto ao ciclo.'}
+                : 'Acompanhe remédios, suplementos e doses junto ao ciclo.'}
             </AppText>
           </View>
         </View>
@@ -172,7 +172,7 @@ export default function MedicationsRoute() {
             <AppText variant="caption" style={styles.noticeText}>
               {getApiErrorMessage(
                 loadError,
-                'Nao deu para carregar medicamentos.',
+                'Não deu para carregar medicamentos.',
               )}
             </AppText>
           </View>
@@ -255,7 +255,7 @@ export default function MedicationsRoute() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="Ultimos registros" detail="historico recente" />
+          <SectionHeader title="Últimos registros" detail="histórico recente" />
           {recentEntriesQuery.isLoading ? (
             <ActivityIndicator color={colors.blue} style={styles.loader} />
           ) : (

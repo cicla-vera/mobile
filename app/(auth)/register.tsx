@@ -58,7 +58,7 @@ export default function RegisterScreen() {
       router.replace('/(exterior)');
     } catch (error) {
       setFormError(
-        getApiErrorMessage(error, 'Nao foi possivel criar sua conta agora.'),
+        getApiErrorMessage(error, 'Não foi possível criar sua conta agora.'),
       );
     }
   }
@@ -147,7 +147,7 @@ export default function RegisterScreen() {
           </TouchableOpacity>
 
           <View style={styles.loginRow}>
-            <AppText style={styles.loginText}>Ja tem conta?</AppText>
+            <AppText style={styles.loginText}>Já tem conta?</AppText>
             <Link href="/login" asChild>
               <TouchableOpacity activeOpacity={0.7} style={styles.loginLink}>
                 <AppText style={styles.loginLabel}>Entrar</AppText>

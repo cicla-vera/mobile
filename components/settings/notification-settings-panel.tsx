@@ -27,12 +27,12 @@ export function NotificationSettingsPanel() {
   const errorMessage = settingsQuery.isError
     ? getApiErrorMessage(
         settingsQuery.error,
-        'Nao deu para carregar as notificacoes.',
+        'Não deu para carregar as notificações.',
       )
     : updateSettingsMutation.isError
       ? getApiErrorMessage(
           updateSettingsMutation.error,
-          'Nao deu para salvar a preferencia.',
+          'Não deu para salvar a preferência.',
         )
       : null;
 
@@ -91,16 +91,16 @@ export function NotificationSettingsPanel() {
 
       <SettingToggleRow
         icon="droplet"
-        title="Menstruacao"
-        description="Aviso quando a proxima menstruacao estiver chegando."
+        title="Menstruação"
+        description="Aviso quando a próxima menstruação estiver chegando."
         value={settings?.periodReminder ?? true}
         disabled={!settings || isSaving}
         onValueChange={(periodReminder) => void patchSettings({ periodReminder })}
       />
       <SettingToggleRow
         icon="sun"
-        title="Ovulacao"
-        description="Lembrete na janela fertil prevista."
+        title="Ovulação"
+        description="Lembrete na janela fértil prevista."
         value={settings?.ovulationReminder ?? true}
         disabled={!settings || isSaving}
         onValueChange={(ovulationReminder) =>
@@ -110,7 +110,7 @@ export function NotificationSettingsPanel() {
       <SettingToggleRow
         icon="plus-circle"
         title="Medicamentos"
-        description="Alerta diario para registrar ou tomar remedios."
+        description="Alerta diário para registrar ou tomar remédios."
         value={settings?.medicationReminder ?? false}
         disabled={!settings || isSaving}
         onValueChange={(medicationReminder) =>
@@ -119,8 +119,8 @@ export function NotificationSettingsPanel() {
       />
       <SettingToggleRow
         icon="droplet"
-        title="Agua"
-        description="Pequeno empurrao para manter a hidratacao."
+        title="Água"
+        description="Pequeno empurrão para manter a hidratação."
         value={settings?.waterReminder ?? false}
         disabled={!settings || isSaving}
         onValueChange={(waterReminder) => void patchSettings({ waterReminder })}

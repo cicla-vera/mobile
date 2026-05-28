@@ -22,7 +22,7 @@ export const DAY_LOG_ACTIONS: DayLogAction[] = [
   {
     id: 'log',
     label: 'Registro geral',
-    shortLabel: 'Diario',
+    shortLabel: 'Diário',
     icon: 'edit-3',
     href: '/(exterior)/log',
   },
@@ -42,8 +42,8 @@ export const DAY_LOG_ACTIONS: DayLogAction[] = [
   },
   {
     id: 'water',
-    label: 'Registrar agua',
-    shortLabel: 'Agua',
+    label: 'Registrar água',
+    shortLabel: 'Água',
     icon: 'droplet',
     href: '/(exterior)/water',
   },
@@ -63,8 +63,8 @@ export const DAY_LOG_ACTIONS: DayLogAction[] = [
   },
   {
     id: 'intercourse',
-    label: 'Registrar relacao',
-    shortLabel: 'Relacao',
+    label: 'Registrar relação',
+    shortLabel: 'Relação',
     icon: 'heart',
     href: '/(exterior)/intercourse',
   },

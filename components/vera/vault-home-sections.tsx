@@ -107,7 +107,7 @@ export function VaultContactsRow({
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Adicionar contato de emergencia"
+        accessibilityLabel="Adicionar contato de emergência"
         onPress={onAddPress}
         style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
       >

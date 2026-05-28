@@ -52,7 +52,7 @@ const evidenceIcon: Record<EvidenceType, keyof typeof Feather.glyphMap> = {
 };
 
 const evidenceLabel: Record<EvidenceType, string> = {
-  AUDIO: "Audio",
+  AUDIO: "Áudio",
   VIDEO: "Video",
   IMAGE: "Imagem",
   FILE: "Arquivo",
@@ -116,23 +116,23 @@ export default function VeraEvidenceDetailRoute() {
   }, [evidenceQuery.data, evidenceRecordId]);
   const queryError =
     !alertSessionId || !evidenceRecordId
-      ? "Nao deu para identificar a evidencia selecionada."
+      ? "Não deu para identificar a evidência selecionada."
       : evidenceQuery.isError
         ? getApiErrorMessage(
             evidenceQuery.error,
-            "Nao deu para carregar a evidencia agora.",
+            "Não deu para carregar a evidência agora.",
           )
         : null;
   const verifyError = verifyEvidenceMutation.error
     ? getApiErrorMessage(
         verifyEvidenceMutation.error,
-        "Nao deu para verificar a integridade agora.",
+        "Não deu para verificar a integridade agora.",
       )
     : null;
   const analysisError = analyzeEvidenceMutation.error
     ? getApiErrorMessage(
         analyzeEvidenceMutation.error,
-        "Nao deu para solicitar a analise agora.",
+        "Não deu para solicitar a análise agora.",
       )
     : null;
   const isRefreshing = evidenceQuery.isRefetching;
@@ -226,7 +226,7 @@ export default function VeraEvidenceDetailRoute() {
           <View style={styles.loadingPanel}>
             <ActivityIndicator color={colors.mint} size="large" />
             <AppText variant="caption" style={styles.darkMuted}>
-              Carregando evidencia...
+              Carregando evidência...
             </AppText>
           </View>
         ) : null}
@@ -236,8 +236,8 @@ export default function VeraEvidenceDetailRoute() {
         {isMissingRecord ? (
           <EmptyState
             icon="file-minus"
-            title="Evidencia nao encontrada"
-            detail="O item pode ter sido ocultado, removido ou pertencer a outra sessao."
+            title="Evidência não encontrada"
+            detail="O item pode ter sido ocultado, removido ou pertencer a outra sessão."
           />
         ) : null}
 
@@ -294,7 +294,7 @@ function Header() {
           Vera
         </AppText>
         <AppText variant="title" tone="cream">
-          Detalhe da evidencia
+          Detalhe da evidência
         </AppText>
       </View>
     </View>
@@ -487,7 +487,7 @@ function IntegrityPanel({
           >
             {verification.matches
               ? `Verificado em ${formatDateTime(verification.checkedAt)}`
-              : "O hash calculado nao confere com o registro."}
+              : "O hash calculado não confere com o registro."}
           </AppText>
         </View>
       ) : null}
@@ -521,7 +521,7 @@ function RetentionPanel({
           <Feather name="eye-off" size={22} color={colors.ink} />
         </View>
         <View style={styles.panelCopy}>
-          <AppText variant="label">Retencao e visibilidade</AppText>
+          <AppText variant="label">Retenção e visibilidade</AppText>
           <AppText variant="caption" tone="muted">
             {isLocalSecurity
               ? "Armazenada localmente no cofre Vera"
@@ -620,9 +620,9 @@ function AnalysisPanel({
           <Feather name="cpu" size={22} color={colors.ink} />
         </View>
         <View style={styles.panelCopy}>
-          <AppText variant="label">Analise IA</AppText>
+          <AppText variant="label">Análise IA</AppText>
           <AppText variant="caption" tone="muted">
-            Leitura de apoio, sem substituir avaliacao humana ou juridica.
+            Leitura de apoio, sem substituir avaliação humana ou jurídica.
           </AppText>
         </View>
       </View>
@@ -637,7 +637,7 @@ function AnalysisPanel({
           <InfoRow
             icon="alert-circle"
             label="Risco"
-            value={analysis.riskLevel ?? "Nao informado"}
+            value={analysis.riskLevel ?? "Não informado"}
           />
           <InfoRow
             icon="bar-chart-2"
@@ -654,10 +654,10 @@ function AnalysisPanel({
             label="Escalonar"
             value={
               analysis.shouldEscalate === null
-                ? "Nao informado"
+                ? "Não informado"
                 : analysis.shouldEscalate
                   ? "Sim"
-                  : "Nao"
+                  : "Não"
             }
           />
           <DetectedSignalsBox signals={analysis.detectedSignals} />
@@ -690,7 +690,7 @@ function AnalysisPanel({
             tone="muted"
             style={styles.analysisEmptyText}
           >
-            Nenhum resultado de apoio salvo para esta evidencia.
+            Nenhum resultado de apoio salvo para esta evidência.
           </AppText>
         </View>
       )}
@@ -700,7 +700,7 @@ function AnalysisPanel({
         onPress={onAnalyze}
         style={styles.stretchButton}
       >
-        Solicitar analise
+        Solicitar análise
       </Button>
     </View>
   );
@@ -857,7 +857,7 @@ function formatSignalKey(key: string) {
 
 function formatSignalValue(value: unknown) {
   if (value === null || value === undefined) {
-    return "Nao informado";
+    return "Não informado";
   }
 
   if (Array.isArray(value)) {
@@ -879,15 +879,15 @@ function formatAnalysisStatus(analysis: EvidenceAnalysis) {
 
 function formatAlertLevel(level: AlertLevel | null) {
   if (!level) {
-    return "Nao informado";
+    return "Não informado";
   }
 
-  return level === "CRITICAL" ? "Critico" : "Normal";
+  return level === "CRITICAL" ? "Crítico" : "Normal";
 }
 
 function formatConfidence(value: number | null) {
   if (value === null) {
-    return "Nao informado";
+    return "Não informado";
   }
 
   return `${Math.round(value * 100)}%`;
@@ -918,7 +918,7 @@ function formatBytes(bytes: number) {
 
 function formatNullableDateTime(value: string | null) {
   if (!value) {
-    return "Nao registrado";
+    return "Não registrado";
   }
 
   return formatDateTime(value);

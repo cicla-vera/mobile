@@ -2,10 +2,12 @@ import * as Notifications from 'expo-notifications';
 import { Alert, Linking, Platform } from 'react-native';
 
 import {
-  SECURITY_MODE_DISCREET_COPY,
+  SECURITY_MODE_NOTIFICATION_CATEGORY_ID,
+  SECURITY_MODE_NOTIFICATION_COPY,
   SECURITY_MODE_OVERLAY_CHANNEL_ID,
   SECURITY_MODE_OVERLAY_CHANNEL_NAME,
   SECURITY_MODE_OVERLAY_NOTIFICATION_ID,
+  SECURITY_MODE_TRIGGER_ACTION_ID,
 } from '@/constants/security-mode-overlay';
 import { requestVeraNotificationPermission } from '@/services/vera/native-capabilities.service';
 import {
@@ -59,6 +61,19 @@ export async function configureSecurityModeOverlayChannel() {
       lightColor: '#20257B',
     },
   );
+
+  await Notifications.setNotificationCategoryAsync(
+    SECURITY_MODE_NOTIFICATION_CATEGORY_ID,
+    [
+      {
+        identifier: SECURITY_MODE_TRIGGER_ACTION_ID,
+        buttonTitle: 'Simular gatilho',
+        options: {
+          opensAppToForeground: true,
+        },
+      },
+    ],
+  ).catch(() => undefined);
 
   overlayChannelConfigured = true;
 }
@@ -234,7 +249,16 @@ async function showNotificationDiscreetOverlay(): Promise<SecurityModeOverlaySho
   try {
     await configureSecurityModeOverlayChannel();
 
-    const permission = await Notifications.getPermissionsAsync();
+    let permission = await Notifications.getPermissionsAsync();
+
+    if (!permission.granted && permission.canAskAgain) {
+      const requested = await requestVeraNotificationPermission();
+      permission = {
+        ...permission,
+        granted: requested.granted,
+        canAskAgain: requested.canAskAgain,
+      };
+    }
 
     if (!permission.granted) {
       return {
@@ -250,20 +274,18 @@ async function showNotificationDiscreetOverlay(): Promise<SecurityModeOverlaySho
     await Notifications.scheduleNotificationAsync({
       identifier: SECURITY_MODE_OVERLAY_NOTIFICATION_ID,
       content: {
-        title: SECURITY_MODE_DISCREET_COPY.title,
-        body: SECURITY_MODE_DISCREET_COPY.body,
-        subtitle:
-          Platform.OS === 'android'
-            ? SECURITY_MODE_DISCREET_COPY.detail
-            : undefined,
+        title: SECURITY_MODE_NOTIFICATION_COPY.title,
+        body: SECURITY_MODE_NOTIFICATION_COPY.body,
+        categoryIdentifier: SECURITY_MODE_NOTIFICATION_CATEGORY_ID,
         data: {
           screen: 'home',
+          securityModeAction: 'simulate-trigger',
           securityModeActive: true,
         },
         sound: false,
         badge: 0,
         sticky: true,
-        priority: Notifications.AndroidNotificationPriority.HIGH,
+        priority: Notifications.AndroidNotificationPriority.DEFAULT,
       },
       trigger:
         Platform.OS === 'android'

@@ -1,8 +1,7 @@
+import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
 import { requireOptionalNativeModule } from 'expo-modules-core';
 import { Linking, Platform } from 'react-native';
-
-import { SECURITY_MODE_DISCREET_COPY } from '@/constants/security-mode-overlay';
 
 export type SystemOverlayShowResult =
   | { shown: true }
@@ -16,28 +15,37 @@ export type SystemOverlayShowResult =
       message?: string;
     };
 
+type BubbleTapEvent = { timestamp: number };
+type BubbleTapListener = (event: BubbleTapEvent) => void;
+
+type FloatingBubbleSubscription = { remove: () => void } | undefined;
+
 type FloatingBubbleModule = {
   canDrawOverlays: () => Promise<boolean>;
   requestOverlayPermission: () => void;
   showBubble: (options: {
+    iconUri?: string;
+    iconResId?: number;
     bubbleColor?: number;
     initialX?: number;
     initialY?: number;
   }) => void;
   hideBubble: () => void;
-  showOverlay: (options: Record<string, unknown>) => void;
-  hideOverlay: () => void;
+  addListener?: (
+    eventName: 'onBubbleTapped',
+    listener: BubbleTapListener,
+  ) => FloatingBubbleSubscription;
 };
 
-const BUBBLE_COLOR = 0xff20257b;
-const PANEL_BACKGROUND = '#FFF7F2';
-const PANEL_TEXT = '#141011';
-const PANEL_MUTED = '#6B6563';
+const BUBBLE_COLOR = 0xfffff5ec;
+const BUBBLE_ICON_MODULE = require('../../assets/images/security-bubble-icon.png');
 const NATIVE_MODULE_MISSING_MESSAGE =
   'A sobreposicao sobre outros apps exige rebuild do app nativo. Rode: npx expo run:android --device';
 
 let moduleAvailability: 'unknown' | 'available' | 'missing' = 'unknown';
 let floatingBubbleModule: FloatingBubbleModule | null = null;
+let cachedBubbleIconUri: string | null = null;
+let bubbleIconPreloadPromise: Promise<string | null> | null = null;
 
 function loadFloatingBubbleModule() {
   if (moduleAvailability === 'missing') {
@@ -178,55 +186,46 @@ export async function getSystemOverlayPermission() {
   };
 }
 
-function buildDiscreetOverlayConfig() {
-  return {
-    componentConfig: {
-      type: 'container' as const,
-      style: {
-        backgroundColor: PANEL_BACKGROUND,
-        padding: 18,
-        borderRadius: 18,
-      },
-      children: [
-        {
-          type: 'text' as const,
-          text: SECURITY_MODE_DISCREET_COPY.title,
-          style: {
-            color: PANEL_TEXT,
-            fontSize: 15,
-            fontWeight: 'bold' as const,
-            textAlign: 'center' as const,
-          },
-        },
-        {
-          type: 'spacer' as const,
-          height: 8,
-        },
-        {
-          type: 'text' as const,
-          text: SECURITY_MODE_DISCREET_COPY.body,
-          style: {
-            color: PANEL_MUTED,
-            fontSize: 13,
-            textAlign: 'center' as const,
-          },
-        },
-        {
-          type: 'spacer' as const,
-          height: 6,
-        },
-        {
-          type: 'text' as const,
-          text: SECURITY_MODE_DISCREET_COPY.detail,
-          style: {
-            color: PANEL_MUTED,
-            fontSize: 11,
-            textAlign: 'center' as const,
-          },
-        },
-      ],
-    },
-  };
+async function resolveBubbleIconUri() {
+  if (cachedBubbleIconUri) {
+    return cachedBubbleIconUri;
+  }
+
+  if (bubbleIconPreloadPromise) {
+    return bubbleIconPreloadPromise;
+  }
+
+  bubbleIconPreloadPromise = (async () => {
+    try {
+      const asset = Asset.fromModule(BUBBLE_ICON_MODULE);
+
+      if (!asset.localUri) {
+        await asset.downloadAsync();
+      }
+
+      const uri = asset.localUri ?? asset.uri ?? null;
+
+      if (uri) {
+        cachedBubbleIconUri = uri;
+      }
+
+      return uri;
+    } catch {
+      return null;
+    } finally {
+      bubbleIconPreloadPromise = null;
+    }
+  })();
+
+  return bubbleIconPreloadPromise;
+}
+
+export function preloadSystemOverlayIcon() {
+  if (Platform.OS !== 'android') {
+    return;
+  }
+
+  void resolveBubbleIconUri();
 }
 
 export async function showSystemSecurityOverlay(): Promise<SystemOverlayShowResult> {
@@ -256,12 +255,14 @@ export async function showSystemSecurityOverlay(): Promise<SystemOverlayShowResu
   }
 
   try {
+    const iconUri = await resolveBubbleIconUri();
+
     module.showBubble({
+      iconUri: iconUri ?? undefined,
       bubbleColor: BUBBLE_COLOR,
       initialX: 20,
       initialY: 140,
     });
-    module.showOverlay(buildDiscreetOverlayConfig());
 
     return { shown: true };
   } catch (error) {
@@ -284,11 +285,34 @@ export async function hideSystemSecurityOverlay() {
   }
 
   try {
-    module.hideOverlay();
     module.hideBubble();
   } catch {
     // Best effort cleanup.
   }
+}
+
+export function subscribeFloatingBubbleTap(listener: BubbleTapListener) {
+  const module = loadFloatingBubbleModule();
+
+  if (!module?.addListener) {
+    return () => undefined;
+  }
+
+  let subscription: FloatingBubbleSubscription;
+
+  try {
+    subscription = module.addListener('onBubbleTapped', listener);
+  } catch {
+    return () => undefined;
+  }
+
+  return () => {
+    try {
+      subscription?.remove();
+    } catch {
+      // Best effort cleanup.
+    }
+  };
 }
 
 export function getSystemOverlayPermissionMessage(permission: {

@@ -197,7 +197,7 @@ export async function syncVeraActiveAlertNotification({
 }
 
 export async function addLocalNotificationResponseListener(
-  onResponse: (data: Record<string, unknown>) => void,
+  onResponse: (data: Record<string, unknown>, actionIdentifier?: string) => void,
 ): Promise<NotificationSubscription | null> {
   const Notifications = await getExpoNotificationsModule();
 
@@ -206,7 +206,10 @@ export async function addLocalNotificationResponseListener(
   }
 
   return Notifications.addNotificationResponseReceivedListener((response) => {
-    onResponse(response.notification.request.content.data ?? {});
+    onResponse(
+      response.notification.request.content.data ?? {},
+      response.actionIdentifier,
+    );
   });
 }
 

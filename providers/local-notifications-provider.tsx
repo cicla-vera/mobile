@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import { useEffect, type ReactNode } from "react";
 
+import { SECURITY_MODE_TRIGGER_ACTION_ID } from "@/constants/security-mode-overlay";
 import { useCyclePredictionQuery } from "@/hooks/useCycles";
 import { useNotificationSettingsQuery } from "@/hooks/useNotificationSettings";
 import {
@@ -11,6 +12,7 @@ import {
   isLocalNotificationsSupported,
   syncLocalNotificationsFromPrediction,
 } from "@/services/local-notifications.service";
+import { triggerSimulatedViolenceDetection } from "@/services/vera/security-audio-simulation.service";
 import { configureSecurityModeOverlayChannel } from "@/services/vera/security-mode-overlay.service";
 import { useAuthStore } from "@/stores/auth.store";
 import { getHasValidVeraSession } from "@/stores/vera.store";
@@ -38,9 +40,19 @@ export function LocalNotificationsProvider({
       return;
     }
 
-    void addLocalNotificationResponseListener((data) => {
+    void addLocalNotificationResponseListener((data, actionIdentifier) => {
       const screen = data.screen as string | undefined;
       const alertSessionId = data.alertSessionId as string | undefined;
+      const securityModeAction = data.securityModeAction as string | undefined;
+
+      if (
+        securityModeAction === "simulate-trigger" ||
+        actionIdentifier === SECURITY_MODE_TRIGGER_ACTION_ID
+      ) {
+        void triggerSimulatedViolenceDetection().catch(() => undefined);
+        router.push("/(exterior)");
+        return;
+      }
 
       if (screen === "home") {
         router.push("/(exterior)");

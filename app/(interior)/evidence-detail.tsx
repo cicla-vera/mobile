@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -23,10 +24,14 @@ import {
   useVerifyEvidenceMutation,
 } from "@/hooks/vera";
 import { getApiErrorMessage } from "@/services/api-error";
-import { hashLocalFile } from "@/services/vera/security-audio-evidence.service";
+import {
+  deleteSecurityAudioEvidence,
+  hashLocalFile,
+} from "@/services/vera/security-audio-evidence.service";
 import {
   findLocalSecurityEvidenceRecord,
   isLocalSecurityEvidenceRecord,
+  parseLocalSecurityEvidenceId,
 } from "@/services/vera/security-audio-evidence-records.service";
 import type {
   AlertLevel,
@@ -206,6 +211,38 @@ export default function VeraEvidenceDetailRoute() {
     }
   }
 
+  function handleDeleteLocalAudio() {
+    if (!record || !isLocalSecurityEvidenceRecord(record.id)) {
+      return;
+    }
+
+    Alert.alert(
+      "Excluir áudio",
+      "O arquivo de áudio será removido deste aparelho. Esta ação não pode ser desfeita.",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: () => {
+            void deleteLocalAudio(record.id);
+          },
+        },
+      ],
+    );
+  }
+
+  async function deleteLocalAudio(recordId: string) {
+    const securityEvidenceId = parseLocalSecurityEvidenceId(recordId);
+
+    if (!securityEvidenceId) {
+      return;
+    }
+
+    await deleteSecurityAudioEvidence(securityEvidenceId);
+    router.back();
+  }
+
   return (
     <Screen padded={false}>
       <ScrollView
@@ -247,6 +284,16 @@ export default function VeraEvidenceDetailRoute() {
 
             {isLocalSecurity && typeof record.metadata?.localUri === "string" ? (
               <LocalAudioPanel localUri={record.metadata.localUri} />
+            ) : null}
+
+            {isLocalSecurity ? (
+              <Button
+                onPress={handleDeleteLocalAudio}
+                style={styles.stretchButton}
+                variant="ghost"
+              >
+                Excluir áudio deste aparelho
+              </Button>
             ) : null}
 
             <IntegrityPanel

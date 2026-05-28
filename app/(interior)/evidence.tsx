@@ -24,7 +24,11 @@ import {
   useVaultEvidenceRecordsQuery,
 } from "@/hooks/vera";
 import { getApiErrorMessage } from "@/services/api-error";
-import { isLocalSecurityEvidenceRecord } from "@/services/vera/security-audio-evidence-records.service";
+import { deleteSecurityAudioEvidence } from "@/services/vera/security-audio-evidence.service";
+import {
+  isLocalSecurityEvidenceRecord,
+  parseLocalSecurityEvidenceId,
+} from "@/services/vera/security-audio-evidence-records.service";
 import type {
   AlertSession,
   EvidenceRecord,
@@ -142,6 +146,24 @@ export default function VeraEvidenceRoute() {
   }
 
   function handleHideEvidence(record: EvidenceRecord) {
+    if (isLocalSecurityEvidenceRecord(record.id)) {
+      Alert.alert(
+        "Excluir áudio",
+        "O arquivo de áudio será removido deste aparelho. Esta ação não pode ser desfeita.",
+        [
+          { text: "Cancelar", style: "cancel" },
+          {
+            text: "Excluir",
+            style: "destructive",
+            onPress: () => {
+              void deleteLocalEvidence(record);
+            },
+          },
+        ],
+      );
+      return;
+    }
+
     Alert.alert(
       "Ocultar evidência",
       "Ela deixa de aparecer no cofre, mas o registro de integridade continua preservado.",
@@ -174,6 +196,27 @@ export default function VeraEvidenceRoute() {
       setFeedback("Evidência removida da visão principal.");
     } catch {
       // Mutation errors are rendered from React Query state.
+    }
+  }
+
+  async function deleteLocalEvidence(record: EvidenceRecord) {
+    const securityEvidenceId = parseLocalSecurityEvidenceId(record.id);
+
+    if (!securityEvidenceId) {
+      return;
+    }
+
+    setFeedback(null);
+
+    try {
+      const deleted = await deleteSecurityAudioEvidence(securityEvidenceId);
+
+      if (deleted) {
+        setFeedback("Áudio excluído deste aparelho.");
+        await evidenceQuery.refetch();
+      }
+    } catch {
+      setFeedback("Não deu para excluir o áudio agora.");
     }
   }
 
@@ -554,21 +597,25 @@ function EvidenceCard({
             <Feather name="chevron-right" size={22} color={colors.blue} />
           </Pressable>
 
-          {!isLocalSecurity ? (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Ocultar evidencia"
-              disabled={disabled}
-              onPress={onHide}
-              style={({ pressed }) => [
-                styles.hideButton,
-                pressed && styles.pressed,
-                disabled && styles.disabledAction,
-              ]}
-            >
-              <Feather name="eye-off" size={20} color={colors.danger} />
-            </Pressable>
-          ) : null}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              isLocalSecurity ? "Excluir audio" : "Ocultar evidencia"
+            }
+            disabled={disabled}
+            onPress={onHide}
+            style={({ pressed }) => [
+              styles.hideButton,
+              pressed && styles.pressed,
+              disabled && styles.disabledAction,
+            ]}
+          >
+            <Feather
+              name={isLocalSecurity ? "trash-2" : "eye-off"}
+              size={20}
+              color={colors.danger}
+            />
+          </Pressable>
         </View>
       </View>
 

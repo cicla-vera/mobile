@@ -1,7 +1,7 @@
 export const VERA_SECURITY_AUDIO_TASK_NAME = 'vera.security.audio';
 
 export const SECURITY_AUDIO_SEGMENT_MS = 2 * 60 * 1000;
-export const SECURITY_AUDIO_POST_TRIGGER_MS = 60 * 1000;
+export const SECURITY_AUDIO_POST_TRIGGER_MS = 2 * 60 * 1000;
 
 export const SECURITY_AUDIO_TRIGGER_MIN_MS = 4 * 60 * 1000;
 export const SECURITY_AUDIO_TRIGGER_MAX_MS = 10 * 60 * 1000;

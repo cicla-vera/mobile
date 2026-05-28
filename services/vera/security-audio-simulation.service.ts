@@ -59,6 +59,7 @@ let nextSimulatedTriggerAt: string | null = null;
 let cachedEvidences: SecurityModeSnapshot['evidences'] = [];
 let isRotatingSegment = false;
 let isSealingSegment = false;
+let isManualTriggerPending = false;
 
 defineVeraSecurityAudioTask();
 
@@ -146,7 +147,7 @@ export async function stopSecurityMode() {
 }
 
 export async function triggerSimulatedViolenceDetection(customText?: string) {
-  if (!isActive || !activeSegment) {
+  if (!isActive) {
     throw new Error('Ative o Modo Seguranca antes de simular um gatilho.');
   }
 
@@ -154,53 +155,65 @@ export async function triggerSimulatedViolenceDetection(customText?: string) {
     return getSecurityModeSnapshot();
   }
 
-  const detectedText =
-    customText?.trim() ||
-    pickRandomTriggerText() ||
-    SIMULATED_VIOLENCE_TRIGGERS[0];
-
-  lastDetectedText = detectedText;
-  postTriggerStartedAt = new Date().toISOString();
-  setStatus('post_trigger');
-
-  if (segmentTimer) {
-    clearTimeout(segmentTimer);
-    segmentTimer = null;
+  if (isManualTriggerPending) {
+    return getSecurityModeSnapshot();
   }
 
-  if (triggerTimer) {
-    clearTimeout(triggerTimer);
-    triggerTimer = null;
+  isManualTriggerPending = true;
+
+  try {
+    const detectedText =
+      customText?.trim() ||
+      pickRandomTriggerText() ||
+      SIMULATED_VIOLENCE_TRIGGERS[0];
+
+    lastDetectedText = detectedText;
+    postTriggerStartedAt = new Date().toISOString();
+
+    if (segmentTimer) {
+      clearTimeout(segmentTimer);
+      segmentTimer = null;
+    }
+
+    if (triggerTimer) {
+      clearTimeout(triggerTimer);
+      triggerTimer = null;
+    }
+
+    if (postTriggerTimer) {
+      clearTimeout(postTriggerTimer);
+    }
+
+    setStatus('post_trigger');
+    await startPostTriggerSegment();
+
+    postTriggerTimer = setTimeout(() => {
+      void sealCurrentSegmentAsEvidence(detectedText);
+    }, SECURITY_AUDIO_POST_TRIGGER_MS);
+
+    await persistCheckpoint({
+      pendingTriggerText: detectedText,
+    });
+    await emitSnapshot();
+
+    console.log(
+      JSON.stringify(
+        {
+          event: 'vera.security.simulated_ai_trigger',
+          detectedText,
+          postTriggerEndsAt: new Date(
+            Date.now() + SECURITY_AUDIO_POST_TRIGGER_MS,
+          ).toISOString(),
+        },
+        null,
+        2,
+      ),
+    );
+
+    return getSecurityModeSnapshot();
+  } finally {
+    isManualTriggerPending = false;
   }
-
-  if (postTriggerTimer) {
-    clearTimeout(postTriggerTimer);
-  }
-
-  postTriggerTimer = setTimeout(() => {
-    void sealCurrentSegmentAsEvidence(detectedText);
-  }, SECURITY_AUDIO_POST_TRIGGER_MS);
-
-  await persistCheckpoint({
-    pendingTriggerText: detectedText,
-  });
-  await emitSnapshot();
-
-  console.log(
-    JSON.stringify(
-      {
-        event: 'vera.security.simulated_ai_trigger',
-        detectedText,
-        postTriggerEndsAt: new Date(
-          Date.now() + SECURITY_AUDIO_POST_TRIGGER_MS,
-        ).toISOString(),
-      },
-      null,
-      2,
-    ),
-  );
-
-  return getSecurityModeSnapshot();
 }
 
 export async function processSecurityAudioCheckpoint() {
@@ -239,6 +252,27 @@ async function startNewSegment() {
     return;
   }
 
+  await startRecordingSegment({ scheduleRotation: true });
+}
+
+async function startPostTriggerSegment() {
+  if (!isActive || isRotatingSegment || isSealingSegment) {
+    activeSegment = { startedAt: Date.now(), tempUri: null };
+    return;
+  }
+
+  try {
+    await startRecordingSegment({ scheduleRotation: false });
+  } catch {
+    activeSegment = { startedAt: Date.now(), tempUri: null };
+  }
+}
+
+async function startRecordingSegment({
+  scheduleRotation,
+}: {
+  scheduleRotation: boolean;
+}) {
   isRotatingSegment = true;
 
   try {
@@ -246,6 +280,7 @@ async function startNewSegment() {
     const nextRecorder = await getRecorder();
     await nextRecorder.prepareToRecordAsync();
     nextRecorder.record();
+    await wait(120);
 
     activeSegment = {
       startedAt: Date.now(),
@@ -256,9 +291,13 @@ async function startNewSegment() {
       clearTimeout(segmentTimer);
     }
 
-    segmentTimer = setTimeout(() => {
-      void rotateSegmentWithoutSaving();
-    }, SECURITY_AUDIO_SEGMENT_MS);
+    if (scheduleRotation) {
+      segmentTimer = setTimeout(() => {
+        void rotateSegmentWithoutSaving();
+      }, SECURITY_AUDIO_SEGMENT_MS);
+    } else {
+      segmentTimer = null;
+    }
   } finally {
     isRotatingSegment = false;
   }
@@ -283,25 +322,16 @@ async function sealCurrentSegmentAsEvidence(detectedText: string) {
 
   try {
     const segmentStartedAt = activeSegment?.startedAt ?? Date.now();
-    const currentRecorder = recorder;
-
-    if (!currentRecorder) {
-      throw new Error('Gravacao ativa nao encontrada.');
-    }
-
-    await currentRecorder.stop();
-    const sourceUri = currentRecorder.uri;
-
-    if (!sourceUri) {
-      throw new Error('Arquivo de audio nao foi gerado.');
-    }
+    const sourceUri = await stopRecorderAndGetUri();
 
     const durationMillis = Math.max(Date.now() - segmentStartedAt, 0);
     const alertSessionId = await getStoredActiveAlertSessionId();
     const evidence = await saveSecurityAudioEvidence({
       detectedText,
       durationMillis,
-      sourceUri,
+      sourceUri:
+        sourceUri ??
+        (await createSimulatedAudioEvidenceFile(detectedText, durationMillis)),
       triggeredAt: postTriggerStartedAt ?? new Date().toISOString(),
       alertSessionId,
     });
@@ -335,11 +365,67 @@ async function sealCurrentSegmentAsEvidence(detectedText: string) {
       error instanceof Error
         ? error.message
         : 'Nao deu para selar a evidencia de audio.';
-    setStatus('error');
+    setStatus(isActive ? 'recording' : 'idle');
     await emitSnapshot();
   } finally {
     isSealingSegment = false;
   }
+}
+
+async function stopRecorderAndGetUri() {
+  const currentRecorder = recorder;
+
+  if (!currentRecorder) {
+    return null;
+  }
+
+  try {
+    if (currentRecorder.isRecording) {
+      await currentRecorder.stop();
+    }
+  } catch {
+    // Fall back to any URI the recorder may have emitted.
+  }
+
+  const sourceUri = currentRecorder.uri ?? activeSegment?.tempUri ?? null;
+  recorder = null;
+
+  if (!sourceUri) {
+    return null;
+  }
+
+  const info = await FileSystem.getInfoAsync(sourceUri);
+  return info.exists ? sourceUri : null;
+}
+
+async function createSimulatedAudioEvidenceFile(
+  detectedText: string,
+  durationMillis: number,
+) {
+  await ensureTempDirectory();
+
+  const documentDirectory = FileSystem.documentDirectory;
+
+  if (!documentDirectory) {
+    throw new Error('Armazenamento local indisponivel.');
+  }
+
+  const uri = `${documentDirectory}${SECURITY_AUDIO_TEMP_DIR}simulated-trigger-${Date.now()}.m4a`;
+  await FileSystem.writeAsStringAsync(
+    uri,
+    JSON.stringify(
+      {
+        simulated: true,
+        detectedText,
+        durationMillis,
+        createdAt: new Date().toISOString(),
+      },
+      null,
+      2,
+    ),
+  );
+
+  return uri;
 }
 
 async function simulateCloudUpload(
@@ -561,6 +647,12 @@ function pickRandomTriggerText() {
 
 function randomBetween(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 export const veraSecurityAudioSimulationService = {

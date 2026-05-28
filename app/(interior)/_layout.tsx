@@ -1,6 +1,12 @@
 import { Redirect, Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  AppState,
+  StyleSheet,
+  View,
+  type AppStateStatus,
+} from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { useVeraProfileQuery } from '@/hooks/vera';
@@ -39,6 +45,21 @@ export default function InteriorLayout() {
 
     return () => clearTimeout(timeout);
   }, [lockVeraSession, sessionExpiresAt]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      'change',
+      (nextState: AppStateStatus) => {
+        if (nextState === 'background' || nextState === 'inactive') {
+          lockVeraSession();
+        }
+      },
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [lockVeraSession]);
 
   if (!hasValidSession) {
     return <Redirect href="/(exterior)/vera-unlock" />;

@@ -1,7 +1,7 @@
+import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { AppState, type AppStateStatus } from 'react-native';
+import { AppState, Platform, type AppStateStatus } from 'react-native';
 
-import { SecurityModeDiscreetBanner } from '@/components/vera/security-mode-discreet-banner';
 import { veraQueryKeys } from '@/hooks/vera/query-keys';
 import { SecurityModeContext } from '@/providers/security-mode-context';
 import { queryClient } from '@/services/query-client';
@@ -23,8 +23,22 @@ import {
   requestSecurityModeOverlayPermission,
   showSecurityModeDiscreetOverlay,
 } from '@/services/vera/security-mode-overlay.service';
+import {
+  preloadSystemOverlayIcon,
+  subscribeFloatingBubbleTap,
+} from '@/services/vera/security-mode-system-overlay.service';
 import { useVeraStore } from '@/stores/vera.store';
 import type { SecurityModeSnapshot } from '@/types/vera-security-audio.types';
+
+const CICLA_HOME_ROUTE = '/(exterior)' as const;
+
+function routeToCiclaHome() {
+  try {
+    router.replace(CICLA_HOME_ROUTE);
+  } catch {
+    // Router may not be ready yet; AppState handler will retry on next focus.
+  }
+}
 
 const defaultSnapshot: SecurityModeSnapshot = {
   status: 'idle',
@@ -49,6 +63,7 @@ export function VeraSecurityModeProvider({
   const [overlayNotice, setOverlayNotice] = useState<string | null>(null);
   const isActiveRef = useRef(false);
   const evidenceCountRef = useRef(0);
+  const lockVeraSession = useVeraStore((state) => state.lockVeraSession);
   const activeAlertSessionId = useVeraStore(
     (state) => state.activeAlertSessionId,
   );
@@ -118,6 +133,9 @@ export function VeraSecurityModeProvider({
         (nextState === 'background' || nextState === 'inactive') &&
         isActiveRef.current
       ) {
+        routeToCiclaHome();
+        setTimeout(lockVeraSession, 0);
+
         void showSecurityModeDiscreetOverlay().then((result) => {
           if (!result.shown && result.message) {
             setOverlayNotice(result.message);
@@ -134,7 +152,24 @@ export function VeraSecurityModeProvider({
     return () => {
       subscription.remove();
     };
-  }, [syncOverlayPermission]);
+  }, [lockVeraSession, syncOverlayPermission]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
+    preloadSystemOverlayIcon();
+
+    const unsubscribe = subscribeFloatingBubbleTap(() => {
+      void triggerSimulatedViolenceDetection().catch(() => undefined);
+      routeToCiclaHome();
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const refresh = useCallback(async () => {
     const nextSnapshot = await getSecurityModeSnapshot();
@@ -261,7 +296,6 @@ export function VeraSecurityModeProvider({
 
   return (
     <SecurityModeContext.Provider value={value}>
-      <SecurityModeDiscreetBanner />
       {children}
     </SecurityModeContext.Provider>
   );

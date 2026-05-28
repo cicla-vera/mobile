@@ -147,7 +147,7 @@ export async function startVeraBackgroundLocationUpdates() {
     deferredUpdatesInterval: 60000,
     distanceInterval: 25,
     foregroundService: {
-      notificationBody: 'Sincronizando lembretes do calendário.',
+      notificationBody: 'Modo Seguranca ativo.',
       notificationTitle: 'Cicla Vera',
     },
     pausesUpdatesAutomatically: false,

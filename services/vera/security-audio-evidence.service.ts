@@ -81,6 +81,20 @@ export async function markSecurityAudioEvidenceUploaded(id: string) {
   return updatedEvidence;
 }
 
+export async function deleteSecurityAudioEvidence(id: string) {
+  const items = await readManifest();
+  const evidence = items.find((item) => item.id === id);
+
+  if (!evidence) {
+    return false;
+  }
+
+  await FileSystem.deleteAsync(evidence.localUri, { idempotent: true });
+  await writeManifest(items.filter((item) => item.id !== id));
+
+  return true;
+}
+
 export async function hashLocalFile(uri: string) {
   const base64 = await FileSystem.readAsStringAsync(uri, {
     encoding: FileSystem.EncodingType.Base64,

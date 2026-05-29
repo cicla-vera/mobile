@@ -210,5 +210,8 @@ evidence capture:
   evidence automatically requests AI analysis.
 - Metadata includes capture timestamps, pre-roll context, platform, foreground
   state, local confidence, metering stats, and trigger reasons.
+- The Vera timeline fetches the latest real analysis for audio evidence and
+  shows safe states for queued, processing, relevant, inconclusive, failed, and
+  critical results inside the unlocked Vera layer.
 - Persistent background audio capture still needs a native foreground service
   or development-build specific implementation; Expo Go can be limited here.

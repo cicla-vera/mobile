@@ -191,6 +191,10 @@ export default function VeraConsentRoute() {
             icon="lock"
             text="Evidências ficam ligadas a sessões de alerta. Contatos recebem resumo seguro e localização, não arquivos brutos."
           />
+          <InfoStrip
+            icon="eye"
+            text="Android e iOS podem mostrar indicadores de localização ou microfone enquanto permissões sensíveis estiverem em uso. A Vera não tenta ocultar esses avisos do sistema."
+          />
 
           <View style={styles.permissions}>
             {permissionItems.map((item) => (
@@ -506,10 +510,10 @@ function getLocationDetail(
 
   if (capabilities.location.foreground.granted) {
     if (capabilities.location.background.granted) {
-      return 'Localização em uso e em segundo plano concedidas.';
+      return 'Localização em uso e em segundo plano concedidas. O sistema pode exibir indicador próprio.';
     }
 
-    return 'Localização em uso concedida. Segundo plano ainda limita locais monitorados.';
+    return 'Localização em uso concedida. Segundo plano ainda limita locais monitorados e pode exigir aviso do sistema.';
   }
 
   return getSnapshotDetail(
@@ -554,7 +558,7 @@ function getAudioDetail(capabilities: VeraNativeCapabilityStatus | undefined) {
     capabilities.audio.recording.granted &&
     capabilities.camera.microphone.granted
   ) {
-    return 'Microfone e gravação de áudio concedidos.';
+    return 'Microfone e áudio concedidos. O sistema pode exibir indicador próprio durante o uso.';
   }
 
   return getSnapshotDetail(

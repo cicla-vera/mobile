@@ -50,8 +50,8 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Permitir que o Cicla Vera use sua localizacao enquanto o app esta aberto.",
-          "locationAlwaysAndWhenInUsePermission": "Permitir que o Cicla Vera use sua localizacao para lembretes e recursos de seguranca configurados por voce.",
+          "locationWhenInUsePermission": "Permitir que o Cicla Vera use sua localizacao enquanto recursos escolhidos por voce estiverem ativos.",
+          "locationAlwaysAndWhenInUsePermission": "Permitir que o Cicla Vera use sua localizacao para recursos configurados por voce.",
           "isIosBackgroundLocationEnabled": true,
           "isAndroidBackgroundLocationEnabled": true,
           "isAndroidForegroundServiceEnabled": true
@@ -61,14 +61,14 @@
         "expo-camera",
         {
           "cameraPermission": "Permitir que o Cicla Vera use a camera quando voce iniciar uma captura.",
-          "microphonePermission": "Permitir que o Cicla Vera use o microfone quando voce iniciar uma gravacao.",
+          "microphonePermission": "Permitir que o Cicla Vera use o microfone quando voce iniciar recursos de audio.",
           "recordAudioAndroid": true
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "Permitir que o Cicla Vera use o microfone quando voce iniciar uma gravacao.",
+          "microphonePermission": "Permitir que o Cicla Vera use o microfone quando voce iniciar recursos de audio.",
           "recordAudioAndroid": true,
           "enableBackgroundRecording": false
         }

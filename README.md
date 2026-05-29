@@ -180,6 +180,10 @@ The Vera interior layer is kept separate from the menstrual-calendar exterior:
   `services/vera/native-capabilities.service.ts` so web, Expo Go, and
   development builds can fall back safely before a Vera screen requests a
   permission or starts a sensitive workflow.
+- Vera status notifications use the `private-status` Android channel with
+  minimal importance, no sound, no vibration, and lock-screen content hidden.
+  OS-level microphone/location indicators are not hidden and are disclosed in
+  the consent flow.
 
 ## Vera Location Monitoring
 

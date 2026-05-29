@@ -47,6 +47,12 @@ const eventCopy: Record<
     icon: "map-pin",
     tone: colors.sky,
   },
+  LOCATION_UPDATED: {
+    title: "Localização atualizada",
+    detail: "A sessão recebeu uma nova amostra de localização.",
+    icon: "navigation",
+    tone: colors.sky,
+  },
   EVIDENCE_UPLOADED: {
     title: "Evidência enviada",
     detail: "Um item foi anexado ao cofre da sessão.",

@@ -17,10 +17,19 @@ export type AudioSentinelChunkSource =
   | 'audio_sentinel_pre_roll'
   | 'audio_sentinel_post_roll';
 
+export type AudioSentinelLocationContext = {
+  accuracyMeters?: number;
+  capturedAt: string;
+  latitude: number;
+  longitude: number;
+  source?: 'background' | 'foreground';
+};
+
 export type AudioSentinelChunkMetadataInput = {
   captureEndedAt: string;
   captureStartedAt: string;
   chunkIndex: number;
+  location?: AudioSentinelLocationContext | null;
   postRollMs?: number;
   preRollMs?: number;
   signal: AudioSentinelChunkSignal;
@@ -87,7 +96,12 @@ export function buildAudioSentinelMetadata(
     audioSentinelSampleCount: input.signal.sampleCount,
     captureEndedAt: input.captureEndedAt,
     captureStartedAt: input.captureStartedAt,
+    capturedAt: input.location?.capturedAt ?? null,
+    accuracyMeters: input.location?.accuracyMeters ?? null,
     foreground: true,
+    latitude: input.location?.latitude ?? null,
+    longitude: input.location?.longitude ?? null,
+    locationSource: input.location?.source ?? null,
     platform: Platform.OS,
     postRollMs: input.postRollMs ?? 0,
     preRollMs: input.preRollMs ?? 0,

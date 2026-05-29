@@ -15,6 +15,7 @@ export type AlertLevel = 'NORMAL' | 'CRITICAL';
 export type AlertEventType =
   | 'SESSION_STARTED'
   | 'LOCATION_ENTERED'
+  | 'LOCATION_UPDATED'
   | 'EVIDENCE_UPLOADED'
   | 'AI_ANALYSIS_COMPLETED'
   | 'ALERT_ESCALATED'
@@ -35,6 +36,8 @@ export type EvidenceAnalysisStatus =
   | 'COMPLETED'
   | 'FAILED'
   | 'INCONCLUSIVE';
+
+export type LocationSampleSource = 'FOREGROUND' | 'BACKGROUND' | 'UNKNOWN';
 
 export type SafetyProfile = {
   id: string;
@@ -216,10 +219,49 @@ export type EmergencyDispatchAttempt = {
 };
 
 export type EmergencyDispatchResponse = {
+  alreadyDispatched?: boolean;
   alertSessionId: string;
   level: AlertLevel;
   providerConfigured: boolean;
   attempts: EmergencyDispatchAttempt[];
+};
+
+export type AlertLocationSample = {
+  id: string;
+  alertSessionId: string;
+  evidenceRecordId: string | null;
+  latitude: number;
+  longitude: number;
+  accuracyMeters: number | null;
+  altitudeMeters: number | null;
+  speedMetersPerSecond: number | null;
+  headingDegrees: number | null;
+  source: LocationSampleSource;
+  capturedAt: VeraDateTime;
+  createdAt: VeraDateTime;
+};
+
+export type RecordLocationSampleRequest = {
+  accuracyMeters?: number;
+  altitudeMeters?: number;
+  capturedAt: VeraDateTime;
+  evidenceRecordId?: string;
+  headingDegrees?: number;
+  latitude: number;
+  longitude: number;
+  source?: LocationSampleSource;
+  speedMetersPerSecond?: number;
+};
+
+export type RecordLocationSamplesRequest =
+  | RecordLocationSampleRequest
+  | {
+      samples: RecordLocationSampleRequest[];
+    };
+
+export type RecordLocationSamplesResponse = {
+  alertSessionId: string;
+  samples: AlertLocationSample[];
 };
 
 export type EvidenceRecord = {

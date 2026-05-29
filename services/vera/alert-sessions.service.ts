@@ -9,9 +9,12 @@ import type {
   AlertEvent,
   AlertSession,
   AlertTimeline,
+  AlertLocationSample,
   CloseAlertSessionRequest,
   CreateAlertEventRequest,
   EmergencyDispatchResponse,
+  RecordLocationSamplesRequest,
+  RecordLocationSamplesResponse,
   StartLocationAlertSessionRequest,
   StartManualAlertSessionRequest,
 } from '@/types/vera.types';
@@ -150,6 +153,56 @@ export async function createAlertEvent(
   return response.data;
 }
 
+export async function recordAlertLocationSamples(
+  alertSessionId: string,
+  payload: RecordLocationSamplesRequest,
+) {
+  if (isVeraDemoModeEnabled) {
+    const samples = 'samples' in payload ? payload.samples : [payload];
+
+    return {
+      alertSessionId,
+      samples: samples.map((sample, index) => ({
+        id: `demo-location-sample-${Date.now()}-${index}`,
+        accuracyMeters: sample.accuracyMeters ?? null,
+        alertSessionId,
+        altitudeMeters: sample.altitudeMeters ?? null,
+        capturedAt: sample.capturedAt,
+        createdAt: new Date().toISOString(),
+        evidenceRecordId: sample.evidenceRecordId ?? null,
+        headingDegrees: sample.headingDegrees ?? null,
+        latitude: sample.latitude,
+        longitude: sample.longitude,
+        source: sample.source ?? 'UNKNOWN',
+        speedMetersPerSecond: sample.speedMetersPerSecond ?? null,
+      })),
+    } satisfies RecordLocationSamplesResponse;
+  }
+
+  const response = await api.post<RecordLocationSamplesResponse>(
+    `/vera/alert-sessions/${alertSessionId}/location-samples`,
+    payload,
+  );
+
+  return response.data;
+}
+
+export async function findAlertLocationSamples(
+  alertSessionId: string,
+  limit = 100,
+) {
+  if (isVeraDemoModeEnabled) {
+    return [] satisfies AlertLocationSample[];
+  }
+
+  const response = await api.get<AlertLocationSample[]>(
+    `/vera/alert-sessions/${alertSessionId}/location-samples`,
+    { params: { limit } },
+  );
+
+  return response.data;
+}
+
 export const veraAlertSessionsService = {
   startManualAlertSession,
   startLocationAlertSession,
@@ -159,4 +212,6 @@ export const veraAlertSessionsService = {
   dispatchEmergencyContacts,
   findAlertTimeline,
   createAlertEvent,
+  recordAlertLocationSamples,
+  findAlertLocationSamples,
 };

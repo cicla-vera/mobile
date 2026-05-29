@@ -125,11 +125,45 @@ const alertSession = await request('/vera/alert-sessions/location', {
 
 expectEqual('alert trigger', alertSession.trigger, 'LOCATION');
 expectEqual('alert status', alertSession.status, 'ACTIVE');
-expectEqual('safety location id', alertSession.safetyLocationId, safetyLocation.id);
+expectEqual(
+  'safety location id',
+  alertSession.safetyLocationId,
+  safetyLocation.id,
+);
 
 const activeAlert = await request('/vera/alert-sessions/active', { headers });
 
 expectEqual('active alert id', activeAlert.id, alertSession.id);
+
+const capturedAt = new Date().toISOString();
+const locationSamplesResponse = await request(
+  `/vera/alert-sessions/${alertSession.id}/location-samples`,
+  {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      accuracyMeters: 18,
+      capturedAt,
+      latitude: SAMPLE_LOCATION.latitude,
+      longitude: SAMPLE_LOCATION.longitude,
+      source: 'FOREGROUND',
+    }),
+  },
+);
+const [locationSample] = locationSamplesResponse.samples ?? [];
+
+if (!locationSample?.id) {
+  throw new Error('location sample: expected persisted sample');
+}
+
+const locationSamples = await request(
+  `/vera/alert-sessions/${alertSession.id}/location-samples?limit=10`,
+  { headers },
+);
+
+if (!locationSamples.some((sample) => sample.id === locationSample.id)) {
+  throw new Error('location samples list: expected persisted sample');
+}
 
 console.log(
   JSON.stringify(
@@ -138,6 +172,7 @@ console.log(
       activeAlertSessionId: activeAlert.id,
       apiUrl: API_URL,
       email: EMAIL,
+      locationSampleId: locationSample.id,
       safetyLocationId: safetyLocation.id,
     },
     null,

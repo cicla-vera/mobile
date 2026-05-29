@@ -7,12 +7,16 @@ import {
   useVeraProfileQuery,
 } from '@/hooks/vera';
 import {
+  buildRecordLocationSampleRequest,
   getVeraLocationMatch,
+  recordAlertLocationSamples,
+  rememberVeraLocationSample,
   startVeraBackgroundLocationUpdates,
   stopVeraBackgroundLocationUpdates,
   subscribeVeraBackgroundLocationUpdates,
   watchVeraForegroundLocation,
   type VeraLocationSample,
+  type VeraLocationSampleSource,
 } from '@/services/vera';
 import { isVeraDemoModeEnabled } from '@/constants/demo';
 import { useAuthStore } from '@/stores/auth.store';
@@ -23,6 +27,7 @@ type VeraLocationMonitorProviderProps = {
 };
 
 const LOCATION_ALERT_ATTEMPT_COOLDOWN_MS = 60 * 1000;
+const ACTIVE_LOCATION_SAMPLE_INTERVAL_MS = 30 * 1000;
 
 export function VeraLocationMonitorProvider({
   children,
@@ -35,12 +40,12 @@ export function VeraLocationMonitorProvider({
   const profileQuery = useVeraProfileQuery();
   const activeLocationsQuery = useActiveSafetyLocationsQuery();
   const activeAlertQuery = useActiveAlertSessionQuery();
-  const {
-    isPending: isStartingLocationAlert,
-    mutate: startLocationAlert,
-  } = useStartLocationAlertSessionMutation();
+  const { isPending: isStartingLocationAlert, mutate: startLocationAlert } =
+    useStartLocationAlertSessionMutation();
   const lastLocationAttemptRef = useRef<Record<string, number>>({});
+  const lastLocationSampleUploadAtRef = useRef(0);
   const isStartingLocationAlertRef = useRef(false);
+  const activeSyncedAlertSessionIdRef = useRef<string | null>(null);
 
   const riskLocations = useMemo(
     () =>
@@ -59,6 +64,10 @@ export function VeraLocationMonitorProvider({
     profileQuery.data?.monitoringEnabled === true;
 
   useEffect(() => {
+    activeSyncedAlertSessionIdRef.current = activeSyncedAlertSessionId ?? null;
+  }, [activeSyncedAlertSessionId]);
+
+  useEffect(() => {
     isStartingLocationAlertRef.current = isStartingLocationAlert;
   }, [isStartingLocationAlert]);
 
@@ -72,7 +81,7 @@ export function VeraLocationMonitorProvider({
       return;
     }
 
-    if (riskLocations.length === 0) {
+    if (riskLocations.length === 0 && !activeSyncedAlertSessionId) {
       void stopVeraBackgroundLocationUpdates();
       return;
     }
@@ -83,9 +92,18 @@ export function VeraLocationMonitorProvider({
 
     function handleLocationSample(
       sample: VeraLocationSample,
-      source: 'background' | 'foreground',
+      source: VeraLocationSampleSource,
     ) {
-      if (disposed || activeSyncedAlertSessionId) {
+      rememberVeraLocationSample(sample, source);
+
+      if (disposed) {
+        return;
+      }
+
+      const activeSessionId = activeSyncedAlertSessionIdRef.current;
+
+      if (activeSessionId) {
+        maybeRecordActiveLocationSample(sample, source, activeSessionId);
         return;
       }
 
@@ -109,6 +127,27 @@ export function VeraLocationMonitorProvider({
         message: `Entrada detectada por ${source}: ${match.location.name}`,
         safetyLocationId: match.location.id,
       });
+    }
+
+    function maybeRecordActiveLocationSample(
+      sample: VeraLocationSample,
+      source: VeraLocationSampleSource,
+      alertSessionId: string,
+    ) {
+      const now = Date.now();
+
+      if (
+        now - lastLocationSampleUploadAtRef.current <
+        ACTIVE_LOCATION_SAMPLE_INTERVAL_MS
+      ) {
+        return;
+      }
+
+      lastLocationSampleUploadAtRef.current = now;
+      void recordAlertLocationSamples(
+        alertSessionId,
+        buildRecordLocationSampleRequest(sample, source),
+      ).catch(() => undefined);
     }
 
     unsubscribeBackground = subscribeVeraBackgroundLocationUpdates((sample) => {

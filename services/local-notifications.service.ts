@@ -10,6 +10,8 @@ import {
   VERA_ACTIVE_ALERT_NOTIFICATION_IDENTIFIER,
   VERA_NOTIFICATION_CHANNEL_ID,
   VERA_NOTIFICATION_CHANNEL_NAME,
+  VERA_STATUS_NOTIFICATION_BODY,
+  VERA_STATUS_NOTIFICATION_TITLE,
 } from "@/constants/local-notifications";
 import {
   areLocalNotificationsEnabled,
@@ -58,11 +60,11 @@ export async function configureLocalNotifications() {
       );
 
       return {
-        shouldShowAlert: true,
+        shouldShowAlert: !isVeraStatus,
         shouldPlaySound: !isVeraStatus,
         shouldSetBadge: false,
-        shouldShowBanner: true,
-        shouldShowList: true,
+        shouldShowBanner: !isVeraStatus,
+        shouldShowList: !isVeraStatus,
       };
     },
   });
@@ -77,8 +79,9 @@ export async function configureLocalNotifications() {
       }),
       Notifications.setNotificationChannelAsync(VERA_NOTIFICATION_CHANNEL_ID, {
         name: VERA_NOTIFICATION_CHANNEL_NAME,
-        importance: Notifications.AndroidImportance.LOW,
-        lockscreenVisibility: Notifications.AndroidNotificationVisibility.SECRET,
+        importance: Notifications.AndroidImportance.MIN,
+        lockscreenVisibility:
+          Notifications.AndroidNotificationVisibility.SECRET,
         showBadge: false,
         sound: null,
         enableVibrate: false,
@@ -177,8 +180,8 @@ export async function syncVeraActiveAlertNotification({
   await Notifications.scheduleNotificationAsync({
     identifier: VERA_ACTIVE_ALERT_NOTIFICATION_IDENTIFIER,
     content: {
-      title: "Modo reservado ativo",
-      body: "Toque para continuar.",
+      title: VERA_STATUS_NOTIFICATION_TITLE,
+      body: VERA_STATUS_NOTIFICATION_BODY,
       data: {
         screen: "vera-active-alert",
         alertSessionId,

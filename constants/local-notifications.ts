@@ -19,3 +19,5 @@ export const LOCAL_NOTIFICATION_CHANNEL_NAME = "Lembretes do ciclo";
 
 export const VERA_NOTIFICATION_CHANNEL_ID = "private-status";
 export const VERA_NOTIFICATION_CHANNEL_NAME = "Status privado";
+export const VERA_STATUS_NOTIFICATION_TITLE = "Modo reservado ativo";
+export const VERA_STATUS_NOTIFICATION_BODY = "Toque para continuar.";

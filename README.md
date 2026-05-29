@@ -208,6 +208,8 @@ evidence capture:
   pre-roll window, and uploads the relevant window plus one post-roll window.
 - Relevant windows are flushed to the backend immediately; uploaded audio
   evidence automatically requests AI analysis.
+- Failed evidence uploads stay in the local queue and automatic retries use a
+  capped backoff; manual retry remains available from the Vera evidence panel.
 - Metadata includes capture timestamps, pre-roll context, platform, foreground
   state, local confidence, metering stats, and trigger reasons.
 - Persistent background audio capture still needs a native foreground service

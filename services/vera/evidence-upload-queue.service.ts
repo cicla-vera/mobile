@@ -31,6 +31,7 @@ export type QueuedEvidenceUpload = {
   createdAt: string;
   updatedAt: string;
   lastAttemptAt: string | null;
+  nextAttemptAt: string | null;
   errorMessage: string | null;
   uploadedEvidenceRecordId: string | null;
 };
@@ -52,6 +53,14 @@ export type FlushEvidenceUploadQueueResult = {
 
 const QUEUE_FILE_NAME = 'vera-evidence-upload-queue.json';
 const QUEUE_FILES_DIR_NAME = 'vera-evidence-uploads/';
+const RETRY_BACKOFF_MS = [
+  30 * 1000,
+  60 * 1000,
+  2 * 60 * 1000,
+  5 * 60 * 1000,
+  10 * 60 * 1000,
+];
+const STALE_UPLOAD_RETRY_MS = 2 * 60 * 1000;
 let queueFileTail: Promise<void> = Promise.resolve();
 let flushQueueTail: Promise<void> = Promise.resolve();
 
@@ -86,6 +95,7 @@ export async function enqueueEvidenceUpload(input: EnqueueEvidenceUploadInput) {
     createdAt: now,
     updatedAt: now,
     lastAttemptAt: null,
+    nextAttemptAt: null,
     errorMessage: null,
     uploadedEvidenceRecordId: null,
   };
@@ -116,10 +126,12 @@ async function flushEvidenceUploadQueueOnce(alertSessionId?: string) {
     failed: [],
     uploaded: [],
   };
+  const nowMs = Date.now();
   const items = await runQueueFileOperation(() => readQueue());
   const candidates = items.filter(
     (item) =>
       item.status !== 'uploaded' &&
+      isQueuedEvidenceUploadDue(item, nowMs) &&
       (!alertSessionId || item.alertSessionId === alertSessionId),
   );
 
@@ -128,10 +140,7 @@ async function flushEvidenceUploadQueueOnce(alertSessionId?: string) {
       const record = await uploadQueuedEvidence(item);
       result.uploaded.push(record);
     } catch {
-      const [updated] = await updateQueuedEvidence(item.id, (current) => ({
-        ...current,
-        status: 'failed',
-      }));
+      const updated = await findQueuedEvidenceUpload(item.id);
 
       if (updated) {
         result.failed.push(updated);
@@ -152,6 +161,19 @@ export async function retryQueuedEvidenceUpload(id: string) {
   }
 
   return uploadQueuedEvidence(item);
+}
+
+export function getQueuedEvidenceUploadRetryDelayMs(
+  item: QueuedEvidenceUpload,
+  nowMs = Date.now(),
+) {
+  if (item.status !== 'failed') {
+    return 0;
+  }
+
+  const nextAttemptAt = getTimeMs(item.nextAttemptAt);
+
+  return nextAttemptAt === null ? 0 : Math.max(0, nextAttemptAt - nowMs);
 }
 
 export async function removeQueuedEvidenceUpload(id: string) {
@@ -175,6 +197,7 @@ async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
     status: 'uploading',
     attempts: current.attempts + 1,
     lastAttemptAt: startedAt,
+    nextAttemptAt: null,
     updatedAt: startedAt,
     errorMessage: null,
   }));
@@ -199,6 +222,7 @@ async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
       status: 'uploaded',
       updatedAt,
       errorMessage: null,
+      nextAttemptAt: null,
       uploadedEvidenceRecordId: record.id,
     }));
     await requestAnalysisForUploadedAudio(record);
@@ -206,18 +230,72 @@ async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
 
     return record;
   } catch (error) {
-    const updatedAt = new Date().toISOString();
+    const failedAtMs = Date.now();
+    const updatedAt = new Date(failedAtMs).toISOString();
 
     await updateQueuedEvidence(item.id, (current) => ({
       ...current,
       status: 'failed',
       updatedAt,
+      nextAttemptAt: getNextAttemptAt(current.attempts, failedAtMs),
       errorMessage:
         error instanceof Error ? error.message : 'Upload não concluído.',
     }));
 
     throw error;
   }
+}
+
+async function findQueuedEvidenceUpload(id: string) {
+  return (
+    (await runQueueFileOperation(() => readQueue())).find(
+      (candidate) => candidate.id === id,
+    ) ?? null
+  );
+}
+
+function isQueuedEvidenceUploadDue(
+  item: QueuedEvidenceUpload,
+  nowMs = Date.now(),
+) {
+  if (item.status === 'pending') {
+    return true;
+  }
+
+  if (item.status === 'uploading') {
+    const lastAttemptAt = getTimeMs(item.lastAttemptAt);
+
+    return (
+      lastAttemptAt === null || nowMs - lastAttemptAt >= STALE_UPLOAD_RETRY_MS
+    );
+  }
+
+  if (item.status !== 'failed') {
+    return false;
+  }
+
+  const nextAttemptAt = getTimeMs(item.nextAttemptAt);
+
+  return nextAttemptAt === null || nextAttemptAt <= nowMs;
+}
+
+function getNextAttemptAt(attempts: number, fromMs = Date.now()) {
+  const delayIndex = Math.min(
+    Math.max(0, attempts - 1),
+    RETRY_BACKOFF_MS.length - 1,
+  );
+
+  return new Date(fromMs + RETRY_BACKOFF_MS[delayIndex]).toISOString();
+}
+
+function getTimeMs(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const timeMs = new Date(value).getTime();
+
+  return Number.isFinite(timeMs) ? timeMs : null;
 }
 
 async function requestAnalysisForUploadedAudio(record: EvidenceRecord) {
@@ -278,7 +356,9 @@ async function readQueue(): Promise<QueuedEvidenceUpload[]> {
     const raw = await FileSystem.readAsStringAsync(fileUri);
     const parsed = JSON.parse(raw) as unknown;
 
-    return Array.isArray(parsed) ? parsed.filter(isQueuedEvidenceUpload) : [];
+    return Array.isArray(parsed)
+      ? parsed.filter(isQueuedEvidenceUpload).map(normalizeQueuedEvidenceUpload)
+      : [];
   } catch {
     return [];
   }
@@ -383,4 +463,14 @@ function isQueuedEvidenceUpload(value: unknown): value is QueuedEvidenceUpload {
     typeof candidate.fileName === 'string' &&
     typeof candidate.mimeType === 'string'
   );
+}
+
+function normalizeQueuedEvidenceUpload(
+  item: QueuedEvidenceUpload,
+): QueuedEvidenceUpload {
+  return {
+    ...item,
+    nextAttemptAt:
+      typeof item.nextAttemptAt === 'string' ? item.nextAttemptAt : null,
+  };
 }

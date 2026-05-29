@@ -28,6 +28,7 @@ import {
 } from '@/hooks/vera';
 import { getApiErrorMessage } from '@/services/api-error';
 import {
+  getQueuedEvidenceUploadRetryDelayMs,
   requestVeraAudioRecordingPermission,
   requestVeraCameraPermission,
   type QueuedEvidenceUpload,
@@ -472,6 +473,9 @@ function QueuedUploadCard({
   retrying: boolean;
 }) {
   const status = uploadStatusCopy[item.status];
+  const retryDelayMs = getQueuedEvidenceUploadRetryDelayMs(item);
+  const retryLabel =
+    retryDelayMs > 0 ? ` - nova em ${formatRetryDelay(retryDelayMs)}` : '';
 
   return (
     <View style={styles.queueCard}>
@@ -500,6 +504,7 @@ function QueuedUploadCard({
             <Feather name={status.icon} size={16} color={status.tone} />
             <AppText variant="caption" style={styles.queueStatusText}>
               {status.label} - tentativa {item.attempts}
+              {retryLabel}
             </AppText>
           </View>
         </View>
@@ -537,6 +542,16 @@ function QueuedUploadCard({
       </View>
     </View>
   );
+}
+
+function formatRetryDelay(delayMs: number) {
+  const seconds = Math.ceil(delayMs / 1000);
+
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+
+  return `${Math.ceil(seconds / 60)}min`;
 }
 
 function inferEvidenceType(mimeType?: string | null, name?: string | null) {

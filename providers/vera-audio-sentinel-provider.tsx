@@ -17,6 +17,7 @@ import {
   buildAudioSentinelMetadata,
   enqueueEvidenceUpload,
   flushEvidenceUploadQueue,
+  getLatestVeraLocationSample,
   requestVeraAudioRecordingPermission,
   type AudioSentinelChunkSignal,
   type AudioSentinelChunkSource,
@@ -312,6 +313,8 @@ export function VeraAudioSentinelProvider({
     chunk: PendingAudioChunk,
     source: AudioSentinelChunkSource,
   ) {
+    const location = getLatestVeraLocationSample();
+
     await enqueueEvidenceUpload({
       alertSessionId,
       fileName: `vera-audio-sentinel-${chunk.chunkIndex}.m4a`,
@@ -327,6 +330,15 @@ export function VeraAudioSentinelProvider({
           source === 'audio_sentinel' || source === 'audio_sentinel_pre_roll'
             ? AUDIO_SENTINEL_PRE_ROLL_MS
             : 0,
+        location: location
+          ? {
+              accuracyMeters: location.accuracy ?? undefined,
+              capturedAt: new Date(location.timestamp).toISOString(),
+              latitude: location.latitude,
+              longitude: location.longitude,
+              source: location.source,
+            }
+          : null,
         signal: chunk.signal,
         source,
       }),

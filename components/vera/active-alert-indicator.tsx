@@ -31,7 +31,7 @@ export function ActiveAlertIndicator({
   }
 
   const isInterior = variant === 'interior';
-  const title = isInterior ? 'Alerta ativo' : 'Modo reservado ativo';
+  const title = isInterior ? 'Monitoramento ativo' : 'Modo reservado ativo';
   const detail = isInterior
     ? `Sessão ${formatShortId(activeAlertSessionId)} em andamento`
     : 'Toque para continuar.';

@@ -5,8 +5,10 @@ import { Platform } from 'react-native';
 import { API_BASE_URL } from '@/constants/api';
 import { VERA_LOCATION_TASK_NAME } from '@/constants/vera-native';
 import { getStoredAuthToken } from '@/services/token-storage';
+import type { RecordLocationSampleRequest } from '@/types/vera.types';
 import type {
   AlertSession,
+  RecordLocationSamplesResponse,
   SafetyLocation,
   SafetyProfile,
 } from '@/types/vera.types';
@@ -16,10 +18,19 @@ type LocationTaskData = {
 };
 
 export type VeraLocationSample = {
+  accuracy: number | null;
+  altitude: number | null;
+  heading: number | null;
   latitude: number;
   longitude: number;
-  accuracy: number | null;
+  speed: number | null;
   timestamp: number;
+};
+
+export type VeraLocationSampleSource = 'background' | 'foreground';
+
+export type VeraStoredLocationSample = VeraLocationSample & {
+  source: VeraLocationSampleSource;
 };
 
 export type VeraLocationMatch = {
@@ -47,6 +58,8 @@ type VeraLocationTaskHandler = (sample: VeraLocationSample) => void;
 const backgroundLocationHandlers = new Set<VeraLocationTaskHandler>();
 const backgroundLocationAttemptAt = new Map<string, number>();
 const BACKGROUND_LOCATION_ALERT_COOLDOWN_MS = 60 * 1000;
+const LATEST_LOCATION_SAMPLE_MAX_AGE_MS = 2 * 60 * 1000;
+let latestVeraLocationSample: VeraStoredLocationSample | null = null;
 
 defineVeraLocationTask();
 
@@ -75,6 +88,49 @@ export function getVeraLocationMatch(
     .sort((first, second) => first.distanceMeters - second.distanceMeters);
 
   return matches[0] ?? null;
+}
+
+export function rememberVeraLocationSample(
+  sample: VeraLocationSample,
+  source: VeraLocationSampleSource,
+) {
+  latestVeraLocationSample = {
+    ...sample,
+    source,
+  };
+
+  return latestVeraLocationSample;
+}
+
+export function getLatestVeraLocationSample(
+  maxAgeMs = LATEST_LOCATION_SAMPLE_MAX_AGE_MS,
+) {
+  if (
+    !latestVeraLocationSample ||
+    Date.now() - latestVeraLocationSample.timestamp > maxAgeMs
+  ) {
+    return null;
+  }
+
+  return latestVeraLocationSample;
+}
+
+export function buildRecordLocationSampleRequest(
+  sample: VeraLocationSample,
+  source: VeraLocationSampleSource,
+  evidenceRecordId?: string,
+): RecordLocationSampleRequest {
+  return {
+    accuracyMeters: sample.accuracy ?? undefined,
+    altitudeMeters: sample.altitude ?? undefined,
+    capturedAt: new Date(sample.timestamp).toISOString(),
+    evidenceRecordId,
+    headingDegrees: sample.heading ?? undefined,
+    latitude: sample.latitude,
+    longitude: sample.longitude,
+    source: source === 'background' ? 'BACKGROUND' : 'FOREGROUND',
+    speedMetersPerSecond: sample.speed ?? undefined,
+  };
 }
 
 export async function watchVeraForegroundLocation(
@@ -178,7 +234,10 @@ export function getVeraLocationMonitoringLimitation(
 }
 
 function defineVeraLocationTask() {
-  if (Platform.OS === 'web' || TaskManager.isTaskDefined(VERA_LOCATION_TASK_NAME)) {
+  if (
+    Platform.OS === 'web' ||
+    TaskManager.isTaskDefined(VERA_LOCATION_TASK_NAME)
+  ) {
     return;
   }
 
@@ -191,6 +250,7 @@ function defineVeraLocationTask() {
 
       for (const location of data.locations) {
         const sample = toLocationSample(location);
+        rememberVeraLocationSample(sample, 'background');
 
         backgroundLocationHandlers.forEach((handler) => {
           handler(sample);
@@ -225,6 +285,23 @@ async function maybeStartBackgroundLocationAlert(sample: VeraLocationSample) {
       return;
     }
 
+    const activeAlert = await requestVeraBackground<AlertSession | null>(
+      '/vera/alert-sessions/active',
+      { token },
+    );
+
+    if (activeAlert?.id) {
+      await requestVeraBackground<RecordLocationSamplesResponse>(
+        `/vera/alert-sessions/${activeAlert.id}/location-samples`,
+        {
+          body: buildRecordLocationSampleRequest(sample, 'background'),
+          method: 'POST',
+          token,
+        },
+      );
+      return;
+    }
+
     const activeLocations = await requestVeraBackground<SafetyLocation[]>(
       '/vera/safety-locations/active',
       { token },
@@ -238,36 +315,21 @@ async function maybeStartBackgroundLocationAlert(sample: VeraLocationSample) {
     const lastAttemptAt =
       backgroundLocationAttemptAt.get(match.location.id) ?? 0;
 
-    if (
-      Date.now() - lastAttemptAt <
-      BACKGROUND_LOCATION_ALERT_COOLDOWN_MS
-    ) {
-      return;
-    }
-
-    const activeAlert = await requestVeraBackground<AlertSession | null>(
-      '/vera/alert-sessions/active',
-      { token },
-    );
-
-    if (activeAlert?.id) {
+    if (Date.now() - lastAttemptAt < BACKGROUND_LOCATION_ALERT_COOLDOWN_MS) {
       return;
     }
 
     backgroundLocationAttemptAt.set(match.location.id, Date.now());
-    await requestVeraBackground<AlertSession>(
-      '/vera/alert-sessions/location',
-      {
-        body: {
-          currentLatitude: sample.latitude,
-          currentLongitude: sample.longitude,
-          message: `Entrada detectada em segundo plano: ${match.location.name}`,
-          safetyLocationId: match.location.id,
-        },
-        method: 'POST',
-        token,
+    await requestVeraBackground<AlertSession>('/vera/alert-sessions/location', {
+      body: {
+        currentLatitude: sample.latitude,
+        currentLongitude: sample.longitude,
+        message: `Entrada detectada em segundo plano: ${match.location.name}`,
+        safetyLocationId: match.location.id,
       },
-    );
+      method: 'POST',
+      token,
+    });
   } catch {
     // Background tasks must not surface errors to the app runtime.
   }
@@ -294,11 +356,16 @@ async function requestVeraBackground<T>(
   return (await response.json().catch(() => null)) as T;
 }
 
-function toLocationSample(location: Location.LocationObject): VeraLocationSample {
+function toLocationSample(
+  location: Location.LocationObject,
+): VeraLocationSample {
   return {
+    accuracy: location.coords.accuracy,
+    altitude: location.coords.altitude,
+    heading: location.coords.heading,
     latitude: location.coords.latitude,
     longitude: location.coords.longitude,
-    accuracy: location.coords.accuracy,
+    speed: location.coords.speed,
     timestamp: location.timestamp,
   };
 }

@@ -1,5 +1,6 @@
 import * as FileSystem from 'expo-file-system/legacy';
 
+import { recordAlertLocationSamples } from '@/services/vera/alert-sessions.service';
 import {
   analyzeEvidence,
   uploadEvidence,
@@ -7,8 +8,11 @@ import {
 import type {
   EvidenceRecord,
   EvidenceType,
+  LocationSampleSource,
+  RecordLocationSampleRequest,
   UploadEvidenceRequest,
   VeraMetadata,
+  VeraMetadataValue,
 } from '@/types/vera.types';
 
 export type QueuedEvidenceUploadStatus =
@@ -201,6 +205,7 @@ async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
       errorMessage: null,
       uploadedEvidenceRecordId: record.id,
     }));
+    await recordLocationSampleForUploadedEvidence(record, item.metadata);
     await requestAnalysisForUploadedAudio(record);
     await FileSystem.deleteAsync(item.localUri, { idempotent: true });
 
@@ -218,6 +223,100 @@ async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
 
     throw error;
   }
+}
+
+async function recordLocationSampleForUploadedEvidence(
+  record: EvidenceRecord,
+  metadata: VeraMetadata | null,
+) {
+  const payload = buildLocationSampleForUploadedEvidence(record, metadata);
+
+  if (!payload) {
+    return;
+  }
+
+  try {
+    await recordAlertLocationSamples(record.alertSessionId, payload);
+  } catch {
+    // Location context improves the timeline, but must not make evidence retry.
+  }
+}
+
+function buildLocationSampleForUploadedEvidence(
+  record: EvidenceRecord,
+  metadata: VeraMetadata | null,
+): RecordLocationSampleRequest | null {
+  if (!metadata) {
+    return null;
+  }
+
+  const latitude = getMetadataNumber(metadata.latitude);
+  const longitude = getMetadataNumber(metadata.longitude);
+  const capturedAt =
+    getMetadataIsoDate(metadata.capturedAt) ??
+    getMetadataIsoDate(metadata.locationCapturedAt);
+
+  if (
+    latitude === null ||
+    longitude === null ||
+    capturedAt === null ||
+    latitude < -90 ||
+    latitude > 90 ||
+    longitude < -180 ||
+    longitude > 180
+  ) {
+    return null;
+  }
+
+  return {
+    accuracyMeters:
+      getMetadataNumber(metadata.accuracyMeters) ??
+      getMetadataNumber(metadata.locationAccuracyMeters) ??
+      undefined,
+    capturedAt,
+    evidenceRecordId: record.id,
+    latitude,
+    longitude,
+    source: getMetadataLocationSource(metadata.locationSource),
+  };
+}
+
+function getMetadataNumber(value: VeraMetadataValue | undefined) {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value !== 'string' || !value.trim()) {
+    return null;
+  }
+
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function getMetadataIsoDate(value: VeraMetadataValue | undefined) {
+  if (typeof value !== 'string' && typeof value !== 'number') {
+    return null;
+  }
+
+  const date = new Date(value);
+
+  return Number.isFinite(date.getTime()) ? date.toISOString() : null;
+}
+
+function getMetadataLocationSource(
+  value: VeraMetadataValue | undefined,
+): LocationSampleSource {
+  if (value === 'background') {
+    return 'BACKGROUND';
+  }
+
+  if (value === 'foreground') {
+    return 'FOREGROUND';
+  }
+
+  return 'UNKNOWN';
 }
 
 async function requestAnalysisForUploadedAudio(record: EvidenceRecord) {

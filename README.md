@@ -195,3 +195,20 @@ Location monitoring is consent-aware and depends on the Vera safety profile:
   to validate persistent background location behavior.
 - If a monitored location is matched and no alert session is active, the app
   starts a normal location-triggered Vera alert session through the backend.
+
+## Vera Audio Sentinel
+
+The foreground audio sentinel is the first MVP layer for near-real-time audio
+evidence capture:
+
+- It only runs when the user is authenticated, Vera consent is accepted,
+  `veraEnabled` and `monitoringEnabled` are true, an alert session is active,
+  and the app is in the foreground.
+- It records short local audio windows with metering enabled, keeps one quiet
+  pre-roll window, and uploads the relevant window plus one post-roll window.
+- Relevant windows are flushed to the backend immediately; uploaded audio
+  evidence automatically requests AI analysis.
+- Metadata includes capture timestamps, pre-roll context, platform, foreground
+  state, local confidence, metering stats, and trigger reasons.
+- Persistent background audio capture still needs a native foreground service
+  or development-build specific implementation; Expo Go can be limited here.

@@ -30,6 +30,24 @@ export function useCachedEvidenceAnalysisQuery(evidenceRecordId: string) {
   });
 }
 
+export function useLatestEvidenceAnalysisQuery(
+  alertSessionId: string,
+  evidenceRecordId: string,
+) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return useQuery({
+    queryKey: veraQueryKeys.evidenceAnalysis(evidenceRecordId),
+    queryFn: () =>
+      veraEvidenceService.findLatestEvidenceAnalysis(
+        alertSessionId,
+        evidenceRecordId,
+      ),
+    enabled:
+      isAuthenticated && Boolean(alertSessionId) && Boolean(evidenceRecordId),
+  });
+}
+
 export function useUploadEvidenceMutation() {
   return useMutation({
     mutationKey: [...veraQueryKeys.alertSessions(), 'upload-evidence'],

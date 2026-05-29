@@ -168,6 +168,8 @@ export const VERA_DEMO_EVIDENCE: EvidenceRecord[] = [
 
 export const VERA_DEMO_ANALYSIS: EvidenceAnalysis = {
   id: 'demo-analysis-audio',
+  analysisId: 'demo-ai-analysis-audio',
+  analysisVersion: 'audio-evidence-v1',
   evidenceRecordId: VERA_DEMO_EVIDENCE[0].id,
   alertSessionId: VERA_DEMO_ALERT_SESSION.id,
   status: 'COMPLETED',
@@ -184,9 +186,52 @@ export const VERA_DEMO_ANALYSIS: EvidenceAnalysis = {
     distressLanguage: true,
   },
   shouldEscalate: true,
+  recommendedAction: 'ESCALATE_CONTACTS',
+  evidenceWindow: {
+    durationMs: 38000,
+    endedAt: null,
+    startedAt: null,
+  },
+  transcription: {
+    language: 'pt-BR',
+    segments: [],
+    text: 'Trecho demo de audio com sinais de risco.',
+  },
+  acousticEvents: [
+    {
+      confidence: 0.82,
+      endMs: 21000,
+      label: 'impact_candidate',
+      source: 'demo',
+      startMs: 20000,
+    },
+  ],
+  threatMatches: [
+    {
+      confidence: 0.82,
+      evidence: 'pedido de afastamento',
+      label: 'active_distress_call',
+      severity: 'HIGH',
+    },
+  ],
+  providerMetadata: {
+    model: 'demo',
+    modelVersion: 'demo',
+    provider: 'demo',
+  },
+  processingStartedAt: new Date(
+    new Date(sessionStart).getTime() + 18 * 60 * 1000,
+  ).toISOString(),
+  processingFinishedAt: new Date(
+    new Date(sessionStart).getTime() + 18 * 60 * 1000 + 1400,
+  ).toISOString(),
+  latencyMs: 1400,
   failureReason: null,
   createdAt: new Date(
     new Date(sessionStart).getTime() + 18 * 60 * 1000,
+  ).toISOString(),
+  updatedAt: new Date(
+    new Date(sessionStart).getTime() + 18 * 60 * 1000 + 1400,
   ).toISOString(),
 };
 

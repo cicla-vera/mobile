@@ -1,6 +1,9 @@
 import * as FileSystem from 'expo-file-system/legacy';
 
-import { uploadEvidence } from '@/services/vera/evidence.service';
+import {
+  analyzeEvidence,
+  uploadEvidence,
+} from '@/services/vera/evidence.service';
 import type {
   EvidenceRecord,
   EvidenceType,
@@ -49,9 +52,11 @@ export type FlushEvidenceUploadQueueResult = {
 
 const QUEUE_FILE_NAME = 'vera-evidence-upload-queue.json';
 const QUEUE_FILES_DIR_NAME = 'vera-evidence-uploads/';
+let queueFileTail: Promise<void> = Promise.resolve();
+let flushQueueTail: Promise<void> = Promise.resolve();
 
 export async function listQueuedEvidenceUploads(alertSessionId?: string) {
-  const items = await readQueue();
+  const items = await runQueueFileOperation(() => readQueue());
 
   if (!alertSessionId) {
     return items;
@@ -60,9 +65,7 @@ export async function listQueuedEvidenceUploads(alertSessionId?: string) {
   return items.filter((item) => item.alertSessionId === alertSessionId);
 }
 
-export async function enqueueEvidenceUpload(
-  input: EnqueueEvidenceUploadInput,
-) {
+export async function enqueueEvidenceUpload(input: EnqueueEvidenceUploadInput) {
   await ensureQueueDirectory();
 
   const now = new Date().toISOString();
@@ -87,17 +90,33 @@ export async function enqueueEvidenceUpload(
     uploadedEvidenceRecordId: null,
   };
 
-  await writeQueue([item, ...(await readQueue())]);
+  await runQueueFileOperation(async () => {
+    await writeQueue([item, ...(await readQueue())]);
+  });
 
   return item;
 }
 
-export async function flushEvidenceUploadQueue(alertSessionId?: string) {
+export function flushEvidenceUploadQueue(alertSessionId?: string) {
+  const nextFlush = flushQueueTail.then(
+    () => flushEvidenceUploadQueueOnce(alertSessionId),
+    () => flushEvidenceUploadQueueOnce(alertSessionId),
+  );
+
+  flushQueueTail = nextFlush.then(
+    () => undefined,
+    () => undefined,
+  );
+
+  return nextFlush;
+}
+
+async function flushEvidenceUploadQueueOnce(alertSessionId?: string) {
   const result: FlushEvidenceUploadQueueResult = {
     failed: [],
     uploaded: [],
   };
-  const items = await readQueue();
+  const items = await runQueueFileOperation(() => readQueue());
   const candidates = items.filter(
     (item) =>
       item.status !== 'uploaded' &&
@@ -124,7 +143,9 @@ export async function flushEvidenceUploadQueue(alertSessionId?: string) {
 }
 
 export async function retryQueuedEvidenceUpload(id: string) {
-  const item = (await readQueue()).find((candidate) => candidate.id === id);
+  const item = (await runQueueFileOperation(() => readQueue())).find(
+    (candidate) => candidate.id === id,
+  );
 
   if (!item) {
     return null;
@@ -134,14 +155,16 @@ export async function retryQueuedEvidenceUpload(id: string) {
 }
 
 export async function removeQueuedEvidenceUpload(id: string) {
-  const items = await readQueue();
-  const item = items.find((candidate) => candidate.id === id);
+  await runQueueFileOperation(async () => {
+    const items = await readQueue();
+    const item = items.find((candidate) => candidate.id === id);
 
-  if (item) {
-    await FileSystem.deleteAsync(item.localUri, { idempotent: true });
-  }
+    if (item) {
+      await FileSystem.deleteAsync(item.localUri, { idempotent: true });
+    }
 
-  await writeQueue(items.filter((candidate) => candidate.id !== id));
+    await writeQueue(items.filter((candidate) => candidate.id !== id));
+  });
 }
 
 async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
@@ -178,6 +201,7 @@ async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
       errorMessage: null,
       uploadedEvidenceRecordId: record.id,
     }));
+    await requestAnalysisForUploadedAudio(record);
     await FileSystem.deleteAsync(item.localUri, { idempotent: true });
 
     return record;
@@ -196,24 +220,50 @@ async function uploadQueuedEvidence(item: QueuedEvidenceUpload) {
   }
 }
 
+async function requestAnalysisForUploadedAudio(record: EvidenceRecord) {
+  if (record.type !== 'AUDIO') {
+    return;
+  }
+
+  try {
+    await analyzeEvidence(record.alertSessionId, record.id);
+  } catch {
+    // Evidence upload is the custody boundary; analysis failures are persisted
+    // server-side when possible and must not make the local upload retry.
+  }
+}
+
 async function updateQueuedEvidence(
   id: string,
   updater: (item: QueuedEvidenceUpload) => QueuedEvidenceUpload,
 ) {
-  const items = await readQueue();
-  let updatedItem: QueuedEvidenceUpload | null = null;
-  const updatedItems = items.map((item) => {
-    if (item.id !== id) {
-      return item;
-    }
+  return runQueueFileOperation(async () => {
+    const items = await readQueue();
+    let updatedItem: QueuedEvidenceUpload | null = null;
+    const updatedItems = items.map((item) => {
+      if (item.id !== id) {
+        return item;
+      }
 
-    updatedItem = updater(item);
-    return updatedItem;
+      updatedItem = updater(item);
+      return updatedItem;
+    });
+
+    await writeQueue(updatedItems);
+
+    return [updatedItem, updatedItems] as const;
   });
+}
 
-  await writeQueue(updatedItems);
+function runQueueFileOperation<T>(operation: () => Promise<T>) {
+  const nextOperation = queueFileTail.then(operation, operation);
 
-  return [updatedItem, updatedItems] as const;
+  queueFileTail = nextOperation.then(
+    () => undefined,
+    () => undefined,
+  );
+
+  return nextOperation;
 }
 
 async function readQueue(): Promise<QueuedEvidenceUpload[]> {
@@ -228,9 +278,7 @@ async function readQueue(): Promise<QueuedEvidenceUpload[]> {
     const raw = await FileSystem.readAsStringAsync(fileUri);
     const parsed = JSON.parse(raw) as unknown;
 
-    return Array.isArray(parsed)
-      ? parsed.filter(isQueuedEvidenceUpload)
-      : [];
+    return Array.isArray(parsed) ? parsed.filter(isQueuedEvidenceUpload) : [];
   } catch {
     return [];
   }
@@ -301,7 +349,9 @@ function sanitizeFileName(fileName: string, type: EvidenceType) {
     return `evidence-${Date.now()}.${fallbackExtension}`;
   }
 
-  return sanitized.includes('.') ? sanitized : `${sanitized}.${fallbackExtension}`;
+  return sanitized.includes('.')
+    ? sanitized
+    : `${sanitized}.${fallbackExtension}`;
 }
 
 function getFallbackExtension(type: EvidenceType) {

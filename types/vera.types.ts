@@ -29,7 +29,12 @@ export type EvidenceAuditAction =
   | 'HASH_VERIFIED'
   | 'HIDDEN_FROM_USER';
 
-export type EvidenceAnalysisStatus = 'COMPLETED' | 'FAILED';
+export type EvidenceAnalysisStatus =
+  | 'QUEUED'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'INCONCLUSIVE';
 
 export type SafetyProfile = {
   id: string;
@@ -246,6 +251,8 @@ export type EvidenceVerification = {
 
 export type EvidenceAnalysis = {
   id: string;
+  analysisId: string | null;
+  analysisVersion: string | null;
   evidenceRecordId: string;
   alertSessionId: string;
   status: EvidenceAnalysisStatus;
@@ -255,8 +262,18 @@ export type EvidenceAnalysis = {
   summary: string | null;
   detectedSignals: unknown;
   shouldEscalate: boolean | null;
+  recommendedAction: string | null;
+  evidenceWindow: unknown;
+  transcription: unknown;
+  acousticEvents: unknown;
+  threatMatches: unknown;
+  providerMetadata: unknown;
+  processingStartedAt: VeraDateTime | null;
+  processingFinishedAt: VeraDateTime | null;
+  latencyMs: number | null;
   failureReason: string | null;
   createdAt: VeraDateTime;
+  updatedAt: VeraDateTime;
 };
 
 export type VeraEvidenceUploadFile =

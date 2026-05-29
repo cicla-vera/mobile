@@ -51,8 +51,7 @@ export async function uploadEvidence(
       size: 1024,
       mimeType: getDemoMimeType(payload),
       originalName: getDemoOriginalName(payload),
-      contentHash:
-        'demo-hash-000000000000000000000000000000000000000000000000',
+      contentHash: 'demo-hash-000000000000000000000000000000000000000000000000',
       hashAlgorithm: 'SHA-256',
       hashedAt: new Date().toISOString(),
       hiddenFromUserAt: null,
@@ -121,6 +120,25 @@ export async function analyzeEvidence(
   return response.data;
 }
 
+export async function findLatestEvidenceAnalysis(
+  alertSessionId: string,
+  evidenceRecordId: string,
+) {
+  if (isVeraDemoModeEnabled) {
+    return {
+      ...VERA_DEMO_ANALYSIS,
+      alertSessionId,
+      evidenceRecordId,
+    };
+  }
+
+  const response = await api.get<EvidenceAnalysis | null>(
+    `/vera/alert-sessions/${alertSessionId}/evidence/${evidenceRecordId}/analysis/latest`,
+  );
+
+  return response.data;
+}
+
 export async function hideEvidence(
   alertSessionId: string,
   evidenceRecordId: string,
@@ -150,11 +168,16 @@ export const veraEvidenceService = {
   uploadEvidence,
   verifyEvidence,
   analyzeEvidence,
+  findLatestEvidenceAnalysis,
   hideEvidence,
 };
 
 function getDemoMimeType(payload: UploadEvidenceRequest) {
-  if (payload.file && typeof payload.file === 'object' && 'type' in payload.file) {
+  if (
+    payload.file &&
+    typeof payload.file === 'object' &&
+    'type' in payload.file
+  ) {
     return payload.file.type;
   }
 
@@ -162,7 +185,11 @@ function getDemoMimeType(payload: UploadEvidenceRequest) {
 }
 
 function getDemoOriginalName(payload: UploadEvidenceRequest) {
-  if (payload.file && typeof payload.file === 'object' && 'name' in payload.file) {
+  if (
+    payload.file &&
+    typeof payload.file === 'object' &&
+    'name' in payload.file
+  ) {
     return payload.file.name;
   }
 

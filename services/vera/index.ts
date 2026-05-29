@@ -1,5 +1,6 @@
 export * from './alert-sessions.service';
 export * from './active-alert-storage.service';
+export * from './audio-sentinel.service';
 export * from './emergency-contacts.service';
 export * from './evidence-analysis-cache.service';
 export * from './evidence.service';

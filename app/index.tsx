@@ -25,7 +25,7 @@ export default function IndexRoute() {
     return <Redirect href="/(exterior)" />;
   }
 
-  return <Redirect href="/welcome" />;
+  return <Redirect href="/onboarding" />;
 }
 
 const styles = StyleSheet.create({

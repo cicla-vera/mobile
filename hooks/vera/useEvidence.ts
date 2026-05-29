@@ -45,6 +45,17 @@ export function useLatestEvidenceAnalysisQuery(
       ),
     enabled:
       isAuthenticated && Boolean(alertSessionId) && Boolean(evidenceRecordId),
+    refetchInterval: (query) => {
+      const analysis = query.state.data;
+
+      if (!analysis) {
+        return 10000;
+      }
+
+      return analysis.status === 'QUEUED' || analysis.status === 'PROCESSING'
+        ? 5000
+        : false;
+    },
   });
 }
 
